@@ -1,0 +1,17 @@
+meta:
+  environment: jvm
+  toolchain:
+    name: maven
+    version: "17"
+build:
+  image: ""
+  args: -f untitled/pom.xml clean package
+  artifacts:
+    • untitled/target/demo-0.0.1-SNAPSHOT.jar: /
+run:
+  persistenceMount: /data
+  image: null
+  jarName: demo-0.0.1-SNAPSHOT.jar
+  containerPort: 80
+  singleton: true
+  zeroDowntime: false
