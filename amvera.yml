@@ -4,8 +4,5 @@ meta:
     name: maven
     version: 17   # укажите вашу версию JDK (17, 21 и т.д.)
 
-build:
-  pom: pom.xml
-
 run:
-  jarName: target/demo-0.0.1-SNAPSHOT.jar
+  jarName: demo-0.0.1-SNAPSHOT.jar
