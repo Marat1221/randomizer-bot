@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обратный отсчет до Нового Года</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135px, #010811, #0d1b2a, #010811, #051329);
+            background-size: 400% 400%;
+            animation: oilFlow 15s ease infinite;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        @keyframes oilFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            color: #e0e1dd;
+            margin-bottom: 30px;
+            font-size: 24px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .clock-wrapper {
+            display: flex;
+            gap: 25px;
+        }
+
+        .time-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-label {
+            color: #415a77;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .counter-container {
+            display: flex;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .digit-box {
+            position: relative;
+            width: 45px;
+            height: 70px;
+            overflow: hidden;
+            font-size: 55px;
+            font-weight: bold;
+            color: #e0e1dd;
+            text-shadow: 0 2px 15px rgba(255, 255, 255, 0.15);
+        }
+
+        .digit-tape {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .digit {
+            width: 45px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Стиль для трехзначного отображения дней */
+        .days-box {
+            width: 45px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="main-title">До Нового Года осталось:</h1>
+
+<div class="clock-wrapper">
+    <!-- Блок Дней (сделан трехзначным, так как дней может быть больше 99) -->
+    <div class="time-group">
+        <div class="counter-container">
+            <div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div>
+            <div class="digit-box"><div class="digit-tape" id="d-tens"></div></div>
+            <div class="digit-box"><div class="digit-tape" id="d-ones"></div></div>
+        </div>
+        <div class="time-label">Дней</div>
+    </div>
+
+    <div class="time-group">
+        <div class="counter-container">
+            <div class="digit-box"><div class="digit-tape" id="h-tens"></div></div>
+            <div class="digit-box"><div class="digit-tape" id="h-ones"></div></div>
+        </div>
+        <div class="time-label">Часов</div>
+    </div>
+
+    <div class="time-group">
+        <div class="counter-container">
+            <div class="digit-box"><div class="digit-tape" id="m-tens"></div></div>
+            <div class="digit-box"><div class="digit-tape" id="m-ones"></div></div>
+        </div>
+        <div class="time-label">Минут</div>
+    </div>
+
+    <div class="time-group">
+        <div class="counter-container">
+            <div class="digit-box"><div class="digit-tape" id="s-tens"></div></div>
+            <div class="digit-box"><div class="digit-tape" id="s-ones"></div></div>
+        </div>
+        <div class="time-label">Секунды</div>
+    </div>
+</div>
+
+<script>
+    const digitHeight = 70;
+    let timeOffset = 0; // Разница во времени между сервером и клиентом
+
+    // Динамически заполняем ленты цифрами 0-9
+    const tapes = ['d-hundreds', 'd-tens', 'd-ones', 'h-tens', 'h-ones', 'm-tens', 'm-ones', 's-tens', 's-ones'];
+    tapes.forEach(id => {
+        const el = document.getElementById(id);
+        for(let i = 0; i <= 9; i++) {
+            const div = document.createElement('div');
+            div.className = 'digit';
+            div.innerText = i;
+            el.appendChild(div);
+        }
+    });
+
+    function moveTape(tapeId, value) {
+        const tape = document.getElementById(tapeId);
+        if (tape) {
+            tape.style.transform = `translateY(-${value * digitHeight}px)`;
+        }
+    }
+
+    function updateDisplay(days, hours, minutes, seconds) {
+        moveTape('d-hundreds', Math.floor(days / 100));
+        moveTape('d-tens', Math.floor((days % 100) / 10));
+        moveTape('d-ones', days % 10);
+
+        moveTape('h-tens', Math.floor(hours / 10));
+        moveTape('h-ones', hours % 10);
+
+        moveTape('m-tens', Math.floor(minutes / 10));
+        moveTape('m-ones', minutes % 10);
+
+        moveTape('s-tens', Math.floor(seconds / 10));
+        moveTape('s-ones', seconds % 10);
+    }
+
+    function calculateCountdown() {
+        // Точное скорректированное время с учетом времени сервера
+        const now = new Date(Date.now() + timeOffset);
+
+        // Определяем целевой Новый Год в местном часовом поясе пользователя
+        const currentYear = now.getFullYear();
+        const nextNewYear = new Date(currentYear + 1, 0, 1, 0, 0, 0);
+
+        const diff = nextNewYear - now;
+
+        if (diff <= 0) {
+            document.getElementById('main-title').innerText = "С Новым Годом! 🎄";
+            updateDisplay(0, 0, 0, 0);
+            return;
+        }
+
+        // Переводим миллисекунды в дни, часы, минуты и секунды
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        updateDisplay(days, hours, minutes, seconds);
+    }
+
+    // Синхронизация времени с Spring Boot
+    async function syncTime() {
+        try {
+            const startTime = Date.now();
+            const response = await fetch('/api/value');
+            if (response.ok) {
+                const serverTime = await response.json();
+                const endTime = Date.now();
+                // Корректируем пинг сети
+                const latency = (endTime - startTime) / 2;
+                timeOffset = (serverTime + latency) - endTime;
+            }
+        } catch (error) {
+            console.error("Не удалось синхронизировать время с сервером:", error);
+        }
+    }
+
+    // Инициализация
+    async function init() {
+        await syncTime();
+        calculateCountdown();
+        // Обновляем каждую секунду локально
+        setInterval(calculateCountdown, 1000);
+        // Раз в минуту сверяем часы с сервером
+        setInterval(syncTime, 60000);
+    }
+
+    init();
+</script>
+</body>
+</html>
