@@ -79,7 +79,7 @@ public class Main implements CommandLineRunner {
                 state.players.clear(); // Очищаем список старых игроков
                 sendText(chatId, "🎮 Игра \"Рандомайзер\" запущена!\n\n" +
                         "Используйте команду /add, чтобы добавить участников.\n" +
-                        "Затем введите ?randoms [название], чтобы выбрать случайного.\n" +
+                        "Затем введите /randoms [название], чтобы выбрать случайного.\n" +
                         "Для выхода используйте /exit." +
                         "чтобы начать -> /start_random. :)");
                 return;
@@ -130,7 +130,7 @@ public class Main implements CommandLineRunner {
                     }
 
                     if (title.isEmpty()) {
-                        title = "номинацию";
+                        title = "(пусто)";
                     }
 
                     // Имитация кручения барабана
@@ -151,7 +151,7 @@ public class Main implements CommandLineRunner {
                 }
             } else {
                 // Если пользователь пишет команды /add или ?randoms, но игра не запущена
-                if (text.equals("/add") || text.startsWith("?randoms")) {
+                if (text.equals("/add") || text.startsWith("/randoms")) {
                     sendText(chatId, "⚠️ Чтобы начать добавлять людей и крутить рандомайзер, сначала активируйте игру командой: /start_game_random");
                 }
             }
