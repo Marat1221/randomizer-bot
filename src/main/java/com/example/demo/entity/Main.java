@@ -56,12 +56,18 @@ public class Main {
         @Override
         public void onUpdateReceived(Update update) {
             // Обрабатываем только текстовые сообщения
+            // В начале onUpdateReceived, после получения text
+            String rawText = update.getMessage().getText().trim();
+
+// Убираем @username бота из команды, если он есть
+
             if (!update.hasMessage() || !update.getMessage().hasText()) {
                 return;
             }
 
             long chatId = update.getMessage().getChatId();
-            String text = update.getMessage().getText().trim();
+            String text = rawText.replaceAll("@\\w+", "").trim();
+
 
             // Получаем или создаём игровую сессию для текущего чата
             GameState state = gameSessions.computeIfAbsent(chatId, k -> new GameState());
