@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Новогодний Неоновый Отсчет</title>
     <style>
+        :root {
+            --digit-w: 48px;
+            --digit-h: 76px;
+            --digit-font: 60px;
+            --pad: 10px 20px;
+            --gap: 30px;
+            --title-size: 26px;
+            --title-spacing: 5px;
+            --label-size: 11px;
+            --label-spacing: 3px;
+        }
+
         /* Глубокий черно-угольный фон */
         body {
             margin: 0;
@@ -36,11 +48,13 @@
         h1 {
             color: #ffffff;
             margin-bottom: 40px;
-            font-size: 26px;
+            font-size: var(--title-size);
             font-weight: 300;
-            letter-spacing: 5px;
+            letter-spacing: var(--title-spacing);
             text-transform: uppercase;
             z-index: 2;
+            text-align: center;
+            padding: 0 12px;
             text-shadow: 0 0 10px rgba(0, 242, 254, 0.6), 0 0 20px rgba(0, 242, 254, 0.3);
             animation: textFlicker 5s infinite alternate;
         }
@@ -56,9 +70,11 @@
 
         .clock-wrapper {
             display: flex;
-            gap: 30px;
+            gap: var(--gap);
             z-index: 2;
             margin-bottom: 50px;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         .time-group {
@@ -69,9 +85,9 @@
 
         .time-label {
             color: #64748b;
-            font-size: 11px;
+            font-size: var(--label-size);
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: var(--label-spacing);
             margin-top: 14px;
             font-weight: 600;
         }
@@ -79,8 +95,8 @@
         /* Черно-неоновые рамки */
         .counter-container {
             display: flex;
-            padding: 10px 20px;
-            background: linear-gradient(145px, #0a0f1d, #030712);
+            padding: var(--pad);
+            background: linear-gradient(145deg, #0a0f1d, #030712);
             border-radius: 16px;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 15px rgba(127, 0, 255, 0.25);
             border: 1px solid rgba(127, 0, 255, 0.4);
@@ -89,10 +105,10 @@
         /* Окошки для светящихся бирюзовых цифр */
         .digit-box {
             position: relative;
-            width: 48px;
-            height: 76px;
+            width: var(--digit-w);
+            height: var(--digit-h);
             overflow: hidden;
-            font-size: 60px;
+            font-size: var(--digit-font);
             font-weight: 700;
             color: #00f2fe;
             text-shadow: 0 0 8px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4);
@@ -108,8 +124,8 @@
         }
 
         .digit {
-            width: 48px;
-            height: 76px;
+            width: var(--digit-w);
+            height: var(--digit-h);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -153,6 +169,56 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
             pointer-events: none;
+        }
+
+        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+
+        /* Средние телефоны и планшеты */
+        @media (max-width: 640px) {
+            :root {
+                --digit-w: 32px;
+                --digit-h: 50px;
+                --digit-font: 40px;
+                --pad: 6px 12px;
+                --gap: 12px;
+                --title-size: 16px;
+                --title-spacing: 3px;
+                --label-size: 9px;
+                --label-spacing: 2px;
+            }
+            h1 { margin-bottom: 24px; }
+            .clock-wrapper { margin-bottom: 30px; }
+            .time-label { margin-top: 8px; }
+            .counter-container { border-radius: 10px; }
+            .ad-container { width: 90% !important; max-width: 320px; }
+        }
+
+        /* Маленькие телефоны */
+        @media (max-width: 400px) {
+            :root {
+                --digit-w: 26px;
+                --digit-h: 42px;
+                --digit-font: 32px;
+                --pad: 4px 8px;
+                --gap: 8px;
+                --title-size: 14px;
+                --title-spacing: 2px;
+                --label-size: 8px;
+                --label-spacing: 1px;
+            }
+            h1 { margin-bottom: 20px; }
+            .clock-wrapper { margin-bottom: 24px; }
+        }
+
+        /* Очень узкие экраны — например, старые Android */
+        @media (max-width: 340px) {
+            :root {
+                --digit-w: 22px;
+                --digit-h: 36px;
+                --digit-font: 26px;
+                --pad: 3px 6px;
+                --gap: 6px;
+            }
         }
     </style>
     <!-- Yandex.RTB -->
@@ -203,7 +269,6 @@
 </div>
 
 <!-- Рекламный баннер -->
-<!-- Рекламный баннер -->
 <div class="ad-container" id="ad-block">
     <!-- Yandex.RTB R-A-20278304-1 -->
     <div id="yandex_rtb_R-A-20278304-1"></div>
@@ -218,18 +283,32 @@
 </div>
 
 <script>
-    const digitHeight = 76;
+    // Высота цифры теперь берётся из CSS (--digit-h) через offsetHeight.
+    // Это нужно, чтобы на мобильных (где цифры меньше) лента прокручивалась корректно.
+    let digitHeight = 76;
     let timeOffset = 0;
 
     // Наполнение вертикальных лент цифрами от 0 до 9
     const tapes = ['d-hundreds', 'd-tens', 'd-ones', 'h-tens', 'h-ones', 'm-tens', 'm-ones', 's-tens', 's-ones'];
     tapes.forEach(id => {
         const el = document.getElementById(id);
-        for(let i = 0; i <= 9; i++) {
+        for (let i = 0; i <= 9; i++) {
             const div = document.createElement('div');
-            div.className = 'digit'; div.innerText = i; el.appendChild(div);
+            div.className = 'digit';
+            div.innerText = i;
+            el.appendChild(div);
         }
     });
+
+    // Пересчёт высоты цифры при загрузке и ресайзе (поворот экрана, смена размера окна)
+    function recalcDigitHeight() {
+        const sample = document.querySelector('.digit-box');
+        if (sample) {
+            digitHeight = sample.offsetHeight;
+        }
+    }
+    recalcDigitHeight();
+    window.addEventListener('resize', recalcDigitHeight);
 
     // Функция сдвига ленты к нужной цифре
     function moveTape(tapeId, value) {
@@ -306,7 +385,7 @@
             ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
             f.y += Math.cos(f.d) + 1 + f.r / 2;
             f.x += Math.sin(f.d) * 0.5;
-// Перенос снежинки наверх, если она улетела за экран
+            // Перенос снежинки наверх, если она улетела за экран
             if (f.y > canvas.height) {
                 flakes[i] = { x: Math.random() * canvas.width, y: 0, r: f.r, d: f.d };
             }
@@ -316,6 +395,7 @@
         requestAnimationFrame(drawSnow);
     }
     drawSnow();
+
     // Запрос точного времени со Spring Boot для корректировки пинга
     async function syncTime() {
         try {
@@ -327,6 +407,13 @@
             }
         } catch (e) {}
     }
+
+    // При повороте/ресайзе — пересчитываем высоту и сразу перерисовываем цифры
+    window.addEventListener('resize', () => {
+        recalcDigitHeight();
+        calculateCountdown();
+    });
+
     // Старт системы
     async function init() {
         await syncTime();
@@ -336,3 +423,5 @@
     }
     init();
 </script>
+</body>
+</html>
