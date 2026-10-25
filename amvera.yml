@@ -2,7 +2,8 @@ meta:
   environment: jvm
   toolchain:
     name: maven
-    version: 17   # укажите вашу версию JDK (17, 21 и т.д.)
+    version: 17
 
 run:
   jarName: demo-0.0.1-SNAPSHOT.jar
+  containerPort: 8080
