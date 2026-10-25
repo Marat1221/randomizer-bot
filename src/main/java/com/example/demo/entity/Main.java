@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.config.BotConfig;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,19 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.example.demo")
-public class Main implements CommandLineRunner {
+public class Main {
 
     public static void main(String... args) {
         SpringApplication.run(Main.class, args);
-    }
-
-    @Override
-    public void run(String... args) {
-        // CommandLineRunner оставляем пустым
     }
 
     // Вспомогательный класс для хранения состояния игры в конкретном чате
@@ -45,7 +40,6 @@ public class Main implements CommandLineRunner {
         private final BotConfig botConfig;
 
         // Хранилище игровых сессий (ключ — chatId, значение — состояние игры)
-        // Позволяет боту работать в разных чатах одновременно и не путать списки
         private final Map<Long, GameState> gameSessions = new ConcurrentHashMap<>();
         private final Random random = new Random();
 
@@ -69,90 +63,98 @@ public class Main implements CommandLineRunner {
             long chatId = update.getMessage().getChatId();
             String text = update.getMessage().getText().trim();
 
-            // Получаем или создаем игровую сессию для текущего чата
+            // Получаем или создаём игровую сессию для текущего чата
             GameState state = gameSessions.computeIfAbsent(chatId, k -> new GameState());
 
             // 1. КОМАНДА ЗАПУСКА ИГРЫ
             if (text.equals("/start_game_random")) {
                 state.isGameActive = true;
                 state.isWaitingForName = false;
-                state.players.clear(); // Очищаем список старых игроков
+                state.players.clear();
                 sendText(chatId, "🎮 Игра \"Рандомайзер\" запущена!\n\n" +
                         "Используйте команду /add, чтобы добавить участников.\n" +
-                        "Затем введите /randoms [название], чтобы выбрать случайного.\n" +
-                        "Для выхода используйте /exit." +
-                        "чтобы начать -> /start_random. :)");
+                        "Затем введите /start_random [название], чтобы выбрать случайного.\n" +
+                        "Для выхода используйте /exit.");
                 return;
             }
 
             // 2. КОМАНДА ВЫХОДА ИЗ ИГРЫ
             if (text.equals("/exit")) {
                 if (!state.isGameActive) {
-                    sendText(chatId, "Игра еще даже не запущена. Наберите /start_game_random");
+                    sendText(chatId, "Игра ещё даже не запущена. Наберите /start_game_random");
                     return;
                 }
                 state.isGameActive = false;
                 state.isWaitingForName = false;
                 state.players.clear();
+                gameSessions.remove(chatId); // Освобождаем сессию, чтобы не копить память
                 sendText(chatId, "🚪 Грустно, что вы вышли :(. Список участников полностью очищен.");
                 return;
             }
 
-            // Если игра активна, обрабатываем игровые команды
+            // 3. ЕСЛИ ЖДЁМ ИМЯ И ЭТО НЕ КОМАНДА — ДОБАВЛЯЕМ ИГРОКА
+            if (state.isWaitingForName && !text.startsWith("/")) {
+                state.players.add(text);
+                state.isWaitingForName = false;
+                sendText(chatId, "✅ Добавлен: " + text + "\nВсего участников в списке: " + state.players.size());
+                return;
+            }
+
+            // Если ждали имя, но пришла команда — отменяем ожидание и обрабатываем команду как обычно
+            if (state.isWaitingForName) {
+                state.isWaitingForName = false;
+            }
+
+            // 4. ОБРАБОТКА ИГРОВЫХ КОМАНД
             if (state.isGameActive) {
 
-                // А) Команда добавления сущности
+                // А) Команда добавления игрока
                 if (text.equals("/add")) {
                     state.isWaitingForName = true;
-                    sendText(chatId, "📝 Введите имя игроманов (сущность):");
+                    sendText(chatId, "📝 Введите имя игрока (сущности):");
                     return;
                 }
 
-                // Б) Перехват ввода имени после команды /add
-                if (state.isWaitingForName) {
-                    state.players.add(text);
-                    state.isWaitingForName = false; // Сбрасываем флаг ожидания текста
-                    sendText(chatId, "✅ Добавлен: " + text + "\nВсего участников в списке: " + state.players.size());
-                    return;
-                }
-
-                // В) Команда розыгрыша назначения через префикс ?randoms
-                if (text.startsWith("/start_random")) {
+                // Б) Команда розыгрыша
+                if (text.equals("/start_random") || text.startsWith("/start_random ")) {
                     if (state.players.isEmpty()) {
                         sendText(chatId, "❌ Список участников пуст! Сначала добавьте кого-нибудь через /add");
                         return;
                     }
 
-                    // Вытаскиваем само назначение (все, что идет после "?randoms ")
+                    // Вытаскиваем назначение (всё, что идёт после "/start_random ")
                     String title = "номинацию";
                     if (text.contains(" ")) {
                         title = text.substring(text.indexOf(" ") + 1).trim();
                     }
-
                     if (title.isEmpty()) {
-                        title = "(пусто)";
+                        title = "номинацию";
                     }
 
-                    // Имитация кручения барабана
-                    sendText(chatId, "🎰 Барабан крутится, выбираем, кто тут [" + title + "]...");
+                    // Снимок списка игроков — чтобы за время паузы список не изменился под нами
+                    final List<String> snapshot = new ArrayList<>(state.players);
+                    final String finalTitle = title;
 
-                    try {
-                        Thread.sleep(1500); // Небольшая пауза для интриги
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                    sendText(chatId, "🎰 Барабан крутится, выбираем, кто тут [" + finalTitle + "]...");
 
-                    // Выбираем случайного человека
-                    int randomIndex = random.nextInt(state.players.size());
-                    String winner = state.players.get(randomIndex);
-
-                    sendText(chatId, "🎉 Результат определен!\n\n👉 " + winner + " -> " + title + "!");
+                    // Пауза и результат — в отдельном потоке, чтобы не блокировать polling всех чатов
+                    CompletableFuture.runAsync(() -> {
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
+                        String winner = snapshot.get(random.nextInt(snapshot.size()));
+                        sendText(chatId, "🎉 Результат определён!\n\n👉 " + winner + " -> " + finalTitle + "!");
+                    });
                     return;
                 }
             } else {
-                // Если пользователь пишет команды /add или ?randoms, но игра не запущена
-                if (text.equals("/add") || text.startsWith("/randoms")) {
+                // Если игра не активна, но пользователь пишет игровые команды — подсказываем
+                if (text.equals("/add") || text.equals("/start_random") || text.startsWith("/start_random ")) {
                     sendText(chatId, "⚠️ Чтобы начать добавлять людей и крутить рандомайзер, сначала активируйте игру командой: /start_game_random");
+                    return;
                 }
             }
         }
