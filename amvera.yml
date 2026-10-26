@@ -7,4 +7,3 @@ meta:
 run:
   jarName: demo-0.0.1-SNAPSHOT.jar
   containerPort: 8080
-  javaOptions: "-XX:MaxRAMPercentage=65 -XX:+UseSerialGC -Xss512k -XX:ReservedCodeCacheSize=48m"
