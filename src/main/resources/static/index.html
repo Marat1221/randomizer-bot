@@ -238,6 +238,7 @@
         .clock-wrapper {
             display: flex; gap: var(--gap); z-index: 8; margin-bottom: 20px;
             justify-content: center; align-items: flex-start;
+            flex-wrap: nowrap;
         }
         .time-group { display: flex; flex-direction: column; align-items: center; }
         .time-label {
@@ -364,6 +365,7 @@
             100% { opacity: 0; transform: translate(-50%, -180%) scale(1); }
         }
 
+        /* ===== АДАПТИВ: ПЛАНШЕТЫ (до 640px) ===== */
         @media (max-width: 640px) {
             :root {
                 --digit-w: 32px; --digit-h: 50px; --digit-font: 40px;
@@ -383,7 +385,48 @@
                         0 0 8px rgba(100, 200, 255, 0.8),
                         0 0 16px rgba(80, 160, 255, 0.5);
             }
-            .tree, .snowman, .gifts { display: none; }
+
+            /* Ёлочки — маленькие, по краям, на фоне */
+            .tree {
+                width: 70px; height: 110px;
+                z-index: 2;
+                opacity: 0.85;
+                animation: treeSway 5s infinite ease-in-out;
+            }
+            .tree.left  { left: -6px; }
+            .tree.right { right: -6px; transform: scaleX(-1); animation: treeSwayRight 5s infinite ease-in-out; }
+            .tree-layer:nth-child(1) { bottom: 10px; border-left-width: 28px; border-right-width: 28px; border-bottom-width: 30px; }
+            .tree-layer:nth-child(2) { bottom: 28px; border-left-width: 24px; border-right-width: 24px; border-bottom-width: 28px; }
+            .tree-layer:nth-child(3) { bottom: 46px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 26px; }
+            .tree-layer:nth-child(4) { bottom: 64px; border-left-width: 15px; border-right-width: 15px; border-bottom-width: 22px; }
+            .tree-layer:nth-child(5) { bottom: 82px; border-left-width: 10px; border-right-width: 10px; border-bottom-width: 20px; }
+            .tree-star { bottom: 100px; font-size: 14px; }
+            .tree-ornament { width: 6px; height: 6px; }
+            .tree-ornament:nth-child(6)  { bottom: 18px; left: 20%; }
+            .tree-ornament:nth-child(7)  { bottom: 30px; left: 70%; }
+            .tree-ornament:nth-child(8)  { bottom: 42px; left: 30%; }
+            .tree-ornament:nth-child(9)  { bottom: 54px; left: 60%; }
+            .tree-ornament:nth-child(10) { bottom: 66px; left: 40%; }
+            .tree-ornament:nth-child(11) { bottom: 78px; left: 55%; }
+
+            /* Снеговик — маленький, слева внизу */
+            .snowman {
+                transform: scale(0.55);
+                transform-origin: bottom left;
+                left: 78px; bottom: 8px;
+                z-index: 2;
+                opacity: 0.85;
+            }
+
+            /* Подарки — маленькие, справа внизу */
+            .gifts {
+                transform: scale(0.6);
+                transform-origin: bottom right;
+                right: 78px; bottom: 8px;
+                z-index: 2;
+                opacity: 0.85;
+            }
+
             .garland { height: 45px; }
             .bulb { width: 10px; height: 13px; top: 10px; }
             .icicles { top: 40px; height: 30px; }
@@ -394,6 +437,67 @@
             .top-controls { top: 60px; right: 10px; }
             .ctrl-btn { width: 36px; height: 36px; font-size: 15px; }
             .wish-ticker { font-size: 11px; letter-spacing: 1px; padding: 6px 16px; max-width: 88vw; bottom: 12px; }
+        }
+
+        /* ===== АДАПТИВ: ТЕЛЕФОНЫ (до 420px) ===== */
+        @media (max-width: 420px) {
+            :root {
+                --digit-w: 28px; --digit-h: 44px; --digit-font: 34px;
+                --pad: 5px 10px; --gap: 8px;
+                --title-size: 14px; --title-spacing: 2px;
+                --label-size: 8px; --label-spacing: 1px;
+            }
+            h1 { margin-bottom: 18px; }
+
+            /* Часы: разрешаем перенос — дни наверх, три блока снизу */
+            .clock-wrapper {
+                flex-wrap: wrap;
+                row-gap: 10px;
+                column-gap: 8px;
+                max-width: 98vw;
+                padding: 0 4px;
+                margin-bottom: 12px;
+            }
+            .clock-wrapper > .time-group:first-child {
+                flex-basis: 100%;
+            }
+            .clock-wrapper > .time-group {
+                justify-content: center;
+            }
+            .time-label { margin-top: 6px; }
+
+            /* Снеговика и подарки прячем на самых узких — места нет */
+            .snowman, .gifts { display: none; }
+
+            /* Ёлочки ещё меньше */
+            .tree { width: 55px; height: 85px; }
+            .tree-layer:nth-child(1) { bottom: 8px; border-left-width: 22px; border-right-width: 22px; border-bottom-width: 24px; }
+            .tree-layer:nth-child(2) { bottom: 22px; border-left-width: 18px; border-right-width: 18px; border-bottom-width: 22px; }
+            .tree-layer:nth-child(3) { bottom: 36px; border-left-width: 15px; border-right-width: 15px; border-bottom-width: 20px; }
+            .tree-layer:nth-child(4) { bottom: 50px; border-left-width: 11px; border-right-width: 11px; border-bottom-width: 17px; }
+            .tree-layer:nth-child(5) { bottom: 64px; border-left-width: 8px; border-right-width: 8px; border-bottom-width: 15px; }
+            .tree-star { bottom: 78px; font-size: 11px; }
+            .tree-ornament { width: 5px; height: 5px; }
+            .tree-ornament:nth-child(6)  { bottom: 14px; }
+            .tree-ornament:nth-child(7)  { bottom: 24px; }
+            .tree-ornament:nth-child(8)  { bottom: 34px; }
+            .tree-ornament:nth-child(9)  { bottom: 44px; }
+            .tree-ornament:nth-child(10) { bottom: 54px; }
+            .tree-ornament:nth-child(11) { bottom: 64px; }
+
+            .top-controls { top: 55px; right: 8px; }
+            .ctrl-btn { width: 34px; height: 34px; font-size: 14px; }
+            .wish-ticker { font-size: 10px; letter-spacing: 1px; padding: 5px 12px; max-width: 92vw; bottom: 10px; }
+        }
+
+        /* ===== АДАПТИВ: ОЧЕНЬ УЗКИЕ (до 360px) ===== */
+        @media (max-width: 360px) {
+            :root {
+                --digit-w: 24px; --digit-h: 38px; --digit-font: 28px;
+                --pad: 4px 8px; --gap: 6px;
+                --title-size: 13px; --title-spacing: 1.5px;
+            }
+            .clock-wrapper { column-gap: 6px; row-gap: 8px; }
         }
     </style>
     <script>window.yaContextCb=window.yaContextCb||[]</script>
@@ -669,11 +773,14 @@
             playBell(660 + Math.random() * 440, 0.2);
         });
     });
-    document.querySelector('.snowman').addEventListener('click', (e) => {
-        e.stopPropagation();
-        playBell(880); playBell(1100);
-        createFloatingText(e.clientX, e.clientY, 'Привет от снеговика! ⛄', '#a8d8ff');
-    });
+    const snowmanEl = document.querySelector('.snowman');
+    if (snowmanEl) {
+        snowmanEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playBell(880); playBell(1100);
+            createFloatingText(e.clientX, e.clientY, 'Привет от снеговика! ⛄', '#a8d8ff');
+        });
+    }
 
     // ===== БЕГУЩАЯ СТРОКА =====
     const wishes = [
@@ -970,9 +1077,8 @@
         } catch (e) {}
     }
 
-    // ===== УВЕДОМЛЕНИЕ О ЗАХОДЕ (Telegram) =====
+    // ===== УВЕДОМЛЕНИЕ О ЗАХОДЕ =====
     function notifyVisit() {
-        // Отправляем один раз за сессию, чтобы не спамить
         if (sessionStorage.getItem('visit_notified')) return;
         sessionStorage.setItem('visit_notified', '1');
         fetch('/api/notify-visit').catch(() => {});
