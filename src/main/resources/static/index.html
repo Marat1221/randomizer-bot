@@ -2,9 +2,26 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Счётчик до Нового Года — сколько дней осталось</title>
     <meta name="description" content="Узнайте, сколько дней, часов и минут осталось до Нового Года 2027. Красивый неоновый счётчик с обратным отсчётом онлайн.">
+    <!-- Open Graph для соцсетей -->
+    <meta property="og:title" content="Счётчик до Нового Года">
+    <meta property="og:description" content="Узнайте, сколько дней осталось до Нового Года!">
+    <meta property="og:type" content="website">
+
+    <!-- Микроразметка для Google (событие "Новый год") -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": "Новый Год 2027",
+            "startDate": "2027-01-01T00:00:00+03:00",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": { "@type": "Place", "name": "Россия" }
+        }
+    </script>
+
     <style>
         :root {
             --digit-w: 48px; --digit-h: 76px; --digit-font: 60px;
@@ -12,7 +29,7 @@
             --title-size: 26px; --title-spacing: 5px;
             --label-size: 11px; --label-spacing: 3px;
         }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             margin: 0; height: 100vh;
             display: flex; flex-direction: column;
@@ -29,6 +46,7 @@
             z-index: 100; background-size: 100% 4px, 6px 100%; pointer-events: none;
         }
 
+        /* --- КАНВАСЫ --- */
         #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
         }
@@ -38,6 +56,7 @@
         #particles-canvas { z-index: 4; }
         #fireworks-canvas { z-index: 90; }
 
+        /* --- ДЕКОР --- */
         .garland {
             position: absolute; top: 0; left: 0; right: 0; height: 60px;
             z-index: 15; pointer-events: none; overflow: hidden;
@@ -98,407 +117,125 @@
             z-index: 6; pointer-events: auto; cursor: pointer;
             transform-origin: bottom center;
             animation: treeSway 5s infinite ease-in-out;
+            transition: opacity 1s ease;
         }
         .tree.left  { left: 10px; }
         .tree.right { right: 10px; transform: scaleX(-1); animation: treeSwayRight 5s infinite ease-in-out; }
-        @keyframes treeSway {
-            0%, 100% { transform: rotate(-1deg); }
-            50%      { transform: rotate(1deg); }
-        }
-        @keyframes treeSwayRight {
-            0%, 100% { transform: scaleX(-1) rotate(-1deg); }
-            50%      { transform: scaleX(-1) rotate(1deg); }
-        }
-        .tree-layer {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            border-left: solid transparent; border-right: solid transparent;
-            border-bottom: solid #0d4a2a;
-            filter: drop-shadow(0 0 8px rgba(50, 200, 100, 0.3));
-        }
+        @keyframes treeSway { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
+        @keyframes treeSwayRight { 0%, 100% { transform: scaleX(-1) rotate(-1deg); } 50% { transform: scaleX(-1) rotate(1deg); } }
+        .tree-layer { position: absolute; left: 50%; transform: translateX(-50%); border-left: solid transparent; border-right: solid transparent; border-bottom: solid #0d4a2a; filter: drop-shadow(0 0 8px rgba(50, 200, 100, 0.3)); }
         .tree-layer:nth-child(1) { bottom: 20px;  border-left-width: 60px; border-right-width: 60px; border-bottom-width: 60px; border-bottom-color: #062f1a; }
         .tree-layer:nth-child(2) { bottom: 50px;  border-left-width: 50px; border-right-width: 50px; border-bottom-width: 55px; border-bottom-color: #0a4025; }
         .tree-layer:nth-child(3) { bottom: 80px;  border-left-width: 40px; border-right-width: 40px; border-bottom-width: 50px; border-bottom-color: #0d5a33; }
         .tree-layer:nth-child(4) { bottom: 110px; border-left-width: 30px; border-right-width: 30px; border-bottom-width: 45px; border-bottom-color: #127a44; }
         .tree-layer:nth-child(5) { bottom: 140px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 40px; border-bottom-color: #17a05a; }
-        .tree-star {
-            position: absolute; bottom: 175px; left: 50%; transform: translateX(-50%);
-            font-size: 22px; color: #ffd700;
-            text-shadow: 0 0 10px #ffd700, 0 0 20px #ff9900;
-            animation: starTwinkle 1.5s infinite alternate; z-index: 2;
-        }
-        @keyframes starTwinkle {
-            0%   { transform: translateX(-50%) scale(0.85); opacity: 0.8; }
-            100% { transform: translateX(-50%) scale(1.15); opacity: 1; }
-        }
-        .tree-ornament {
-            position: absolute; width: 8px; height: 8px; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #ff3b5c);
-            box-shadow: 0 0 8px #ff3b5c;
-            animation: ornamentPulse 2s infinite;
-            pointer-events: auto; cursor: pointer;
-        }
+        .tree-star { position: absolute; bottom: 175px; left: 50%; transform: translateX(-50%); font-size: 22px; color: #ffd700; text-shadow: 0 0 10px #ffd700, 0 0 20px #ff9900; animation: starTwinkle 1.5s infinite alternate; z-index: 2; }
+        @keyframes starTwinkle { 0% { transform: translateX(-50%) scale(0.85); opacity: 0.8; } 100% { transform: translateX(-50%) scale(1.15); opacity: 1; } }
+        .tree-ornament { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #ff3b5c); box-shadow: 0 0 8px #ff3b5c; animation: ornamentPulse 2s infinite; pointer-events: auto; cursor: pointer; }
         .tree-ornament:nth-child(6)  { bottom: 30px;  left: 20%; animation-delay: 0s;   background: radial-gradient(circle at 30% 30%, #fff, #3bbaff); box-shadow: 0 0 8px #3bbaff; }
         .tree-ornament:nth-child(7)  { bottom: 45px;  left: 70%; animation-delay: 0.4s; background: radial-gradient(circle at 30% 30%, #fff, #ffd23f); box-shadow: 0 0 8px #ffd23f; }
         .tree-ornament:nth-child(8)  { bottom: 65px;  left: 30%; animation-delay: 0.8s; }
         .tree-ornament:nth-child(9)  { bottom: 80px;  left: 60%; animation-delay: 1.2s; background: radial-gradient(circle at 30% 30%, #fff, #b83bff); box-shadow: 0 0 8px #b83bff; }
         .tree-ornament:nth-child(10) { bottom: 100px; left: 40%; animation-delay: 0.2s; background: radial-gradient(circle at 30% 30%, #fff, #3bff7d); box-shadow: 0 0 8px #3bff7d; }
         .tree-ornament:nth-child(11) { bottom: 120px; left: 55%; animation-delay: 0.6s; }
-        @keyframes ornamentPulse {
-            0%, 100% { transform: scale(1);   opacity: 0.85; }
-            50%      { transform: scale(1.4); opacity: 1; }
-        }
+        @keyframes ornamentPulse { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.4); opacity: 1; } }
 
-        .snowman {
-            position: absolute; bottom: 15px; left: 160px;
-            width: 60px; height: 100px; z-index: 5; cursor: pointer;
-            animation: snowmanBounce 4s infinite ease-in-out;
-        }
-        @keyframes snowmanBounce {
-            0%, 100% { transform: translateY(0); }
-            50%      { transform: translateY(-4px); }
-        }
-        .snowman::after {
-            content: "Привет! 🎄";
-            position: absolute; bottom: 110%; left: 50%;
-            transform: translateX(-50%) scale(0);
-            background: rgba(10, 20, 40, 0.95);
-            color: #a8d8ff; padding: 8px 14px; border-radius: 10px;
-            font-size: 12px; white-space: nowrap;
-            border: 1px solid rgba(140, 190, 255, 0.5);
-            box-shadow: 0 0 16px rgba(100, 180, 255, 0.6);
-            pointer-events: none; opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s;
-        }
-        .snowman:hover::after { transform: translateX(-50%) scale(1); opacity: 1; }
-        .snowman-ball {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ffffff, #d8e8ff 60%, #a8c4e0 100%);
-            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.15), 0 0 10px rgba(180, 220, 255, 0.5);
-        }
+        .snowman { position: absolute; bottom: 15px; left: 160px; width: 60px; height: 100px; z-index: 5; cursor: pointer; animation: snowmanBounce 4s infinite ease-in-out; transition: opacity 1s ease; }
+        @keyframes snowmanBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        .snowman-ball { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, #d8e8ff 60%, #a8c4e0 100%); box-shadow: inset -3px -3px 6px rgba(0,0,0,0.15), 0 0 10px rgba(180, 220, 255, 0.5); }
         .snowman-ball.bottom { width: 60px; height: 60px; bottom: 0; }
         .snowman-ball.middle { width: 44px; height: 44px; bottom: 42px; }
         .snowman-ball.top    { width: 32px; height: 32px; bottom: 80px; }
         .snowman-eye { position: absolute; width: 4px; height: 4px; background: #1a1a2a; border-radius: 50%; bottom: 100px; }
-        .snowman-eye.l { left: 26px; }
-        .snowman-eye.r { right: 26px; }
-        .snowman-nose {
-            position: absolute; width: 0; height: 0;
-            border-top: 3px solid transparent; border-bottom: 3px solid transparent;
-            border-left: 8px solid #ff6600; bottom: 96px; left: 30px; transform: rotate(-10deg);
-        }
-        .snowman-scarf {
-            position: absolute; bottom: 72px; left: 50%; transform: translateX(-50%);
-            width: 46px; height: 8px;
-            background: linear-gradient(90deg, #ff3b5c, #b83bff);
-            border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-        }
-        .snowman-scarf::after {
-            content: ""; position: absolute; bottom: -12px; left: 8px;
-            width: 8px; height: 14px; background: #b83bff;
-            border-radius: 0 0 4px 4px; transform: rotate(-8deg);
-        }
+        .snowman-eye.l { left: 26px; } .snowman-eye.r { right: 26px; }
+        .snowman-nose { position: absolute; width: 0; height: 0; border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-left: 8px solid #ff6600; bottom: 96px; left: 30px; transform: rotate(-10deg); }
+        .snowman-scarf { position: absolute; bottom: 72px; left: 50%; transform: translateX(-50%); width: 46px; height: 8px; background: linear-gradient(90deg, #ff3b5c, #b83bff); border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
 
-        .gifts {
-            position: absolute; bottom: 5px; right: 160px;
-            width: 80px; height: 70px; z-index: 5; pointer-events: none;
-        }
-        .gift {
-            position: absolute; border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            animation: giftSway 3s infinite ease-in-out;
-        }
-        .gift::before {
-            content: ""; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 6px; background: rgba(255,215,0,0.85); box-shadow: 0 0 6px rgba(255,215,0,0.6);
-        }
-        .gift::after {
-            content: ""; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
-            height: 6px; background: rgba(255,215,0,0.85); box-shadow: 0 0 6px rgba(255,215,0,0.6);
-        }
-        .gift.g1 { width: 42px; height: 42px; bottom: 0;    left: 0;    background: linear-gradient(135deg, #ff3b5c, #a02840); }
-        .gift.g2 { width: 34px; height: 34px; bottom: 0;    left: 46px; background: linear-gradient(135deg, #3bff7d, #1d8a40); animation-delay: 0.4s; }
+        .gifts { position: absolute; bottom: 5px; right: 160px; width: 80px; height: 70px; z-index: 5; pointer-events: none; transition: opacity 1s ease; }
+        .gift { position: absolute; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); animation: giftSway 3s infinite ease-in-out; }
+        .gift::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 6px; background: rgba(255,215,0,0.85); box-shadow: 0 0 6px rgba(255,215,0,0.6); }
+        .gift::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 6px; background: rgba(255,215,0,0.85); box-shadow: 0 0 6px rgba(255,215,0,0.6); }
+        .gift.g1 { width: 42px; height: 42px; bottom: 0; left: 0; background: linear-gradient(135deg, #ff3b5c, #a02840); }
+        .gift.g2 { width: 34px; height: 34px; bottom: 0; left: 46px; background: linear-gradient(135deg, #3bff7d, #1d8a40); animation-delay: 0.4s; }
         .gift.g3 { width: 30px; height: 26px; bottom: 42px; left: 10px; background: linear-gradient(135deg, #3bbaff, #1a6a95); animation-delay: 0.8s; }
-        @keyframes giftSway {
-            0%, 100% { transform: rotate(-1deg); }
-            50%      { transform: rotate(1deg); }
-        }
+        @keyframes giftSway { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
 
-        h1 {
-            color: #ffffff; margin-bottom: 40px;
-            font-size: var(--title-size); font-weight: 300;
-            letter-spacing: var(--title-spacing); text-transform: uppercase;
-            z-index: 8; text-align: center; padding: 0 12px;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4), 0 0 40px rgba(100, 180, 255, 0.3);
-            animation: textFlicker 5s infinite alternate;
-        }
-        @keyframes textFlicker {
-            0%, 100% { opacity: 1; } 95% { opacity: 1; } 96% { opacity: 0.8; }
-            97% { opacity: 1; } 98% { opacity: 0.9; } 99% { opacity: 1; }
-        }
-        .clock-wrapper {
-            display: flex; gap: var(--gap); z-index: 8; margin-bottom: 20px;
-            justify-content: center; align-items: flex-start;
-            flex-wrap: nowrap;
-        }
+        /* --- ТЕКСТ И ЧАСЫ --- */
+        h1 { color: #ffffff; margin-bottom: 40px; font-size: var(--title-size); font-weight: 300; letter-spacing: var(--title-spacing); text-transform: uppercase; z-index: 8; text-align: center; padding: 0 12px; text-shadow: 0 0 10px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4), 0 0 40px rgba(100, 180, 255, 0.3); animation: textFlicker 5s infinite alternate; transition: opacity 1s ease; }
+        @keyframes textFlicker { 0%, 100% { opacity: 1; } 95% { opacity: 1; } 96% { opacity: 0.8; } 97% { opacity: 1; } 98% { opacity: 0.9; } 99% { opacity: 1; } }
+
+        .clock-wrapper { display: flex; gap: var(--gap); z-index: 8; margin-bottom: 20px; justify-content: center; align-items: flex-start; transition: opacity 1s ease; }
         .time-group { display: flex; flex-direction: column; align-items: center; }
-        .time-label {
-            color: #a8d8ff; font-size: var(--label-size);
-            text-transform: uppercase; letter-spacing: var(--label-spacing);
-            margin-top: 14px; font-weight: 600;
-            text-shadow: 0 0 6px rgba(150, 200, 255, 0.8), 0 0 12px rgba(100, 180, 255, 0.4);
-        }
-        .counter-container {
-            display: flex; padding: var(--pad);
-            background: linear-gradient(145deg, #1e2a4a 0%, #0a1020 50%, #060a15 100%);
-            border-radius: 14px; position: relative;
-            box-shadow:
-                    0 15px 35px rgba(0, 0, 0, 0.9),
-                    0 5px 15px rgba(0, 0, 0, 0.7),
-                    inset 0 1px 0 rgba(180, 220, 255, 0.35),
-                    inset 0 -2px 0 rgba(0, 0, 0, 0.6),
-                    inset 0 0 20px rgba(100, 150, 255, 0.15),
-                    0 0 25px rgba(100, 180, 255, 0.35);
-            border: 1px solid rgba(140, 190, 255, 0.35);
-            perspective: 800px;
-        }
-        .counter-container::before, .counter-container::after {
-            content: "❄"; position: absolute; font-size: 9px;
-            color: rgba(200, 230, 255, 0.7);
-            text-shadow: 0 0 6px rgba(150, 200, 255, 0.9), 0 0 12px rgba(100, 180, 255, 0.5);
-            z-index: 3; pointer-events: none;
-        }
-        .counter-container::before { top: 2px;    left: 5px;  }
-        .counter-container::after  { bottom: 2px; right: 5px; }
-        .ice-glare {
-            position: absolute; top: 0; left: 0; right: 0; height: 40%;
-            background: linear-gradient(to bottom, rgba(200, 230, 255, 0.15) 0%, rgba(200, 230, 255, 0.03) 60%, transparent 100%);
-            border-radius: 14px 14px 0 0; pointer-events: none; z-index: 1;
-        }
-        .digit-box {
-            position: relative; width: var(--digit-w); height: var(--digit-h);
-            overflow: hidden; font-size: var(--digit-font); font-weight: 700;
-            color: #cceeff; font-family: 'Courier New', Courier, monospace; z-index: 2;
-        }
-        .digit-tape {
-            position: absolute; top: 0; left: 0;
-            display: flex; flex-direction: column;
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        .digit {
-            width: var(--digit-w); height: var(--digit-h);
-            display: flex; justify-content: center; align-items: center;
-            text-shadow:
-                    0 1px 0 #6fa8c9, 0 2px 0 #5a8aab, 0 3px 0 #4a7089, 0 4px 0 #3a5667,
-                    0 5px 8px rgba(0, 0, 0, 0.8),
-                    0 0 12px rgba(100, 200, 255, 0.9),
-                    0 0 25px rgba(80, 160, 255, 0.6),
-                    0 0 40px rgba(60, 120, 255, 0.3);
-        }
+        .time-label { color: #a8d8ff; font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-spacing); margin-top: 14px; font-weight: 600; text-shadow: 0 0 6px rgba(150, 200, 255, 0.8), 0 0 12px rgba(100, 180, 255, 0.4); }
 
-        .top-controls {
-            position: fixed; top: 70px; right: 15px; z-index: 50;
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .ctrl-btn {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: rgba(10, 20, 40, 0.75);
-            border: 1px solid rgba(140, 190, 255, 0.5);
-            color: #a8d8ff; font-size: 18px; cursor: pointer;
-            box-shadow: 0 0 12px rgba(100, 180, 255, 0.3);
-            backdrop-filter: blur(6px);
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
-        .ctrl-btn:hover {
-            background: rgba(30, 50, 90, 0.9);
-            box-shadow: 0 0 20px rgba(100, 180, 255, 0.7);
-            transform: scale(1.08);
-        }
+        .counter-container { display: flex; padding: var(--pad); background: linear-gradient(145deg, #1e2a4a 0%, #0a1020 50%, #060a15 100%); border-radius: 14px; position: relative; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 5px 15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(180, 220, 255, 0.35), inset 0 -2px 0 rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(100, 150, 255, 0.15), 0 0 25px rgba(100, 180, 255, 0.35); border: 1px solid rgba(140, 190, 255, 0.35); perspective: 800px; }
+        .counter-container::before, .counter-container::after { content: "❄"; position: absolute; font-size: 9px; color: rgba(200, 230, 255, 0.7); text-shadow: 0 0 6px rgba(150, 200, 255, 0.9), 0 0 12px rgba(100, 180, 255, 0.5); z-index: 3; pointer-events: none; }
+        .counter-container::before { top: 2px; left: 5px; } .counter-container::after { bottom: 2px; right: 5px; }
+        .ice-glare { position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, rgba(200, 230, 255, 0.15) 0%, rgba(200, 230, 255, 0.03) 60%, transparent 100%); border-radius: 14px 14px 0 0; pointer-events: none; z-index: 1; }
+
+        .digit-box { position: relative; width: var(--digit-w); height: var(--digit-h); overflow: hidden; font-size: var(--digit-font); font-weight: 700; color: #cceeff; font-family: 'Courier New', Courier, monospace; z-index: 2; }
+        .digit-tape { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        .digit { width: var(--digit-w); height: var(--digit-h); display: flex; justify-content: center; align-items: center; text-shadow: 0 1px 0 #6fa8c9, 0 2px 0 #5a8aab, 0 3px 0 #4a7089, 0 4px 0 #3a5667, 0 5px 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(100, 200, 255, 0.9), 0 0 25px rgba(80, 160, 255, 0.6), 0 0 40px rgba(60, 120, 255, 0.3); }
+
+        /* --- УПРАВЛЕНИЕ --- */
+        .top-controls { position: fixed; top: 70px; right: 15px; z-index: 50; display: flex; flex-direction: column; gap: 8px; transition: opacity 1s ease; }
+        .ctrl-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(10, 20, 40, 0.75); border: 1px solid rgba(140, 190, 255, 0.5); color: #a8d8ff; font-size: 18px; cursor: pointer; box-shadow: 0 0 12px rgba(100, 180, 255, 0.3); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .ctrl-btn:hover { background: rgba(30, 50, 90, 0.9); box-shadow: 0 0 20px rgba(100, 180, 255, 0.7); transform: scale(1.08); }
         .ctrl-btn:active { transform: scale(0.95); }
-        .music-btn.playing {
-            background: rgba(60, 100, 180, 0.9) !important;
-            box-shadow: 0 0 20px rgba(100, 180, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5) !important;
-            animation: musicPulse 1.5s infinite ease-in-out;
-        }
-        @keyframes musicPulse {
-            0%, 100% { transform: scale(1); }
-            50%      { transform: scale(1.08); }
-        }
+        .music-btn.playing { background: rgba(60, 100, 180, 0.9) !important; box-shadow: 0 0 20px rgba(100, 180, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5) !important; animation: musicPulse 1.5s infinite ease-in-out; }
+        @keyframes musicPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-        .wish-ticker {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            z-index: 50; color: #a8d8ff;
-            font-size: 13px; letter-spacing: 2px;
-            text-shadow: 0 0 8px rgba(150, 200, 255, 0.7), 0 0 16px rgba(100, 180, 255, 0.4);
-            background: rgba(10, 20, 40, 0.7);
-            padding: 8px 22px; border-radius: 22px;
-            border: 1px solid rgba(140, 190, 255, 0.35);
-            backdrop-filter: blur(8px); white-space: nowrap;
-            opacity: 1; transition: opacity 0.6s ease, transform 0.6s ease;
-            max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
-            pointer-events: none;
-            animation: tickerGlow 3s infinite alternate;
-        }
-        .wish-ticker.fade {
-            opacity: 0; transform: translateX(-50%) translateY(6px);
-        }
-        @keyframes tickerGlow {
-            0%   { box-shadow: 0 0 10px rgba(100, 180, 255, 0.2), inset 0 0 10px rgba(100, 180, 255, 0.05); }
-            100% { box-shadow: 0 0 20px rgba(100, 180, 255, 0.5), inset 0 0 15px rgba(100, 180, 255, 0.1); }
-        }
+        .wish-ticker { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 50; color: #a8d8ff; font-size: 13px; letter-spacing: 2px; text-shadow: 0 0 8px rgba(150, 200, 255, 0.7), 0 0 16px rgba(100, 180, 255, 0.4); background: rgba(10, 20, 40, 0.7); padding: 8px 22px; border-radius: 22px; border: 1px solid rgba(140, 190, 255, 0.35); backdrop-filter: blur(8px); white-space: nowrap; opacity: 1; transition: opacity 0.6s ease, transform 0.6s ease; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; pointer-events: none; animation: tickerGlow 3s infinite alternate; }
+        .wish-ticker.fade { opacity: 0; transform: translateX(-50%) translateY(6px); }
+        @keyframes tickerGlow { 0% { box-shadow: 0 0 10px rgba(100, 180, 255, 0.2), inset 0 0 10px rgba(100, 180, 255, 0.05); } 100% { box-shadow: 0 0 20px rgba(100, 180, 255, 0.5), inset 0 0 15px rgba(100, 180, 255, 0.1); } }
 
-        .toast {
-            position: fixed; bottom: 70px; left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: rgba(10, 20, 40, 0.95); color: #a8d8ff;
-            padding: 10px 20px; border-radius: 10px;
-            border: 1px solid rgba(140, 190, 255, 0.5);
-            box-shadow: 0 0 20px rgba(100, 180, 255, 0.5);
-            z-index: 1000; opacity: 0; transition: all 0.3s;
-            font-size: 13px; pointer-events: none; max-width: 90vw;
-        }
+        .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(10, 20, 40, 0.95); color: #a8d8ff; padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(140, 190, 255, 0.5); box-shadow: 0 0 20px rgba(100, 180, 255, 0.5); z-index: 1000; opacity: 0; transition: all 0.3s; font-size: 13px; pointer-events: none; max-width: 90vw; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        @keyframes floatUp {
-            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-            20%  { opacity: 1; transform: translate(-50%, -80%) scale(1.1); }
-            100% { opacity: 0; transform: translate(-50%, -180%) scale(1); }
-        }
+        /* --- ЭКРАН НОВОГО ГОДА --- */
+        #new-year-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 1s ease; }
+        #new-year-overlay.active { display: flex; }
+        #ny-number { font-family: 'Courier New', Courier, monospace; font-size: 25vw; font-weight: bold; color: #fff; text-shadow: 0 0 20px #00f2fe, 0 0 60px #00f2fe, 0 0 100px #00f2fe; opacity: 0; transform: scale(0.5); line-height: 1; }
+        #ny-number.pulse { animation: nyPulse 1s ease-out forwards; }
+        @keyframes nyPulse { 0% { transform: scale(0.5); opacity: 0; } 30% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 30px #fff, 0 0 80px #00f2fe, 0 0 150px #00f2fe; } 100% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 20px #00f2fe, 0 0 60px #00f2fe, 0 0 100px #00f2fe; } }
+        #ny-title { font-size: 6vw; color: #ffd700; margin-top: 20px; text-shadow: 0 0 20px #ffd700, 0 0 50px #ff9900, 0 0 100px #ff3b5c; text-align: center; opacity: 0; transition: opacity 1s ease; font-family: 'Segoe UI', Roboto, sans-serif; font-weight: 900; letter-spacing: 5px; }
 
-        /* ===== АДАПТИВ: ПЛАНШЕТЫ (до 640px) ===== */
+        /* ========================================================= */
+        /* ==================== МОБИЛЬНАЯ ВЕРСИЯ =================== */
+        /* ========================================================= */
         @media (max-width: 640px) {
             :root {
-                --digit-w: 32px; --digit-h: 50px; --digit-font: 40px;
-                --pad: 6px 12px; --gap: 12px;
-                --title-size: 16px; --title-spacing: 3px;
-                --label-size: 9px; --label-spacing: 2px;
+                --digit-w: 34px; --digit-h: 54px; --digit-font: 42px;
+                --pad: 6px 12px; --gap: 8px;
+                --title-size: 15px; --title-spacing: 2px;
+                --label-size: 9px; --label-spacing: 1px;
             }
-            h1 { margin-bottom: 24px; }
-            .clock-wrapper { margin-bottom: 16px; }
-            .time-label { margin-top: 8px; }
-            .counter-container { border-radius: 10px; }
-            .counter-container::before, .counter-container::after { font-size: 7px; }
-            .digit {
-                text-shadow:
-                        0 1px 0 #6fa8c9, 0 2px 0 #5a8aab,
-                        0 3px 4px rgba(0,0,0,0.8),
-                        0 0 8px rgba(100, 200, 255, 0.8),
-                        0 0 16px rgba(80, 160, 255, 0.5);
-            }
+            .clock-wrapper { flex-wrap: wrap; justify-content: center; max-width: 100vw; padding: 0 10px; row-gap: 12px; }
+            .clock-wrapper > .time-group:nth-child(1) { flex-basis: 100%; margin-bottom: 5px; }
+            .clock-wrapper > .time-group:nth-child(2), .clock-wrapper > .time-group:nth-child(3), .clock-wrapper > .time-group:nth-child(4) { flex: 1 1 30%; min-width: 85px; }
 
-            /* Ёлочки — маленькие, по краям, на фоне */
-            .tree {
-                width: 70px; height: 110px;
-                z-index: 2;
-                opacity: 0.85;
-                animation: treeSway 5s infinite ease-in-out;
-            }
-            .tree.left  { left: -6px; }
-            .tree.right { right: -6px; transform: scaleX(-1); animation: treeSwayRight 5s infinite ease-in-out; }
-            .tree-layer:nth-child(1) { bottom: 10px; border-left-width: 28px; border-right-width: 28px; border-bottom-width: 30px; }
-            .tree-layer:nth-child(2) { bottom: 28px; border-left-width: 24px; border-right-width: 24px; border-bottom-width: 28px; }
-            .tree-layer:nth-child(3) { bottom: 46px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 26px; }
-            .tree-layer:nth-child(4) { bottom: 64px; border-left-width: 15px; border-right-width: 15px; border-bottom-width: 22px; }
-            .tree-layer:nth-child(5) { bottom: 82px; border-left-width: 10px; border-right-width: 10px; border-bottom-width: 20px; }
-            .tree-star { bottom: 100px; font-size: 14px; }
-            .tree-ornament { width: 6px; height: 6px; }
-            .tree-ornament:nth-child(6)  { bottom: 18px; left: 20%; }
-            .tree-ornament:nth-child(7)  { bottom: 30px; left: 70%; }
-            .tree-ornament:nth-child(8)  { bottom: 42px; left: 30%; }
-            .tree-ornament:nth-child(9)  { bottom: 54px; left: 60%; }
-            .tree-ornament:nth-child(10) { bottom: 66px; left: 40%; }
-            .tree-ornament:nth-child(11) { bottom: 78px; left: 55%; }
+            .tree { width: 75px; height: 115px; bottom: -5px; z-index: 2; opacity: 0.9; }
+            .tree.left { left: -15px; } .tree.right { right: -15px; }
+            .tree-layer:nth-child(1) { bottom: 8px; border-left-width: 28px; border-right-width: 28px; border-bottom-width: 32px; }
+            .tree-layer:nth-child(2) { bottom: 26px; border-left-width: 24px; border-right-width: 24px; border-bottom-width: 28px; }
+            .tree-layer:nth-child(3) { bottom: 44px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 25px; }
+            .tree-layer:nth-child(4) { bottom: 62px; border-left-width: 15px; border-right-width: 15px; border-bottom-width: 22px; }
+            .tree-layer:nth-child(5) { bottom: 80px; border-left-width: 11px; border-right-width: 11px; border-bottom-width: 20px; }
+            .tree-star { bottom: 98px; font-size: 15px; }
+            .tree-ornament { width: 7px; height: 7px; }
+            .tree-ornament:nth-child(6) { bottom: 14px; } .tree-ornament:nth-child(7) { bottom: 28px; }
+            .tree-ornament:nth-child(8) { bottom: 42px; } .tree-ornament:nth-child(9) { bottom: 56px; }
+            .tree-ornament:nth-child(10) { bottom: 70px; } .tree-ornament:nth-child(11) { bottom: 84px; }
 
-            /* Снеговик — маленький, слева внизу */
-            .snowman {
-                transform: scale(0.55);
-                transform-origin: bottom left;
-                left: 78px; bottom: 8px;
-                z-index: 2;
-                opacity: 0.85;
-            }
+            .snowman { transform: scale(0.55); left: 80px; bottom: 0; z-index: 2; opacity: 0.85; }
+            .gifts { transform: scale(0.65); right: 80px; bottom: 0; z-index: 2; opacity: 0.85; }
 
-            /* Подарки — маленькие, справа внизу */
-            .gifts {
-                transform: scale(0.6);
-                transform-origin: bottom right;
-                right: 78px; bottom: 8px;
-                z-index: 2;
-                opacity: 0.85;
-            }
+            .top-controls { top: 55px; right: 10px; }
+            .ctrl-btn { width: 36px; height: 36px; font-size: 16px; }
+            .wish-ticker { font-size: 9px; letter-spacing: 0.5px; padding: 5px 10px; max-width: 95vw; bottom: 10px; }
 
-            .garland { height: 45px; }
-            .bulb { width: 10px; height: 13px; top: 10px; }
-            .icicles { top: 40px; height: 30px; }
-            .icicle { width: 4px; height: 20px; }
-            .icicle:nth-child(odd) { height: 15px; }
-            .icicle:nth-child(3n)  { height: 24px; }
-            .icicle:nth-child(4n)  { height: 12px; }
-            .top-controls { top: 60px; right: 10px; }
-            .ctrl-btn { width: 36px; height: 36px; font-size: 15px; }
-            .wish-ticker { font-size: 11px; letter-spacing: 1px; padding: 6px 16px; max-width: 88vw; bottom: 12px; }
-        }
-
-        /* ===== АДАПТИВ: ТЕЛЕФОНЫ (до 420px) ===== */
-        @media (max-width: 420px) {
-            :root {
-                --digit-w: 28px; --digit-h: 44px; --digit-font: 34px;
-                --pad: 5px 10px; --gap: 8px;
-                --title-size: 14px; --title-spacing: 2px;
-                --label-size: 8px; --label-spacing: 1px;
-            }
-            h1 { margin-bottom: 18px; }
-
-            /* Часы: разрешаем перенос — дни наверх, три блока снизу */
-            .clock-wrapper {
-                flex-wrap: wrap;
-                row-gap: 10px;
-                column-gap: 8px;
-                max-width: 98vw;
-                padding: 0 4px;
-                margin-bottom: 12px;
-            }
-            .clock-wrapper > .time-group:first-child {
-                flex-basis: 100%;
-            }
-            .clock-wrapper > .time-group {
-                justify-content: center;
-            }
-            .time-label { margin-top: 6px; }
-
-            /* Снеговика и подарки прячем на самых узких — места нет */
-            .snowman, .gifts { display: none; }
-
-            /* Ёлочки ещё меньше */
-            .tree { width: 55px; height: 85px; }
-            .tree-layer:nth-child(1) { bottom: 8px; border-left-width: 22px; border-right-width: 22px; border-bottom-width: 24px; }
-            .tree-layer:nth-child(2) { bottom: 22px; border-left-width: 18px; border-right-width: 18px; border-bottom-width: 22px; }
-            .tree-layer:nth-child(3) { bottom: 36px; border-left-width: 15px; border-right-width: 15px; border-bottom-width: 20px; }
-            .tree-layer:nth-child(4) { bottom: 50px; border-left-width: 11px; border-right-width: 11px; border-bottom-width: 17px; }
-            .tree-layer:nth-child(5) { bottom: 64px; border-left-width: 8px; border-right-width: 8px; border-bottom-width: 15px; }
-            .tree-star { bottom: 78px; font-size: 11px; }
-            .tree-ornament { width: 5px; height: 5px; }
-            .tree-ornament:nth-child(6)  { bottom: 14px; }
-            .tree-ornament:nth-child(7)  { bottom: 24px; }
-            .tree-ornament:nth-child(8)  { bottom: 34px; }
-            .tree-ornament:nth-child(9)  { bottom: 44px; }
-            .tree-ornament:nth-child(10) { bottom: 54px; }
-            .tree-ornament:nth-child(11) { bottom: 64px; }
-
-            .top-controls { top: 55px; right: 8px; }
-            .ctrl-btn { width: 34px; height: 34px; font-size: 14px; }
-            .wish-ticker { font-size: 10px; letter-spacing: 1px; padding: 5px 12px; max-width: 92vw; bottom: 10px; }
-        }
-
-        /* ===== АДАПТИВ: ОЧЕНЬ УЗКИЕ (до 360px) ===== */
-        @media (max-width: 360px) {
-            :root {
-                --digit-w: 24px; --digit-h: 38px; --digit-font: 28px;
-                --pad: 4px 8px; --gap: 6px;
-                --title-size: 13px; --title-spacing: 1.5px;
-            }
-            .clock-wrapper { column-gap: 6px; row-gap: 8px; }
+            #ny-number { font-size: 55vw; }
+            #ny-title { font-size: 8vw; letter-spacing: 2px; }
         }
     </style>
     <script>window.yaContextCb=window.yaContextCb||[]</script>
@@ -506,104 +243,79 @@
 </head>
 <body>
 
+<!-- Экран Нового Года -->
+<div id="new-year-overlay">
+    <div id="ny-number"></div>
+    <div id="ny-title">С НОВЫМ ГОДОМ! 🎉</div>
+</div>
+
+<!-- Канвасы -->
 <canvas id="aurora-canvas"></canvas>
 <canvas id="stars-canvas"></canvas>
 <canvas id="snow-canvas"></canvas>
 <canvas id="particles-canvas"></canvas>
 <canvas id="fireworks-canvas"></canvas>
 
+<!-- Декор -->
 <div class="garland">
-    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
-    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
-    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
-    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
-    <div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
 </div>
 
 <div class="icicles">
-    <div class="icicle"></div><div class="icicle"></div><div class="icicle"></div>
-    <div class="icicle"></div><div class="icicle"></div><div class="icicle"></div>
-    <div class="icicle"></div><div class="icicle"></div><div class="icicle"></div>
-    <div class="icicle"></div><div class="icicle"></div><div class="icicle"></div>
+    <div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div>
 </div>
 
 <div class="tree left">
-    <div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div>
-    <div class="tree-layer"></div><div class="tree-layer"></div>
+    <div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div>
     <div class="tree-star">★</div>
-    <div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div>
-    <div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div>
+    <div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div>
 </div>
 <div class="tree right">
-    <div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div>
-    <div class="tree-layer"></div><div class="tree-layer"></div>
+    <div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div>
     <div class="tree-star">★</div>
-    <div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div>
-    <div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div>
+    <div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div><div class="tree-ornament"></div>
 </div>
 
 <div class="snowman">
-    <div class="snowman-ball bottom"></div>
-    <div class="snowman-ball middle"></div>
-    <div class="snowman-ball top"></div>
-    <div class="snowman-eye l"></div>
-    <div class="snowman-eye r"></div>
-    <div class="snowman-nose"></div>
-    <div class="snowman-scarf"></div>
+    <div class="snowman-ball bottom"></div><div class="snowman-ball middle"></div><div class="snowman-ball top"></div>
+    <div class="snowman-eye l"></div><div class="snowman-eye r"></div><div class="snowman-nose"></div><div class="snowman-scarf"></div>
 </div>
 
 <div class="gifts">
-    <div class="gift g1"></div>
-    <div class="gift g2"></div>
-    <div class="gift g3"></div>
+    <div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div>
 </div>
 
+<!-- Встроенный аудиоплеер (скрытый) -->
 <audio id="bg-music" src="/music.mp3" loop preload="auto"></audio>
 
+<!-- Кнопки -->
 <div class="top-controls">
-    <button class="ctrl-btn" id="sound-btn" title="Звук эффектов">🔔</button>
-    <button class="ctrl-btn music-btn" id="music-btn" title="Фоновая музыка">🎵</button>
+    <button class="ctrl-btn" id="preview-btn" title="Посмотреть Новый Год">🎆</button>
+    <button class="ctrl-btn music-btn" id="music-btn" title="Музыка">🎵</button>
     <button class="ctrl-btn" id="share-btn" title="Поделиться">📤</button>
 </div>
 
 <div class="wish-ticker" id="wish-ticker">❄ С наступающим Новым Годом! ❄</div>
-
 <div class="toast" id="toast"></div>
 
 <h1 id="main-title">До Нового Года осталось</h1>
 
-<div class="clock-wrapper">
+<!-- Часы -->
+<div class="clock-wrapper" id="main-clock">
     <div class="time-group">
-        <div class="counter-container">
-            <div class="ice-glare"></div>
-            <div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div>
-            <div class="digit-box"><div class="digit-tape" id="d-tens"></div></div>
-            <div class="digit-box"><div class="digit-tape" id="d-ones"></div></div>
-        </div>
+        <div class="counter-container"><div class="ice-glare"></div><div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div><div class="digit-box"><div class="digit-tape" id="d-tens"></div></div><div class="digit-box"><div class="digit-tape" id="d-ones"></div></div></div>
         <div class="time-label">Дней</div>
     </div>
     <div class="time-group">
-        <div class="counter-container">
-            <div class="ice-glare"></div>
-            <div class="digit-box"><div class="digit-tape" id="h-tens"></div></div>
-            <div class="digit-box"><div class="digit-tape" id="h-ones"></div></div>
-        </div>
+        <div class="counter-container"><div class="ice-glare"></div><div class="digit-box"><div class="digit-tape" id="h-tens"></div></div><div class="digit-box"><div class="digit-tape" id="h-ones"></div></div></div>
         <div class="time-label">Часов</div>
     </div>
     <div class="time-group">
-        <div class="counter-container">
-            <div class="ice-glare"></div>
-            <div class="digit-box"><div class="digit-tape" id="m-tens"></div></div>
-            <div class="digit-box"><div class="digit-tape" id="m-ones"></div></div>
-        </div>
+        <div class="counter-container"><div class="ice-glare"></div><div class="digit-box"><div class="digit-tape" id="m-tens"></div></div><div class="digit-box"><div class="digit-tape" id="m-ones"></div></div></div>
         <div class="time-label">Минут</div>
     </div>
     <div class="time-group">
-        <div class="counter-container">
-            <div class="ice-glare"></div>
-            <div class="digit-box"><div class="digit-tape" id="s-tens"></div></div>
-            <div class="digit-box"><div class="digit-tape" id="s-ones"></div></div>
-        </div>
+        <div class="counter-container"><div class="ice-glare"></div><div class="digit-box"><div class="digit-tape" id="s-tens"></div></div><div class="digit-box"><div class="digit-tape" id="s-ones"></div></div></div>
         <div class="time-label">Секунды</div>
     </div>
 </div>
@@ -613,7 +325,7 @@
     let digitHeight = 76;
     let timeOffset = 0;
     const isMobile = window.innerWidth < 640;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
     function setupCanvas(canvas) {
         canvas.width = window.innerWidth * dpr;
@@ -626,72 +338,34 @@
         return ctx;
     }
 
-    // ===== ЗВУК ЭФФЕКТОВ =====
+    // ===== ЗВУК =====
     let audioCtx = null;
-    let soundEnabled = true;
-
     function playBell(freq = 880, volume = 0.25) {
-        if (!soundEnabled) return;
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const now = audioCtx.currentTime;
-
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now);
-            osc.frequency.exponentialRampToValueAtTime(freq * 1.5, now + 0.05);
             gain.gain.setValueAtTime(volume, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
             osc.connect(gain).connect(audioCtx.destination);
-            osc.start(now);
-            osc.stop(now + 0.9);
-
-            const osc2 = audioCtx.createOscillator();
-            const gain2 = audioCtx.createGain();
-            osc2.type = 'sine';
-            osc2.frequency.setValueAtTime(freq * 2.4, now);
-            gain2.gain.setValueAtTime(volume * 0.4, now);
-            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-            osc2.connect(gain2).connect(audioCtx.destination);
-            osc2.start(now);
-            osc2.stop(now + 0.5);
+            osc.start(now); osc.stop(now + 0.8);
         } catch (e) {}
     }
 
-    document.getElementById('sound-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        soundEnabled = !soundEnabled;
-        document.getElementById('sound-btn').innerText = soundEnabled ? '🔔' : '🔕';
-        if (soundEnabled) playBell(880);
-        showToast(soundEnabled ? 'Звук включён' : 'Звук выключен');
-    });
-
-    // ===== ФОНОВАЯ МУЗЫКА =====
+    // ===== МУЗЫКА (ВСТРОЕННАЯ) =====
     const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.15;
-
     document.getElementById('music-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         const btn = document.getElementById('music-btn');
-
         if (bgMusic.paused) {
-            bgMusic.play()
-                .then(() => {
-                    btn.textContent = '🎶';
-                    btn.classList.add('playing');
-                    showToast('Музыка включена 🎵');
-                })
-                .catch(err => {
-                    showToast('Не удалось запустить музыку');
-                    console.error(err);
-                });
+            bgMusic.play().then(() => { btn.textContent = '🎶'; btn.classList.add('playing'); showToast('Музыка включена'); }).catch((err) => { showToast('Не удалось запустить'); });
         } else {
-            bgMusic.pause();
-            btn.textContent = '🎵';
-            btn.classList.remove('playing');
-            showToast('Музыка выключена');
+            bgMusic.pause(); btn.textContent = '🎵'; btn.classList.remove('playing'); showToast('Музыка выключена');
         }
     });
 
@@ -699,327 +373,210 @@
     document.getElementById('share-btn').addEventListener('click', async (e) => {
         e.stopPropagation();
         const url = window.location.href;
-        const data = { title: 'Счётчик до Нового Года', text: 'Смотри, сколько осталось до Нового Года! 🎄', url };
         if (navigator.share) {
-            try { await navigator.share(data); } catch (err) {}
+            try { await navigator.share({ title: 'Счётчик до Нового Года', url }); } catch (err) {}
         } else if (navigator.clipboard) {
-            try { await navigator.clipboard.writeText(url); showToast('Ссылка скопирована! 📋'); }
-            catch (err) { showToast('Скопируйте: ' + url); }
-        } else { showToast('Скопируйте: ' + url); }
+            try { await navigator.clipboard.writeText(url); showToast('Ссылка скопирована! 📋'); } catch (err) {}
+        }
     });
 
     // ===== ТОСТЫ =====
     let toastTimer;
     function showToast(text) {
         const t = document.getElementById('toast');
-        t.textContent = text;
-        t.classList.add('show');
+        t.textContent = text; t.classList.add('show');
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
     }
 
-    // ===== ВСПЛЫВАЮЩИЙ ТЕКСТ =====
-    function createFloatingText(x, y, text, color) {
-        const el = document.createElement('div');
-        el.textContent = text;
-        el.style.cssText = `position:fixed;left:${x}px;top:${y}px;transform:translate(-50%,-50%);color:${color};font-size:18px;font-weight:700;text-shadow:0 0 12px ${color},0 0 24px ${color};pointer-events:none;z-index:1000;animation:floatUp 1.5s ease-out forwards;font-family:'Segoe UI',sans-serif;white-space:nowrap;`;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 1600);
-    }
-
-    // ===== КОНФЕТТИ =====
-    function createConfetti(x, y) {
-        const colors = ['#ff3b5c', '#ffd23f', '#3bff7d', '#3bbaff', '#b83bff', '#ffffff'];
-        for (let i = 0; i < 12; i++) {
-            const el = document.createElement('div');
-            const angle = (Math.PI * 2 * i) / 12 + Math.random() * 0.4;
-            const dist = 50 + Math.random() * 70;
-            const dx = Math.cos(angle) * dist;
-            const dy = Math.sin(angle) * dist;
-            const size = 4 + Math.random() * 5;
-            const color = colors[i % colors.length];
-            el.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${color};border-radius:50%;pointer-events:none;z-index:999;box-shadow:0 0 8px ${color};transition:all 0.9s cubic-bezier(0.25,1,0.5,1);`;
-            document.body.appendChild(el);
-            requestAnimationFrame(() => {
-                el.style.transform = `translate(${dx}px, ${dy}px) scale(0)`;
-                el.style.opacity = '0';
-            });
-            setTimeout(() => el.remove(), 1000);
-        }
-    }
-
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('.ctrl-btn, .tree, .tree-ornament, .snowman, .bulb, a, button')) return;
-        createConfetti(e.clientX, e.clientY);
-    });
-
-    // ===== ИНТЕРАКТИВ =====
-    document.querySelectorAll('.tree').forEach(tree => {
-        tree.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playBell(1046.5);
-            createFloatingText(e.clientX, e.clientY, 'С Новым Годом! 🎄', '#ffd700');
-        });
-    });
-    document.querySelectorAll('.tree-ornament').forEach(orn => {
-        orn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playBell(1318.5, 0.3);
-            createFloatingText(e.clientX, e.clientY, '✨', '#ffd700');
-        });
-    });
-    document.querySelectorAll('.bulb').forEach(b => {
-        b.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playBell(660 + Math.random() * 440, 0.2);
-        });
-    });
-    const snowmanEl = document.querySelector('.snowman');
-    if (snowmanEl) {
-        snowmanEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playBell(880); playBell(1100);
-            createFloatingText(e.clientX, e.clientY, 'Привет от снеговика! ⛄', '#a8d8ff');
-        });
-    }
-
-    // ===== БЕГУЩАЯ СТРОКА =====
-    const wishes = [
-        "❄ С наступающим Новым Годом! ❄",
-        "🎄 Пусть сбудутся все мечты!",
-        "✨ Новый год — новые возможности",
-        "🎁 Не забудь про подарки близким",
-        "🌟 Волшебство рядом, оглянись",
-        "❄ Пусть снег укроет все печали",
-        "🎅 Дед Мороз уже в пути!",
-        "🥂 За счастье и здоровье в новом году!",
-        "⛄ Слепи снеговика — примета удачи",
-        "🌙 Загадай желание под бой курантов",
-        "🍊 Мандарины — вкус детства",
-        "🎆 В следующем году будет ещё лучше!",
-        "📸 Сделай фото с близкими на память",
-        "💫 Верь в чудеса — они случаются",
-        "🕯 Согрей кого-то в холодный вечер",
-        "🛷 Катайся с горки, как в детстве!",
-        "🎶 Включи новогоднюю музыку",
-        "🍪 Испеки печенье с корицей",
-        "🧣 Не забудь тёплый шарф",
-        "🌠 Загадай желание на падающую звезду"
-    ];
-    const wishEl = document.getElementById('wish-ticker');
-    let wishIndex = 0;
-    setInterval(() => {
-        wishEl.classList.add('fade');
-        setTimeout(() => {
-            wishIndex = (wishIndex + 1) % wishes.length;
-            wishEl.textContent = wishes[wishIndex];
-            wishEl.classList.remove('fade');
-        }, 600);
-    }, 6000);
-
-    // ===== ЦИФРЫ СЧЁТЧИКА =====
+    // ===== СЧЁТЧИК =====
     const tapes = ['d-hundreds', 'd-tens', 'd-ones', 'h-tens', 'h-ones', 'm-tens', 'm-ones', 's-tens', 's-ones'];
     tapes.forEach(id => {
         const el = document.getElementById(id);
         for (let i = 0; i <= 9; i++) {
-            const div = document.createElement('div');
-            div.className = 'digit';
-            div.innerText = i;
-            el.appendChild(div);
+            const div = document.createElement('div'); div.className = 'digit'; div.innerText = i; el.appendChild(div);
         }
     });
-    function recalcDigitHeight() {
-        const sample = document.querySelector('.digit-box');
-        if (sample) digitHeight = sample.offsetHeight;
-    }
+    function recalcDigitHeight() { const sample = document.querySelector('.digit-box'); if (sample) digitHeight = sample.offsetHeight; }
     recalcDigitHeight();
-    function moveTape(tapeId, value) {
-        const tape = document.getElementById(tapeId);
-        if (tape) tape.style.transform = `translateY(-${value * digitHeight}px)`;
-    }
+    function moveTape(tapeId, value) { const tape = document.getElementById(tapeId); if (tape) tape.style.transform = `translateY(-${value * digitHeight}px)`; }
     function updateDisplay(days, hours, minutes, seconds) {
-        moveTape('d-hundreds', Math.floor(days / 100));
-        moveTape('d-tens', Math.floor((days % 100) / 10));
-        moveTape('d-ones', days % 10);
-        moveTape('h-tens', Math.floor(hours / 10));
-        moveTape('h-ones', hours % 10);
-        moveTape('m-tens', Math.floor(minutes / 10));
-        moveTape('m-ones', minutes % 10);
-        moveTape('s-tens', Math.floor(seconds / 10));
-        moveTape('s-ones', seconds % 10);
+        moveTape('d-hundreds', Math.floor(days / 100)); moveTape('d-tens', Math.floor((days % 100) / 10)); moveTape('d-ones', days % 10);
+        moveTape('h-tens', Math.floor(hours / 10)); moveTape('h-ones', hours % 10);
+        moveTape('m-tens', Math.floor(minutes / 10)); moveTape('m-ones', minutes % 10);
+        moveTape('s-tens', Math.floor(seconds / 10)); moveTape('s-ones', seconds % 10);
     }
-    let newYearReached = false;
+
+    let isNewYearSequenceRunning = false;
     function calculateCountdown() {
+        if (isNewYearSequenceRunning) return;
         const now = new Date(Date.now() + timeOffset);
-        const currentYear = now.getFullYear();
-        const nextNewYear = new Date(currentYear + 1, 0, 1, 0, 0, 0);
+        const nextNewYear = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0);
         const diff = nextNewYear - now;
-        if (diff <= 0) {
-            document.getElementById('main-title').innerText = "С НОВЫМ ГОДОМ! 🎄";
-            updateDisplay(0, 0, 0, 0);
-            if (!newYearReached) { newYearReached = true; launchFireworks(); }
-            return;
-        }
-        const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours   = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        if (diff <= 0) { startNewYearSequence(false); return; }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((diff / 1000 / 60) % 60);
         const seconds = Math.floor((diff / 1000) % 60);
         updateDisplay(days, hours, minutes, seconds);
     }
 
-    // ===== СЕВЕРНОЕ СИЯНИЕ =====
+    // ===== СКРЫТИЕ / ПОКАЗ ЭЛЕМЕНТОВ =====
+    function fadeOutNormalUI() {
+        document.querySelectorAll('.garland, .icicles, .tree, .snowman, .gifts, #main-clock, #main-title, .wish-ticker, .top-controls').forEach(el => {
+            el.style.opacity = '0';
+            setTimeout(() => el.style.display = 'none', 1000);
+        });
+    }
+    function fadeInNormalUI() {
+        document.querySelectorAll('.garland, .icicles, .tree, .snowman, .gifts, #main-clock, #main-title, .wish-ticker, .top-controls').forEach(el => {
+            el.style.display = '';
+            setTimeout(() => el.style.opacity = '', 50);
+        });
+    }
+
+    // ===== НОВЫЙ ГОД (10 СЕКУНД) =====
+    async function startNewYearSequence(isPreview = false) {
+        if (isNewYearSequenceRunning) return;
+        isNewYearSequenceRunning = true;
+
+        bgMusic.pause();
+        document.getElementById('music-btn').textContent = '🎵';
+        document.getElementById('music-btn').classList.remove('playing');
+
+        fadeOutNormalUI();
+
+        const overlay = document.getElementById('new-year-overlay');
+        const numEl = document.getElementById('ny-number');
+        const titleEl = document.getElementById('ny-title');
+
+        titleEl.style.opacity = '0';
+        overlay.classList.add('active');
+        setTimeout(() => overlay.style.opacity = '1', 50);
+
+        for (let i = 10; i >= 1; i--) {
+            numEl.textContent = i;
+            numEl.classList.remove('pulse');
+            numEl.offsetHeight;
+            numEl.classList.add('pulse');
+            playBell(600 + (10 - i) * 60, 0.15);
+            await new Promise(r => setTimeout(r, 1000));
+        }
+
+        numEl.style.opacity = '0';
+        titleEl.style.opacity = '1';
+        launchFireworks();
+        playBell(523.25, 0.3); playBell(659.25, 0.3); playBell(783.99, 0.3); playBell(1046.5, 0.3);
+
+        if (isPreview) {
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    fadeInNormalUI();
+                    isNewYearSequenceRunning = false;
+                    calculateCountdown();
+                }, 1000);
+            }, 8000);
+        }
+    }
+
+    document.getElementById('preview-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        startNewYearSequence(true);
+    });
+
+    // ===== ФОНОВЫЕ АНИМАЦИИ =====
     const auroraCtx = setupCanvas(document.getElementById('aurora-canvas'));
     let auroraPhase = 0;
     function drawAurora() {
         const w = window.innerWidth, h = window.innerHeight;
-        auroraCtx.clearRect(0, 0, w, h);
-        auroraPhase += 0.003;
+        auroraCtx.clearRect(0, 0, w, h); auroraPhase += 0.003;
         for (let band = 0; band < 3; band++) {
             const baseY = h * 0.15 + band * 30;
             const grad = auroraCtx.createLinearGradient(0, baseY, 0, baseY + 180);
-            const hueShift = Math.sin(auroraPhase + band) * 30;
-            grad.addColorStop(0,   `rgba(${40 + hueShift}, ${200 + hueShift}, 120, 0)`);
-            grad.addColorStop(0.3, `rgba(80, 255, 180, 0.12)`);
-            grad.addColorStop(0.6, `rgba(80, 180, 255, 0.08)`);
-            grad.addColorStop(1,   `rgba(120, 80, 255, 0)`);
-            auroraCtx.fillStyle = grad;
-            auroraCtx.beginPath();
-            auroraCtx.moveTo(0, h);
-            for (let x = 0; x <= w; x += 12) {
-                const wave = Math.sin(x * 0.008 + auroraPhase * 2 + band * 1.5) * 25
-                    + Math.sin(x * 0.015 + auroraPhase * 1.2 + band) * 15;
-                auroraCtx.lineTo(x, baseY + wave);
-            }
-            auroraCtx.lineTo(w, h);
-            auroraCtx.closePath();
-            auroraCtx.fill();
+            grad.addColorStop(0.3, `rgba(80, 255, 180, 0.08)`); grad.addColorStop(0.6, `rgba(80, 180, 255, 0.05)`); grad.addColorStop(1, `rgba(120, 80, 255, 0)`);
+            auroraCtx.fillStyle = grad; auroraCtx.beginPath(); auroraCtx.moveTo(0, h);
+            for (let x = 0; x <= w; x += 20) { auroraCtx.lineTo(x, baseY + Math.sin(x * 0.008 + auroraPhase * 2 + band * 1.5) * 25); }
+            auroraCtx.lineTo(w, h); auroraCtx.closePath(); auroraCtx.fill();
         }
         requestAnimationFrame(drawAurora);
     }
-    drawAurora();
+    if (!isMobile) drawAurora();
 
-    // ===== ЗВЁЗДЫ =====
     const starsCtx = setupCanvas(document.getElementById('stars-canvas'));
     const stars = [];
-    const starCount = isMobile ? 80 : 180;
-    for (let i = 0; i < starCount; i++) {
-        stars.push({
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight * 0.7,
-            r: Math.random() * 1.4 + 0.3,
-            phase: Math.random() * Math.PI * 2,
-            speed: Math.random() * 0.02 + 0.01,
-            baseAlpha: Math.random() * 0.5 + 0.4
-        });
+    for (let i = 0; i < (isMobile ? 40 : 180); i++) {
+        stars.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight * 0.7, r: Math.random() * 1.4 + 0.3, phase: Math.random() * Math.PI * 2, speed: Math.random() * 0.02 + 0.01, baseAlpha: Math.random() * 0.5 + 0.4 });
     }
     function drawStars() {
         const w = window.innerWidth, h = window.innerHeight;
         starsCtx.clearRect(0, 0, w, h);
         for (const s of stars) {
-            s.phase += s.speed;
-            const twinkle = Math.sin(s.phase) * 0.5 + 0.5;
-            const alpha = s.baseAlpha * (0.4 + twinkle * 0.6);
-            starsCtx.fillStyle = `rgba(200, 230, 255, ${alpha})`;
-            starsCtx.beginPath();
-            starsCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            starsCtx.fill();
-            if (s.r > 1.2 && twinkle > 0.6) {
-                starsCtx.strokeStyle = `rgba(200, 230, 255, ${alpha * 0.6})`;
-                starsCtx.lineWidth = 0.5;
-                starsCtx.beginPath();
-                starsCtx.moveTo(s.x - s.r * 3, s.y); starsCtx.lineTo(s.x + s.r * 3, s.y);
-                starsCtx.moveTo(s.x, s.y - s.r * 3); starsCtx.lineTo(s.x, s.y + s.r * 3);
-                starsCtx.stroke();
-            }
+            s.phase += s.speed; const twinkle = Math.sin(s.phase) * 0.5 + 0.5;
+            starsCtx.fillStyle = `rgba(200, 230, 255, ${s.baseAlpha * (0.4 + twinkle * 0.6)})`;
+            starsCtx.beginPath(); starsCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); starsCtx.fill();
         }
         requestAnimationFrame(drawStars);
     }
     drawStars();
 
-    // ===== СНЕГОПАД =====
     const snowCtx = setupCanvas(document.getElementById('snow-canvas'));
-    let flakes = [];
-    let wind = 0;
+    let flakes = []; let wind = 0;
     function createFlakes() {
         flakes = [];
-        const count = isMobile ? 100 : 200;
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < (isMobile ? 50 : 200); i++) {
             const size = Math.random() * 2.5 + 0.8;
-            flakes.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                r: size,
-                speed: Math.random() * 1.2 + 0.4 + size / 3,
-                sway: Math.random() * 0.02,
-                swayPhase: Math.random() * Math.PI * 2,
-                alpha: Math.random() * 0.5 + 0.4
-            });
+            flakes.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, r: size, speed: Math.random() * 1.2 + 0.4 + size / 3, sway: Math.random() * 0.02, swayPhase: Math.random() * Math.PI * 2, alpha: Math.random() * 0.5 + 0.4 });
         }
     }
     createFlakes();
     function drawSnow() {
         const w = window.innerWidth, h = window.innerHeight;
-        snowCtx.clearRect(0, 0, w, h);
-        wind = Math.sin(Date.now() / 4000) * 0.4;
-        for (const f of flakes) {
-            snowCtx.shadowBlur = 8;
-            snowCtx.shadowColor = `rgba(150, 220, 255, ${f.alpha})`;
-            const grad = snowCtx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2);
-            grad.addColorStop(0,   `rgba(220, 240, 255, ${f.alpha})`);
-            grad.addColorStop(0.5, `rgba(150, 210, 255, ${f.alpha * 0.7})`);
-            grad.addColorStop(1,   `rgba(100, 180, 255, 0)`);
-            snowCtx.fillStyle = grad;
-            snowCtx.beginPath();
-            snowCtx.arc(f.x, f.y, f.r * 2, 0, Math.PI * 2);
-            snowCtx.fill();
-            f.y += f.speed;
-            f.swayPhase += f.sway;
-            f.x += Math.sin(f.swayPhase) * 0.6 + wind;
-            if (f.y > h + 10) { f.y = -10; f.x = Math.random() * w; }
-            if (f.x > w + 10) f.x = -10;
-            if (f.x < -10) f.x = w + 10;
+        snowCtx.clearRect(0, 0, w, h); wind = Math.sin(Date.now() / 4000) * 0.4;
+        if (isMobile) {
+            snowCtx.fillStyle = 'rgba(220, 240, 255, 0.8)';
+            for (const f of flakes) {
+                snowCtx.beginPath(); snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2); snowCtx.fill();
+                f.y += f.speed; f.swayPhase += f.sway; f.x += Math.sin(f.swayPhase) * 0.6 + wind;
+                if (f.y > h + 10) { f.y = -10; f.x = Math.random() * w; }
+            }
+        } else {
+            for (const f of flakes) {
+                snowCtx.shadowBlur = 8; snowCtx.shadowColor = `rgba(150, 220, 255, ${f.alpha})`;
+                const grad = snowCtx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2);
+                grad.addColorStop(0, `rgba(220, 240, 255, ${f.alpha})`); grad.addColorStop(1, `rgba(100, 180, 255, 0)`);
+                snowCtx.fillStyle = grad; snowCtx.beginPath(); snowCtx.arc(f.x, f.y, f.r * 2, 0, Math.PI * 2); snowCtx.fill();
+                f.y += f.speed; f.swayPhase += f.sway; f.x += Math.sin(f.swayPhase) * 0.6 + wind;
+                if (f.y > h + 10) { f.y = -10; f.x = Math.random() * w; }
+            }
+            snowCtx.shadowBlur = 0;
         }
-        snowCtx.shadowBlur = 0;
         requestAnimationFrame(drawSnow);
     }
     drawSnow();
 
-    // ===== ЧАСТИЦЫ =====
     const particlesCtx = setupCanvas(document.getElementById('particles-canvas'));
     const particles = [];
-    const particleCount = isMobile ? 30 : 60;
-    for (let i = 0; i < particleCount; i++) {
-        particles.push({
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            r: Math.random() * 1.8 + 0.5,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: -Math.random() * 0.5 - 0.1,
-            alpha: Math.random() * 0.6 + 0.3,
-            hue: Math.random() * 60 + 180
-        });
-    }
-    function drawParticles() {
-        const w = window.innerWidth, h = window.innerHeight;
-        particlesCtx.clearRect(0, 0, w, h);
-        for (const p of particles) {
-            p.x += p.vx; p.y += p.vy;
-            if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
-            if (p.x < -10) p.x = w + 10;
-            if (p.x > w + 10) p.x = -10;
-            particlesCtx.shadowBlur = 10;
-            particlesCtx.shadowColor = `hsla(${p.hue}, 100%, 70%, ${p.alpha})`;
-            particlesCtx.fillStyle = `hsla(${p.hue}, 100%, 80%, ${p.alpha})`;
-            particlesCtx.beginPath();
-            particlesCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            particlesCtx.fill();
+    if (!isMobile) {
+        for (let i = 0; i < 60; i++) particles.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, r: Math.random() * 1.8 + 0.5, vx: (Math.random() - 0.5) * 0.4, vy: -Math.random() * 0.5 - 0.1, alpha: Math.random() * 0.6 + 0.3, hue: Math.random() * 60 + 180 });
+        function drawParticles() {
+            const w = window.innerWidth, h = window.innerHeight;
+            particlesCtx.clearRect(0, 0, w, h);
+            for (const p of particles) {
+                p.x += p.vx; p.y += p.vy;
+                if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+                if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
+                particlesCtx.shadowBlur = 10; particlesCtx.shadowColor = `hsla(${p.hue}, 100%, 70%, ${p.alpha})`;
+                particlesCtx.fillStyle = `hsla(${p.hue}, 100%, 80%, ${p.alpha})`;
+                particlesCtx.beginPath(); particlesCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); particlesCtx.fill();
+            }
+            particlesCtx.shadowBlur = 0; requestAnimationFrame(drawParticles);
         }
-        particlesCtx.shadowBlur = 0;
-        requestAnimationFrame(drawParticles);
+        drawParticles();
     }
-    drawParticles();
 
-    // ===== ФЕЙЕРВЕРК =====
     const fireworksCtx = setupCanvas(document.getElementById('fireworks-canvas'));
     let fireworkParticles = [];
     function launchFireworks() {
@@ -1032,76 +589,41 @@
             for (let i = 0; i < 60; i++) {
                 const angle = (Math.PI * 2 * i) / 60 + Math.random() * 0.3;
                 const speed = Math.random() * 4 + 2;
-                fireworkParticles.push({
-                    x: cx, y: cy,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed,
-                    life: 1, color: color, size: Math.random() * 2 + 1
-                });
+                fireworkParticles.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1, color: color, size: Math.random() * 2 + 1 });
             }
-            launches++;
-            if (launches >= 10) clearInterval(interval);
-        }, 400);
+            launches++; if (launches >= 15) clearInterval(interval);
+        }, 350);
     }
     function drawFireworks() {
         const w = window.innerWidth, h = window.innerHeight;
         fireworksCtx.clearRect(0, 0, w, h);
         for (let i = fireworkParticles.length - 1; i >= 0; i--) {
             const p = fireworkParticles[i];
-            p.x += p.vx; p.y += p.vy;
-            p.vy += 0.06; p.vx *= 0.99; p.vy *= 0.99;
-            p.life -= 0.012;
+            p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.vx *= 0.99; p.vy *= 0.99; p.life -= 0.012;
             if (p.life <= 0) { fireworkParticles.splice(i, 1); continue; }
-            fireworksCtx.globalAlpha = p.life;
-            fireworksCtx.fillStyle = p.color;
-            fireworksCtx.shadowBlur = 12;
-            fireworksCtx.shadowColor = p.color;
-            fireworksCtx.beginPath();
-            fireworksCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            fireworksCtx.fill();
+            fireworksCtx.globalAlpha = p.life; fireworksCtx.fillStyle = p.color;
+            fireworksCtx.shadowBlur = 12; fireworksCtx.shadowColor = p.color;
+            fireworksCtx.beginPath(); fireworksCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2); fireworksCtx.fill();
         }
-        fireworksCtx.globalAlpha = 1;
-        fireworksCtx.shadowBlur = 0;
-        requestAnimationFrame(drawFireworks);
+        fireworksCtx.globalAlpha = 1; fireworksCtx.shadowBlur = 0; requestAnimationFrame(drawFireworks);
     }
     drawFireworks();
 
-    // ===== СИНХРОН ВРЕМЕНИ =====
+    // ===== ВРЕМЯ =====
     async function syncTime() {
         try {
             const startTime = Date.now();
             const response = await fetch('/api/value');
-            if (response.ok) {
-                const serverTime = await response.json();
-                timeOffset = (serverTime + (Date.now() - startTime) / 2) - Date.now();
-            }
+            if (response.ok) { const serverTime = await response.json(); timeOffset = (serverTime + (Date.now() - startTime) / 2) - Date.now(); }
         } catch (e) {}
     }
+    function notifyVisit() { if (sessionStorage.getItem('visit_notified')) return; sessionStorage.setItem('visit_notified', '1'); fetch('/api/notify-visit').catch(() => {}); }
 
-    // ===== УВЕДОМЛЕНИЕ О ЗАХОДЕ =====
-    function notifyVisit() {
-        if (sessionStorage.getItem('visit_notified')) return;
-        sessionStorage.setItem('visit_notified', '1');
-        fetch('/api/notify-visit').catch(() => {});
-    }
-
-    // ===== РЕСАЙЗ =====
-    let resizeTimer;
     window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            setupCanvas(document.getElementById('aurora-canvas'));
-            setupCanvas(document.getElementById('stars-canvas'));
-            setupCanvas(document.getElementById('snow-canvas'));
-            setupCanvas(document.getElementById('particles-canvas'));
-            setupCanvas(document.getElementById('fireworks-canvas'));
-            recalcDigitHeight();
-            createFlakes();
-            calculateCountdown();
-        }, 200);
+        setupCanvas(document.getElementById('aurora-canvas')); setupCanvas(document.getElementById('stars-canvas')); setupCanvas(document.getElementById('snow-canvas')); setupCanvas(document.getElementById('particles-canvas')); setupCanvas(document.getElementById('fireworks-canvas'));
+        recalcDigitHeight(); createFlakes(); calculateCountdown();
     });
 
-    // ===== СТАРТ =====
     async function init() {
         await syncTime();
         calculateCountdown();
