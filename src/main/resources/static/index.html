@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Счётчик до Нового Года — сколько дней осталось</title>
+    <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/" />
     <meta name="description" content="Узнайте, сколько дней, часов и минут осталось до Нового Года 2027. Красивый неоновый счётчик с обратным отсчётом онлайн.">
-    <!-- Open Graph для соцсетей -->
+
     <meta property="og:title" content="Счётчик до Нового Года">
     <meta property="og:description" content="Узнайте, сколько дней осталось до Нового Года!">
     <meta property="og:type" content="website">
 
-    <!-- Микроразметка для Google (событие "Новый год") -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -37,6 +37,7 @@
             background: radial-gradient(ellipse at center bottom, #0a1428 0%, #050b14 40%, #000205 100%);
             font-family: 'Segoe UI', Roboto, sans-serif;
             overflow: hidden; position: relative;
+            transition: background 0.15s ease;
         }
         body::after {
             content: " "; display: block; position: absolute;
@@ -177,12 +178,58 @@
         .digit-tape { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
         .digit { width: var(--digit-w); height: var(--digit-h); display: flex; justify-content: center; align-items: center; text-shadow: 0 1px 0 #6fa8c9, 0 2px 0 #5a8aab, 0 3px 0 #4a7089, 0 4px 0 #3a5667, 0 5px 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(100, 200, 255, 0.9), 0 0 25px rgba(80, 160, 255, 0.6), 0 0 40px rgba(60, 120, 255, 0.3); }
 
-        /* --- УПРАВЛЕНИЕ --- */
-        .top-controls { position: fixed; top: 70px; right: 15px; z-index: 50; display: flex; flex-direction: column; gap: 8px; transition: opacity 1s ease; }
-        .ctrl-btn { width: 42px; height: 42px; border-radius: 50%; background: rgba(10, 20, 40, 0.75); border: 1px solid rgba(140, 190, 255, 0.5); color: #a8d8ff; font-size: 18px; cursor: pointer; box-shadow: 0 0 12px rgba(100, 180, 255, 0.3); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .ctrl-btn:hover { background: rgba(30, 50, 90, 0.9); box-shadow: 0 0 20px rgba(100, 180, 255, 0.7); transform: scale(1.08); }
-        .ctrl-btn:active { transform: scale(0.95); }
-        .music-btn.playing { background: rgba(60, 100, 180, 0.9) !important; box-shadow: 0 0 20px rgba(100, 180, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5) !important; animation: musicPulse 1.5s infinite ease-in-out; }
+        /* --- НОВАЯ ПАНЕЛЬ УПРАВЛЕНИЯ СВЕРХУ --- */
+        .top-controls {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            display: flex;
+            gap: 8px;
+            padding: 6px 10px;
+            background: rgba(10, 20, 40, 0.85);
+            border-radius: 30px;
+            border: 1px solid rgba(140, 190, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: opacity 1s ease;
+        }
+
+        .ctrl-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: rgba(30, 50, 90, 0.6);
+            border: 1px solid rgba(140, 190, 255, 0.4);
+            color: #a8d8ff;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(100, 180, 255, 0.2);
+            transition: all 0.2s;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .ctrl-btn:hover {
+            background: rgba(60, 100, 180, 0.8);
+            box-shadow: 0 0 20px rgba(100, 180, 255, 0.6);
+            transform: scale(1.03);
+        }
+
+        .ctrl-btn:active { transform: scale(0.97); }
+
+        .ctrl-btn .icon { font-size: 18px; }
+        .ctrl-btn .text { font-size: 13px; letter-spacing: 0.5px; }
+
+        .music-btn.playing {
+            background: rgba(60, 100, 180, 0.9) !important;
+            box-shadow: 0 0 20px rgba(100, 180, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5) !important;
+            animation: musicPulse 1.5s infinite ease-in-out;
+        }
         @keyframes musicPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
         .wish-ticker { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 50; color: #a8d8ff; font-size: 13px; letter-spacing: 2px; text-shadow: 0 0 8px rgba(150, 200, 255, 0.7), 0 0 16px rgba(100, 180, 255, 0.4); background: rgba(10, 20, 40, 0.7); padding: 8px 22px; border-radius: 22px; border: 1px solid rgba(140, 190, 255, 0.35); backdrop-filter: blur(8px); white-space: nowrap; opacity: 1; transition: opacity 0.6s ease, transform 0.6s ease; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; pointer-events: none; animation: tickerGlow 3s infinite alternate; }
@@ -195,9 +242,13 @@
         /* --- ЭКРАН НОВОГО ГОДА --- */
         #new-year-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 1s ease; }
         #new-year-overlay.active { display: flex; }
-        #ny-number { font-family: 'Courier New', Courier, monospace; font-size: 25vw; font-weight: bold; color: #fff; text-shadow: 0 0 20px #00f2fe, 0 0 60px #00f2fe, 0 0 100px #00f2fe; opacity: 0; transform: scale(0.5); line-height: 1; }
+        #ny-number { font-family: 'Courier New', Courier, monospace; font-size: 25vw; font-weight: bold; color: #fff; text-shadow: 0 0 20px #00f2fe, 0 0 60px #00f2fe, 0 0 100px #00f2fe; opacity: 0; transform: scale(0.5); line-height: 1; transition: color 0.3s, text-shadow 0.3s; }
         #ny-number.pulse { animation: nyPulse 1s ease-out forwards; }
-        @keyframes nyPulse { 0% { transform: scale(0.5); opacity: 0; } 30% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 30px #fff, 0 0 80px #00f2fe, 0 0 150px #00f2fe; } 100% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 20px #00f2fe, 0 0 60px #00f2fe, 0 0 100px #00f2fe; } }
+        @keyframes nyPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            30% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 30px #fff, 0 0 80px #00f2fe, 0 0 150px #00f2fe; }
+            100% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 20px #00f2fe, 0 0 60px #00f2fe, 0 0 100px #00f2fe; }
+        }
         #ny-title { font-size: 6vw; color: #ffd700; margin-top: 20px; text-shadow: 0 0 20px #ffd700, 0 0 50px #ff9900, 0 0 100px #ff3b5c; text-align: center; opacity: 0; transition: opacity 1s ease; font-family: 'Segoe UI', Roboto, sans-serif; font-weight: 900; letter-spacing: 5px; }
 
         /* ========================================================= */
@@ -230,8 +281,20 @@
             .snowman { transform: scale(0.55); left: 80px; bottom: 0; z-index: 2; opacity: 0.85; }
             .gifts { transform: scale(0.65); right: 80px; bottom: 0; z-index: 2; opacity: 0.85; }
 
-            .top-controls { top: 55px; right: 10px; }
-            .ctrl-btn { width: 36px; height: 36px; font-size: 16px; }
+            /* Панель кнопок на мобильных */
+            .top-controls {
+                top: 6px;
+                padding: 4px 8px;
+                gap: 5px;
+            }
+            .ctrl-btn {
+                padding: 6px 10px;
+                gap: 4px;
+                font-size: 12px;
+            }
+            .ctrl-btn .icon { font-size: 14px; }
+            .ctrl-btn .text { font-size: 10px; }
+
             .wish-ticker { font-size: 9px; letter-spacing: 0.5px; padding: 5px 10px; max-width: 95vw; bottom: 10px; }
 
             #ny-number { font-size: 55vw; }
@@ -285,14 +348,19 @@
     <div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div>
 </div>
 
-<!-- Встроенный аудиоплеер (скрытый) -->
 <audio id="bg-music" src="/music.mp3" loop preload="auto"></audio>
 
-<!-- Кнопки -->
+<!-- НОВАЯ ПАНЕЛЬ УПРАВЛЕНИЯ -->
 <div class="top-controls">
-    <button class="ctrl-btn" id="preview-btn" title="Посмотреть Новый Год">🎆</button>
-    <button class="ctrl-btn music-btn" id="music-btn" title="Музыка">🎵</button>
-    <button class="ctrl-btn" id="share-btn" title="Поделиться">📤</button>
+    <button class="ctrl-btn" id="preview-btn" title="Посмотреть Новый Год">
+        <span class="icon">🎆</span><span class="text">Превью</span>
+    </button>
+    <button class="ctrl-btn music-btn" id="music-btn" title="Музыка">
+        <span class="icon">🎵</span><span class="text">Музыка</span>
+    </button>
+    <button class="ctrl-btn" id="share-btn" title="Поделиться">
+        <span class="icon">📤</span><span class="text">Поделиться</span>
+    </button>
 </div>
 
 <div class="wish-ticker" id="wish-ticker">❄ С наступающим Новым Годом! ❄</div>
@@ -356,16 +424,24 @@
         } catch (e) {}
     }
 
-    // ===== МУЗЫКА (ВСТРОЕННАЯ) =====
+    // ===== МУЗЫКА =====
     const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.15;
     document.getElementById('music-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         const btn = document.getElementById('music-btn');
+        const iconSpan = btn.querySelector('.icon');
         if (bgMusic.paused) {
-            bgMusic.play().then(() => { btn.textContent = '🎶'; btn.classList.add('playing'); showToast('Музыка включена'); }).catch((err) => { showToast('Не удалось запустить'); });
+            bgMusic.play().then(() => {
+                iconSpan.textContent = '🎶';
+                btn.classList.add('playing');
+                showToast('Музыка включена');
+            }).catch((err) => { showToast('Не удалось запустить'); });
         } else {
-            bgMusic.pause(); btn.textContent = '🎵'; btn.classList.remove('playing'); showToast('Музыка выключена');
+            bgMusic.pause();
+            iconSpan.textContent = '🎵';
+            btn.classList.remove('playing');
+            showToast('Музыка выключена');
         }
     });
 
@@ -442,8 +518,9 @@
         isNewYearSequenceRunning = true;
 
         bgMusic.pause();
-        document.getElementById('music-btn').textContent = '🎵';
-        document.getElementById('music-btn').classList.remove('playing');
+        const musicBtn = document.getElementById('music-btn');
+        musicBtn.querySelector('.icon').textContent = '🎵';
+        musicBtn.classList.remove('playing');
 
         fadeOutNormalUI();
 
@@ -464,10 +541,26 @@
             await new Promise(r => setTimeout(r, 1000));
         }
 
+        // ===== КУЛЬМИНАЦИЯ (Вспышка и 0) =====
+        numEl.textContent = '0';
+        numEl.style.color = '#ffd700';
+        numEl.classList.remove('pulse');
+        numEl.offsetHeight;
+        numEl.classList.add('pulse');
+
+        playBell(1046.5, 0.4);
+
+        document.body.style.background = '#fff';
+        setTimeout(() => { document.body.style.background = ''; }, 150);
+
+        await new Promise(r => setTimeout(r, 500));
+
+        // ===== ФИНАЛ =====
         numEl.style.opacity = '0';
         titleEl.style.opacity = '1';
         launchFireworks();
-        playBell(523.25, 0.3); playBell(659.25, 0.3); playBell(783.99, 0.3); playBell(1046.5, 0.3);
+
+        playBell(523.25, 0.3); playBell(659.25, 0.3); playBell(783.99, 0.3);
 
         if (isPreview) {
             setTimeout(() => {
@@ -476,6 +569,7 @@
                     overlay.classList.remove('active');
                     fadeInNormalUI();
                     isNewYearSequenceRunning = false;
+                    numEl.style.color = '#fff';
                     calculateCountdown();
                 }, 1000);
             }, 8000);

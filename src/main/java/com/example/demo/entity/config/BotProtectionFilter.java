@@ -37,6 +37,7 @@ public class BotProtectionFilter extends OncePerRequestFilter {
     // Легитимные UA — пропускаем (поисковики, мессенджеры)
     private static final String[] ALLOWED_UA_MARKERS = {
             "googlebot", "yandexbot", "bingbot", "duckduckbot",
+            "google-cloud-vertexbot", // <--- ДОБАВЛЕНО СЮДА
             "telegram", "whatsapp", "viber", "facebookexternalhit",
             "chrome", "safari", "firefox", "edg/", "opr/", "opera"
     };
@@ -106,14 +107,14 @@ public class BotProtectionFilter extends OncePerRequestFilter {
         // Сначала проверяем разрешённых — их пропускаем
         for (String allowed : ALLOWED_UA_MARKERS) {
             if (lower.contains(allowed)) {
-                return false;
+                return false; // Если нашли в разрешенных, то это НЕ бот (пропускаем)
             }
         }
 
         // Затем проверяем запрещённых
         for (String marker : BOT_UA_MARKERS) {
             if (lower.contains(marker)) {
-                return true;
+                return true; // Если нашли в запрещенных, то блокируем
             }
         }
         return false;
