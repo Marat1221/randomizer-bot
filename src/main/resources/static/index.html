@@ -7,6 +7,7 @@
     <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/" />
     <meta name="description" content="Узнайте, сколько дней, часов и минут осталось до Нового Года 2027. Красивый неоновый счётчик с обратным отсчётом онлайн.">
 
+    <!-- Open Graph для соцсетей -->
     <meta property="og:title" content="Счётчик до Нового Года">
     <meta property="og:description" content="Узнайте, сколько дней осталось до Нового Года!">
     <meta property="og:type" content="website">
@@ -47,10 +48,11 @@
 
     <style>
         :root {
-            --digit-w: 48px; --digit-h: 76px; --digit-font: 60px;
-            --pad: 10px 20px; --gap: 30px;
-            --title-size: 26px; --title-spacing: 5px;
-            --label-size: 11px; --label-spacing: 3px;
+            /* Увеличенные размеры для ПК */
+            --digit-w: 75px; --digit-h: 110px; --digit-font: 85px;
+            --pad: 15px 30px; --gap: 45px;
+            --title-size: 38px; --title-spacing: 8px;
+            --label-size: 14px; --label-spacing: 4px;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -198,61 +200,34 @@
         .ice-glare { position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, rgba(200, 230, 255, 0.15) 0%, rgba(200, 230, 255, 0.03) 60%, transparent 100%); border-radius: 14px 14px 0 0; pointer-events: none; z-index: 1; }
 
         .digit-box { position: relative; width: var(--digit-w); height: var(--digit-h); overflow: hidden; font-size: var(--digit-font); font-weight: 700; color: #cceeff; font-family: 'Courier New', Courier, monospace; z-index: 2; }
-        .digit-tape { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        .digit-tape {
+            position: absolute; top: 0; left: 0; display: flex; flex-direction: column;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform; /* Ускорение для GPU */
+        }
         .digit { width: var(--digit-w); height: var(--digit-h); display: flex; justify-content: center; align-items: center; text-shadow: 0 1px 0 #6fa8c9, 0 2px 0 #5a8aab, 0 3px 0 #4a7089, 0 4px 0 #3a5667, 0 5px 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(100, 200, 255, 0.9), 0 0 25px rgba(80, 160, 255, 0.6), 0 0 40px rgba(60, 120, 255, 0.3); }
 
-        /* --- НОВАЯ ПАНЕЛЬ УПРАВЛЕНИЯ СВЕРХУ --- */
+        /* --- ПАНЕЛЬ УПРАВЛЕНИЯ --- */
         .top-controls {
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 200;
-            display: flex;
-            gap: 8px;
-            padding: 6px 10px;
-            background: rgba(10, 20, 40, 0.85);
-            border-radius: 30px;
-            border: 1px solid rgba(140, 190, 255, 0.3);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            transition: opacity 1s ease;
+            position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+            z-index: 200; display: flex; gap: 8px; padding: 6px 10px;
+            background: rgba(10, 20, 40, 0.85); border-radius: 30px;
+            border: 1px solid rgba(140, 190, 255, 0.3); backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); transition: opacity 1s ease;
         }
-
         .ctrl-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            border-radius: 20px;
-            background: rgba(30, 50, 90, 0.6);
-            border: 1px solid rgba(140, 190, 255, 0.4);
-            color: #a8d8ff;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 0 12px rgba(100, 180, 255, 0.2);
-            transition: all 0.2s;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            font-weight: 600;
-            white-space: nowrap;
+            display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+            border-radius: 20px; background: rgba(30, 50, 90, 0.6);
+            border: 1px solid rgba(140, 190, 255, 0.4); color: #a8d8ff;
+            font-size: 14px; cursor: pointer; box-shadow: 0 0 12px rgba(100, 180, 255, 0.2);
+            transition: all 0.2s; font-family: 'Segoe UI', Roboto, sans-serif;
+            font-weight: 600; white-space: nowrap;
         }
-
-        .ctrl-btn:hover {
-            background: rgba(60, 100, 180, 0.8);
-            box-shadow: 0 0 20px rgba(100, 180, 255, 0.6);
-            transform: scale(1.03);
-        }
-
+        .ctrl-btn:hover { background: rgba(60, 100, 180, 0.8); box-shadow: 0 0 20px rgba(100, 180, 255, 0.6); transform: scale(1.03); }
         .ctrl-btn:active { transform: scale(0.97); }
-
         .ctrl-btn .icon { font-size: 18px; }
         .ctrl-btn .text { font-size: 13px; letter-spacing: 0.5px; }
-
-        .music-btn.playing {
-            background: rgba(60, 100, 180, 0.9) !important;
-            box-shadow: 0 0 20px rgba(100, 180, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5) !important;
-            animation: musicPulse 1.5s infinite ease-in-out;
-        }
+        .music-btn.playing { background: rgba(60, 100, 180, 0.9) !important; box-shadow: 0 0 20px rgba(100, 180, 255, 0.9), 0 0 40px rgba(100, 180, 255, 0.5) !important; animation: musicPulse 1.5s infinite ease-in-out; }
         @keyframes musicPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
         .wish-ticker { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 50; color: #a8d8ff; font-size: 13px; letter-spacing: 2px; text-shadow: 0 0 8px rgba(150, 200, 255, 0.7), 0 0 16px rgba(100, 180, 255, 0.4); background: rgba(10, 20, 40, 0.7); padding: 8px 22px; border-radius: 22px; border: 1px solid rgba(140, 190, 255, 0.35); backdrop-filter: blur(8px); white-space: nowrap; opacity: 1; transition: opacity 0.6s ease, transform 0.6s ease; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; pointer-events: none; animation: tickerGlow 3s infinite alternate; }
@@ -304,17 +279,8 @@
             .snowman { transform: scale(0.55); left: 80px; bottom: 0; z-index: 2; opacity: 0.85; }
             .gifts { transform: scale(0.65); right: 80px; bottom: 0; z-index: 2; opacity: 0.85; }
 
-            /* Панель кнопок на мобильных */
-            .top-controls {
-                top: 6px;
-                padding: 4px 8px;
-                gap: 5px;
-            }
-            .ctrl-btn {
-                padding: 6px 10px;
-                gap: 4px;
-                font-size: 12px;
-            }
+            .top-controls { top: 6px; padding: 4px 8px; gap: 5px; }
+            .ctrl-btn { padding: 6px 10px; gap: 4px; font-size: 12px; }
             .ctrl-btn .icon { font-size: 14px; }
             .ctrl-btn .text { font-size: 10px; }
 
@@ -322,6 +288,13 @@
 
             #ny-number { font-size: 55vw; }
             #ny-title { font-size: 8vw; letter-spacing: 2px; }
+
+            /* Отключаем тяжелые box-shadow на мобильных для повышения FPS */
+            .bulb {
+                animation: none !important;
+                box-shadow: 0 0 10px currentColor !important;
+                filter: brightness(1.2);
+            }
         }
     </style>
     <script>window.yaContextCb=window.yaContextCb||[]</script>
@@ -373,7 +346,7 @@
 
 <audio id="bg-music" src="/music.mp3" loop preload="auto"></audio>
 
-<!-- НОВАЯ ПАНЕЛЬ УПРАВЛЕНИЯ -->
+<!-- Панель управления -->
 <div class="top-controls">
     <button class="ctrl-btn" id="preview-btn" title="Посмотреть Новый Год">
         <span class="icon">🎆</span><span class="text">Превью</span>
@@ -411,9 +384,14 @@
     </div>
 </div>
 
+<!-- SEO-текст для поисковиков (Увеличен для ПК) -->
+<div style="position: absolute; bottom: 70px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #94a3b8; font-size: 15px; line-height: 1.6; max-width: 800px; margin: 0 auto; opacity: 0.8;">
+    <p>Счётчик до Нового Года 2027 показывает, сколько дней, часов, минут и секунд осталось до главного праздника. Наш онлайн-таймер с красивым неоновым дизайном и музыкой поможет вам следить за обратным отсчётом. Узнайте, сколько дней до Нового Года, и готовьтесь к празднику заранее!</p>
+</div>
+
 <script>
     // ===== ОБЩЕЕ =====
-    let digitHeight = 76;
+    let digitHeight = 110; // Значение по умолчанию для ПК
     let timeOffset = 0;
     const isMobile = window.innerWidth < 640;
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -523,13 +501,13 @@
 
     // ===== СКРЫТИЕ / ПОКАЗ ЭЛЕМЕНТОВ =====
     function fadeOutNormalUI() {
-        document.querySelectorAll('.garland, .icicles, .tree, .snowman, .gifts, #main-clock, #main-title, .wish-ticker, .top-controls').forEach(el => {
+        document.querySelectorAll('.garland, .icicles, .tree, .snowman, .gifts, #main-clock, #main-title, .wish-ticker, .top-controls, p').forEach(el => {
             el.style.opacity = '0';
             setTimeout(() => el.style.display = 'none', 1000);
         });
     }
     function fadeInNormalUI() {
-        document.querySelectorAll('.garland, .icicles, .tree, .snowman, .gifts, #main-clock, #main-title, .wish-ticker, .top-controls').forEach(el => {
+        document.querySelectorAll('.garland, .icicles, .tree, .snowman, .gifts, #main-clock, #main-title, .wish-ticker, .top-controls, p').forEach(el => {
             el.style.display = '';
             setTimeout(() => el.style.opacity = '', 50);
         });
@@ -622,12 +600,18 @@
     }
     if (!isMobile) drawAurora();
 
+    // === ОПТИМИЗАЦИЯ ЗВЕЗД (60 FPS) ===
     const starsCtx = setupCanvas(document.getElementById('stars-canvas'));
     const stars = [];
     for (let i = 0; i < (isMobile ? 40 : 180); i++) {
         stars.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight * 0.7, r: Math.random() * 1.4 + 0.3, phase: Math.random() * Math.PI * 2, speed: Math.random() * 0.02 + 0.01, baseAlpha: Math.random() * 0.5 + 0.4 });
     }
-    function drawStars() {
+
+    let lastStarTime = 0;
+    function drawStars(timestamp) {
+        if (timestamp - lastStarTime < 16) { requestAnimationFrame(drawStars); return; }
+        lastStarTime = timestamp;
+
         const w = window.innerWidth, h = window.innerHeight;
         starsCtx.clearRect(0, 0, w, h);
         for (const s of stars) {
@@ -637,8 +621,9 @@
         }
         requestAnimationFrame(drawStars);
     }
-    drawStars();
+    requestAnimationFrame(drawStars);
 
+    // === ОПТИМИЗАЦИЯ СНЕГА (60 FPS) ===
     const snowCtx = setupCanvas(document.getElementById('snow-canvas'));
     let flakes = []; let wind = 0;
     function createFlakes() {
@@ -649,7 +634,12 @@
         }
     }
     createFlakes();
-    function drawSnow() {
+
+    let lastSnowTime = 0;
+    function drawSnow(timestamp) {
+        if (timestamp - lastSnowTime < 16) { requestAnimationFrame(drawSnow); return; }
+        lastSnowTime = timestamp;
+
         const w = window.innerWidth, h = window.innerHeight;
         snowCtx.clearRect(0, 0, w, h); wind = Math.sin(Date.now() / 4000) * 0.4;
         if (isMobile) {
@@ -672,8 +662,9 @@
         }
         requestAnimationFrame(drawSnow);
     }
-    drawSnow();
+    requestAnimationFrame(drawSnow);
 
+    // Частицы (только для ПК)
     const particlesCtx = setupCanvas(document.getElementById('particles-canvas'));
     const particles = [];
     if (!isMobile) {
@@ -694,6 +685,7 @@
         drawParticles();
     }
 
+    // Фейерверки
     const fireworksCtx = setupCanvas(document.getElementById('fireworks-canvas'));
     let fireworkParticles = [];
     function launchFireworks() {
@@ -750,9 +742,5 @@
     }
     init();
 </script>
-<!-- SEO-текст для поисковиков -->
-<div style="position: absolute; bottom: 60px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #64748b; font-size: 12px; line-height: 1.6; max-width: 600px; margin: 0 auto; opacity: 0.7;">
-    <p>Счётчик до Нового Года 2027 показывает, сколько дней, часов, минут и секунд осталось до главного праздника. Наш онлайн-таймер с красивым неоновым дизайном и музыкой поможет вам следить за обратным отсчётом. Узнайте, сколько дней до Нового Года, и готовьтесь к празднику заранее!</p>
-</div>
 </body>
 </html>
