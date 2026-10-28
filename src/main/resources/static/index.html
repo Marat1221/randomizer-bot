@@ -27,25 +27,42 @@
             transition: background 0.5s ease;
         }
 
-        /* Скан-линии */
+        /* Скан-линии (только для Нового Года) */
         body::after {
             content: " "; display: block; position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
             z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
+        /* Убираем скан-линии для других тем, чтобы не было черных пикселей */
+        body:not(.theme-newyear)::after { display: none; }
 
-        /* Слой для фона Рамадана */
+        /* --- ЭКРАН ЗАГРУЗКИ (ПРЕЛОАДЕР) --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #050b14; z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 3px solid rgba(140, 190, 255, 0.3);
+            border-top-color: #a8d8ff; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .preloader-text { color: #a8d8ff; font-size: 18px; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* Фон Рамадана */
         #ramadan-bg {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('/ramadan.jpg') no-repeat center center; background-size: cover;
+            background: #0b1a14 url('/ramadan.jpg') no-repeat center center; background-size: cover;
             z-index: -1; opacity: 0; transition: opacity 0.5s ease;
         }
 
-        /* --- НОВЫЕ ДЕКОРАЦИИ ДЛЯ СОБЫТИЙ --- */
+        /* Декор */
         .ramadan-decor { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 70px; text-shadow: 0 0 30px #ffd700, 0 0 60px #ff9900; z-index: 1; opacity: 0; animation: floatMoon 4s infinite ease-in-out; }
         .birthday-decor { display: none; position: absolute; top: 15%; width: 100%; text-align: center; font-size: 60px; z-index: 1; opacity: 0; animation: floatBday 3s infinite ease-in-out; filter: drop-shadow(0 0 20px #ff3b5c); }
-
         @keyframes floatMoon { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -15px); } }
         @keyframes floatBday { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } }
 
@@ -74,7 +91,6 @@
         body.theme-birthday h1 { color: #ff3b5c; text-shadow: 0 0 15px rgba(255, 59, 92, 0.8); }
         body.theme-birthday .time-label { color: #ff3b5c; }
 
-        /* Скрываем зимний декор, если тема НЕ новый год */
         body:not(.theme-newyear) .garland,
         body:not(.theme-newyear) .icicles,
         body:not(.theme-newyear) .tree,
@@ -82,13 +98,8 @@
         body:not(.theme-newyear) .gifts { display: none !important; }
 
         /* --- КАНВАСЫ --- */
-        #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
-        }
-        #aurora-canvas { z-index: 1; opacity: 0.55; }
-        #stars-canvas { z-index: 2; }
-        #snow-canvas { z-index: 3; }
-        #particles-canvas { z-index: 4; }
+        #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #aurora-canvas { z-index: 1; opacity: 0.55; } #stars-canvas { z-index: 2; } #snow-canvas { z-index: 3; } #particles-canvas { z-index: 4; }
 
         /* --- БОКОВОЕ МЕНЮ --- */
         .menu-btn {
@@ -112,9 +123,7 @@
         }
         .sidebar.open { left: 0; }
         .sidebar-title { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; padding-left: 10px; }
-
         .menu-items-wrapper { display: flex; flex-direction: column; gap: 10px; }
-
         .menu-item {
             display: flex; align-items: center; padding: 15px 20px; border-radius: 12px;
             background: rgba(30, 50, 90, 0.4); border: 1px solid rgba(140, 190, 255, 0.2);
@@ -126,8 +135,7 @@
         .add-birthday-link {
             display: block; text-align: center; padding: 15px 12px; margin-top: 10px;
             color: #ffd700; font-size: 13px; text-decoration: none;
-            border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 10px;
-            transition: all 0.3s;
+            border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 10px; transition: all 0.3s;
         }
         .add-birthday-link:hover { background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
 
@@ -139,50 +147,40 @@
         .bulb { position: absolute; top: 14px; width: 14px; height: 18px; border-radius: 50% 50% 45% 45%; animation: bulbGlow 2s infinite alternate; }
         .bulb:nth-child(1) { left: 3%; background: #ff3b5c; } .bulb:nth-child(2) { left: 10%; background: #ffd23f; } .bulb:nth-child(3) { left: 17%; background: #3bff7d; } .bulb:nth-child(4) { left: 24%; background: #3bbaff; } .bulb:nth-child(5) { left: 31%; background: #b83bff; } .bulb:nth-child(6) { left: 38%; background: #ff3b5c; } .bulb:nth-child(7) { left: 45%; background: #ffd23f; } .bulb:nth-child(8) { left: 52%; background: #3bff7d; } .bulb:nth-child(9) { left: 59%; background: #3bbaff; } .bulb:nth-child(10) { left: 66%; background: #b83bff; } .bulb:nth-child(11) { left: 73%; background: #ff3b5c; } .bulb:nth-child(12) { left: 80%; background: #ffd23f; } .bulb:nth-child(13) { left: 87%; background: #3bff7d; } .bulb:nth-child(14) { left: 94%; background: #3bbaff; }
         @keyframes bulbGlow { 0% { box-shadow: 0 0 4px currentColor; filter: brightness(0.8); } 100% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; filter: brightness(1.4); } }
-
         .icicles { position: absolute; top: 52px; left: 0; right: 0; height: 40px; z-index: 14; pointer-events: none; display: flex; justify-content: space-around; }
         .icicle { width: 6px; height: 28px; background: linear-gradient(to bottom, rgba(180, 220, 255, 0.9), transparent); clip-path: polygon(0 0, 100% 0, 50% 100%); animation: icicleShine 3s infinite ease-in-out; }
         @keyframes icicleShine { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-
         .tree { position: absolute; bottom: 0; width: 140px; height: 220px; z-index: 6; transform-origin: bottom center; }
         .tree.left { left: 10px; } .tree.right { right: 10px; transform: scaleX(-1); }
         .tree-layer { position: absolute; left: 50%; transform: translateX(-50%); border-left: solid transparent; border-right: solid transparent; border-bottom: solid #0d4a2a; }
         .tree-layer:nth-child(1) { bottom: 20px; border-left-width: 60px; border-right-width: 60px; border-bottom-width: 60px; border-bottom-color: #062f1a; } .tree-layer:nth-child(2) { bottom: 50px; border-left-width: 50px; border-right-width: 50px; border-bottom-width: 55px; border-bottom-color: #0a4025; } .tree-layer:nth-child(3) { bottom: 80px; border-left-width: 40px; border-right-width: 40px; border-bottom-width: 50px; border-bottom-color: #0d5a33; } .tree-layer:nth-child(4) { bottom: 110px; border-left-width: 30px; border-right-width: 30px; border-bottom-width: 45px; border-bottom-color: #127a44; } .tree-layer:nth-child(5) { bottom: 140px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 40px; border-bottom-color: #17a05a; }
         .tree-star { position: absolute; bottom: 175px; left: 50%; transform: translateX(-50%); font-size: 22px; color: #ffd700; }
-
         .snowman { position: absolute; bottom: 15px; left: 160px; width: 60px; height: 100px; z-index: 5; }
         .snowman-ball { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, #d8e8ff 60%, #a8c4e0 100%); }
         .snowman-ball.bottom { width: 60px; height: 60px; bottom: 0; } .snowman-ball.middle { width: 44px; height: 44px; bottom: 42px; } .snowman-ball.top { width: 32px; height: 32px; bottom: 80px; }
         .snowman-eye { position: absolute; width: 4px; height: 4px; background: #1a1a2a; border-radius: 50%; bottom: 100px; } .snowman-eye.l { left: 26px; } .snowman-eye.r { right: 26px; }
         .snowman-nose { position: absolute; width: 0; height: 0; border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-left: 8px solid #ff6600; bottom: 96px; left: 30px; }
         .snowman-scarf { position: absolute; bottom: 72px; left: 50%; transform: translateX(-50%); width: 46px; height: 8px; background: linear-gradient(90deg, #ff3b5c, #b83bff); }
-
         .gifts { position: absolute; bottom: 5px; right: 160px; width: 80px; height: 70px; z-index: 5; }
         .gift { position: absolute; border-radius: 4px; }
         .gift.g1 { width: 42px; height: 42px; bottom: 0; left: 0; background: #ff3b5c; } .gift.g2 { width: 34px; height: 34px; bottom: 0; left: 46px; background: #3bff7d; } .gift.g3 { width: 30px; height: 26px; bottom: 42px; left: 10px; background: #3bbaff; }
 
         /* --- ЦЕНТРАЛЬНЫЙ БЛОК --- */
-        .main-content {
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 8; width: 100%; max-width: 1200px;
-            margin-bottom: 6vh; /* Поднял счетчик для ПК */
-        }
+        .main-content { display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 8; width: 100%; max-width: 1200px; margin-bottom: 6vh; }
         h1 { color: #ffffff; margin-bottom: 40px; font-size: var(--title-size); font-weight: 300; letter-spacing: var(--title-spacing); text-transform: uppercase; text-align: center; transition: all 0.4s ease; }
-
         .clock-wrapper { display: flex; gap: var(--gap); margin-bottom: 20px; justify-content: center; align-items: flex-start; transition: all 0.4s ease; }
         .time-group { display: flex; flex-direction: column; align-items: center; }
         .time-label { color: #a8d8ff; font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-spacing); margin-top: 14px; font-weight: 600; transition: color 0.4s; }
-
         .counter-container { display: flex; padding: var(--pad); background: linear-gradient(145deg, #1e2a4a 0%, #0a1020 50%); border-radius: 14px; position: relative; border: 1px solid rgba(140, 190, 255, 0.35); transition: all 0.4s ease; }
         .digit-box { position: relative; width: var(--digit-w); height: var(--digit-h); overflow: hidden; font-size: var(--digit-font); font-weight: 700; color: #cceeff; font-family: 'Courier New', monospace; z-index: 2; }
         .digit-tape { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
         .digit { width: var(--digit-w); height: var(--digit-h); display: flex; justify-content: center; align-items: center; transition: all 0.4s; }
-
         .fade-out { opacity: 0; transform: scale(0.95); }
 
         .top-controls { position: fixed; top: 20px; right: 20px; z-index: 50; display: flex; gap: 8px; background: rgba(10, 20, 40, 0.85); border-radius: 30px; padding: 6px 10px; border: 1px solid rgba(140, 190, 255, 0.3); backdrop-filter: blur(10px); }
         .ctrl-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 20px; background: rgba(30, 50, 90, 0.6); border: 1px solid rgba(140, 190, 255, 0.4); color: #a8d8ff; cursor: pointer; transition: all 0.2s; font-weight: 600; }
         .ctrl-btn:hover { background: rgba(60, 100, 180, 0.8); }
+        .ctrl-btn:disabled { opacity: 0.6; cursor: wait; }
 
         .seo-text { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #475569; font-size: 11px; line-height: 1.4; max-width: 700px; margin: 0 auto; opacity: 0.5; pointer-events: none; }
 
@@ -190,44 +188,33 @@
         /* ==================== МОБИЛЬНАЯ ВЕРСИЯ =================== */
         /* ========================================================= */
         @media (max-width: 768px) {
-            :root {
-                --digit-w: 22px; --digit-h: 38px; --digit-font: 28px;
-                --pad: 4px 6px; --gap: 4px;
-                --title-size: 14px; --title-spacing: 1px;
-                --label-size: 9px; --label-spacing: 0px;
-            }
-
-            /* Поднимаем счетчик на мобилках */
+            :root { --digit-w: 22px; --digit-h: 38px; --digit-font: 28px; --pad: 4px 6px; --gap: 4px; --title-size: 14px; --title-spacing: 1px; --label-size: 9px; --label-spacing: 0px; }
             .main-content { margin-bottom: 12vh; }
-
-            /* Возвращаем декор на мобилки! */
-            .tree { display: block !important; width: 60px; height: 100px; opacity: 0.35; z-index: 1; }
-            .tree.left { left: 0px; } .tree.right { right: 0px; }
+            .tree { display: block !important; width: 60px; height: 100px; opacity: 0.35; z-index: 1; } .tree.left { left: 0px; } .tree.right { right: 0px; }
             .tree-star { bottom: 82px; font-size: 12px; }
-
             .snowman { display: block !important; transform: scale(0.45); left: 10px; bottom: 0px; opacity: 0.4; z-index: 1; transform-origin: bottom left; }
             .gifts { display: block !important; transform: scale(0.5); right: 10px; bottom: 10px; opacity: 0.4; z-index: 1; transform-origin: bottom right; }
-
-            /* Фон Рамадана на телефонах (смещаем на мечеть) */
             #ramadan-bg { background-position: 20% 80%; }
-
             .clock-wrapper { flex-wrap: nowrap; row-gap: 0; width: 100%; max-width: 100vw; padding: 0 5px; gap: var(--gap); }
             .clock-wrapper > .time-group:nth-child(1) { flex-basis: auto; margin-bottom: 0; }
             .clock-wrapper > .time-group { flex: 0 1 auto; }
-
             .time-label { margin-top: 6px; }
             .top-controls { top: 15px; right: 10px; padding: 4px 8px; }
             .ctrl-btn { padding: 6px 10px; } .ctrl-btn .text { display: none; } .ctrl-btn .icon { font-size: 18px; }
             .menu-btn { top: 15px; left: 10px; width: 40px; height: 40px; font-size: 20px; }
             .sidebar { width: 260px; padding-top: 70px; }
             .seo-text { font-size: 9px; bottom: 5px; }
-
-            .ramadan-decor { font-size: 45px; top: 10%; }
-            .birthday-decor { font-size: 45px; top: 10%; }
+            .ramadan-decor { font-size: 45px; top: 10%; } .birthday-decor { font-size: 45px; top: 10%; }
         }
     </style>
 </head>
 <body class="theme-newyear">
+
+<!-- ЭКРАН ЗАГРУЗКИ -->
+<div id="preloader">
+    <div class="spinner"></div>
+    <div class="preloader-text">Загрузка...</div>
+</div>
 
 <div id="ramadan-bg"></div>
 <div class="ramadan-decor">🌙</div>
@@ -241,10 +228,7 @@
     <div class="menu-items-wrapper" id="menu-items-container">
         <div style="color:#64748b; padding: 10px;">Загрузка...</div>
     </div>
-
-    <a href="#" id="add-birthday-link" class="add-birthday-link" target="_blank">
-        🎁 Хочешь, чтобы твой ДР был в этом списке?
-    </a>
+    <a href="#" id="add-birthday-link" class="add-birthday-link" target="_blank">🎁 Хочешь, чтобы твой ДР был в этом списке?</a>
 </div>
 
 <div class="top-controls">
@@ -270,7 +254,6 @@
 
 <div class="main-content" id="main-content">
     <h1 id="main-title">Загрузка...</h1>
-
     <div class="clock-wrapper" id="main-clock">
         <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div><div class="digit-box"><div class="digit-tape" id="d-tens"></div></div><div class="digit-box"><div class="digit-tape" id="d-ones"></div></div></div><div class="time-label">Дней</div></div>
         <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="h-tens"></div></div><div class="digit-box"><div class="digit-tape" id="h-ones"></div></div></div><div class="time-label">Часов</div></div>
@@ -304,6 +287,13 @@
     let targetDate = null;
     let isSnowEnabled = true;
 
+    // Ждем полной загрузки страницы, чтобы убрать прелоадер
+    window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        preloader.style.opacity = '0';
+        setTimeout(() => { preloader.style.display = 'none'; }, 600);
+    });
+
     function setupCanvas(canvas) {
         canvas.width = window.innerWidth * dpr;
         canvas.height = window.innerHeight * dpr;
@@ -316,6 +306,9 @@
     const menuBtn = document.getElementById('menu-btn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
+    const bgMusic = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    const iconSpan = musicBtn.querySelector('.icon');
 
     function toggleMenu() {
         sidebar.classList.toggle('open');
@@ -363,22 +356,34 @@
 
         document.body.className = '';
         if (id === 'newyear') {
-            document.body.classList.add('theme-newyear');
-            isSnowEnabled = true;
+            document.body.classList.add('theme-newyear'); isSnowEnabled = true;
         } else if (id === 'ramadan') {
-            document.body.classList.add('theme-ramadan');
-            isSnowEnabled = false;
+            document.body.classList.add('theme-ramadan'); isSnowEnabled = false;
             snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         } else {
-            document.body.classList.add('theme-birthday');
-            isSnowEnabled = false;
+            document.body.classList.add('theme-birthday'); isSnowEnabled = false;
             snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         }
 
+        // === УМНАЯ ЗАГРУЗКА МУЗЫКИ ===
         const wasPlaying = !bgMusic.paused;
-        bgMusic.src = musicMap[id] || '/music.mp3';
-        bgMusic.load();
-        if (wasPlaying) { bgMusic.play().catch(e => console.log("Autoplay blocked")); }
+        const newTrack = musicMap[id] || '/music.mp3';
+
+        // Если трек меняется, показываем загрузку
+        if (bgMusic.src.indexOf(newTrack) === -1) {
+            iconSpan.textContent = '⏳';
+            musicBtn.disabled = true;
+            bgMusic.src = newTrack;
+            bgMusic.load();
+
+            // Ждем, пока трек загрузится
+            bgMusic.addEventListener('canplay', function onCanPlay() {
+                musicBtn.disabled = false;
+                iconSpan.textContent = wasPlaying ? '🎶' : '🎵';
+                if (wasPlaying) bgMusic.play().catch(e => console.log("Autoplay blocked"));
+                bgMusic.removeEventListener('canplay', onCanPlay); // Убираем слушатель
+            });
+        }
 
         const mainTitle = document.getElementById('main-title');
         const clockWrapper = document.getElementById('main-clock');
@@ -398,16 +403,14 @@
         }, 400);
     }
 
-    const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.15;
-    document.getElementById('music-btn').addEventListener('click', (e) => {
+    musicBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const btn = document.getElementById('music-btn');
-        const iconSpan = btn.querySelector('.icon');
+        if (musicBtn.disabled) return; // Если грузится, ничего не делаем
         if (bgMusic.paused) {
-            bgMusic.play().then(() => { iconSpan.textContent = '🎶'; btn.classList.add('playing'); }).catch(() => {});
+            bgMusic.play().then(() => { iconSpan.textContent = '🎶'; musicBtn.classList.add('playing'); }).catch(() => {});
         } else {
-            bgMusic.pause(); iconSpan.textContent = '🎵'; btn.classList.remove('playing');
+            bgMusic.pause(); iconSpan.textContent = '🎵'; musicBtn.classList.remove('playing');
         }
     });
 
