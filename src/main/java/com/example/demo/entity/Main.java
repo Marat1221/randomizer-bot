@@ -47,6 +47,14 @@ public class Main {
         public long getServerTime() {
             return System.currentTimeMillis();
         }
+        @GetMapping("/events")
+        public java.util.List<EventDto> getEvents() {
+            return java.util.List.of(
+                    new EventDto("newyear", "До Нового Года", "2027-01-01T00:00:00+03:00"),
+                    new EventDto("ramadan", "До Рамадана", "2027-02-08T00:00:00+03:00"),
+                    new EventDto("adina", "До дня рождения Адины", "2027-08-30T00:00:00+03:00")
+            );
+        }
 
         // Уведомление о заходе на сайт
         @GetMapping("/notify-visit")
