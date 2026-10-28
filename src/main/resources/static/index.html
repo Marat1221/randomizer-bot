@@ -27,6 +27,7 @@
             transition: background 0.5s ease;
         }
 
+        /* Скан-линии */
         body::after {
             content: " "; display: block; position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
@@ -34,19 +35,28 @@
             z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
 
+        /* Слой для фона Рамадана */
         #ramadan-bg {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('/ramadan.jpg') no-repeat center center; background-size: cover;
             z-index: -1; opacity: 0; transition: opacity 0.5s ease;
         }
 
+        /* --- НОВЫЕ ДЕКОРАЦИИ ДЛЯ СОБЫТИЙ --- */
+        .ramadan-decor { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 70px; text-shadow: 0 0 30px #ffd700, 0 0 60px #ff9900; z-index: 1; opacity: 0; animation: floatMoon 4s infinite ease-in-out; }
+        .birthday-decor { display: none; position: absolute; top: 15%; width: 100%; text-align: center; font-size: 60px; z-index: 1; opacity: 0; animation: floatBday 3s infinite ease-in-out; filter: drop-shadow(0 0 20px #ff3b5c); }
+
+        @keyframes floatMoon { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -15px); } }
+        @keyframes floatBday { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } }
+
         /* --- ТЕМА: РАМАДАН --- */
         body.theme-ramadan { background: #0b1a14; }
         body.theme-ramadan #ramadan-bg { display: block; opacity: 1; }
+        body.theme-ramadan .ramadan-decor { display: block; opacity: 1; }
         body.theme-ramadan .counter-container {
-            background: linear-gradient(145deg, #10402d, #082116);
+            background: linear-gradient(145deg, rgba(16, 64, 45, 0.9), rgba(8, 33, 22, 0.9));
             border-color: #ffd700;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2);
         }
         body.theme-ramadan .digit { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5); }
         body.theme-ramadan h1 { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
@@ -54,21 +64,24 @@
 
         /* --- ТЕМА: ДЕНЬ РОЖДЕНИЯ --- */
         body.theme-birthday { background: radial-gradient(circle at center, #2a0845 0%, #000000 100%); }
+        body.theme-birthday .birthday-decor { display: block; opacity: 1; }
         body.theme-birthday .counter-container {
-            background: linear-gradient(145deg, #4a1e2a, #200a10);
+            background: linear-gradient(145deg, rgba(74, 30, 42, 0.9), rgba(32, 10, 16, 0.9));
             border-color: #ff3b5c;
-            box-shadow: 0 0 25px rgba(255, 59, 92, 0.3), inset 0 0 20px rgba(255, 59, 92, 0.1);
+            box-shadow: 0 0 25px rgba(255, 59, 92, 0.4), inset 0 0 20px rgba(255, 59, 92, 0.2);
         }
         body.theme-birthday .digit { color: #ff3b5c; text-shadow: 0 0 10px rgba(255, 59, 92, 0.8), 0 0 20px rgba(255, 59, 92, 0.5); }
         body.theme-birthday h1 { color: #ff3b5c; text-shadow: 0 0 15px rgba(255, 59, 92, 0.8); }
         body.theme-birthday .time-label { color: #ff3b5c; }
 
+        /* Скрываем зимний декор, если тема НЕ новый год */
         body:not(.theme-newyear) .garland,
         body:not(.theme-newyear) .icicles,
         body:not(.theme-newyear) .tree,
         body:not(.theme-newyear) .snowman,
         body:not(.theme-newyear) .gifts { display: none !important; }
 
+        /* --- КАНВАСЫ --- */
         #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
         }
@@ -95,7 +108,7 @@
             z-index: 1000; padding: 80px 20px 20px 20px;
             transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             backdrop-filter: blur(15px); display: flex; flex-direction: column; gap: 15px;
-            overflow-y: auto; /* ДОБАВЛЕНО: прокрутка для маленьких экранов */
+            overflow-y: auto;
         }
         .sidebar.open { left: 0; }
         .sidebar-title { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; padding-left: 10px; }
@@ -112,7 +125,9 @@
 
         .add-birthday-link {
             display: block; text-align: center; padding: 15px 12px; margin-top: 10px;
-            /* ... остальное ... */
+            color: #ffd700; font-size: 13px; text-decoration: none;
+            border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 10px;
+            transition: all 0.3s;
         }
         .add-birthday-link:hover { background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
 
@@ -147,7 +162,11 @@
         .gift.g1 { width: 42px; height: 42px; bottom: 0; left: 0; background: #ff3b5c; } .gift.g2 { width: 34px; height: 34px; bottom: 0; left: 46px; background: #3bff7d; } .gift.g3 { width: 30px; height: 26px; bottom: 42px; left: 10px; background: #3bbaff; }
 
         /* --- ЦЕНТРАЛЬНЫЙ БЛОК --- */
-        .main-content { display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 8; width: 100%; max-width: 1200px; }
+        .main-content {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 8; width: 100%; max-width: 1200px;
+            margin-bottom: 6vh; /* Поднял счетчик для ПК */
+        }
         h1 { color: #ffffff; margin-bottom: 40px; font-size: var(--title-size); font-weight: 300; letter-spacing: var(--title-spacing); text-transform: uppercase; text-align: center; transition: all 0.4s ease; }
 
         .clock-wrapper { display: flex; gap: var(--gap); margin-bottom: 20px; justify-content: center; align-items: flex-start; transition: all 0.4s ease; }
@@ -172,36 +191,29 @@
         /* ========================================================= */
         @media (max-width: 768px) {
             :root {
-                /* Уменьшаем цифры, чтобы 9 штук поместились в один ряд */
-                --digit-w: 22px;
-                --digit-h: 38px;
-                --digit-font: 28px;
-                --pad: 4px 6px;
-                --gap: 4px;
-                --title-size: 14px;
-                --title-spacing: 1px;
-                --label-size: 9px;
-                --label-spacing: 0px;
+                --digit-w: 22px; --digit-h: 38px; --digit-font: 28px;
+                --pad: 4px 6px; --gap: 4px;
+                --title-size: 14px; --title-spacing: 1px;
+                --label-size: 9px; --label-spacing: 0px;
             }
 
-            /* Убираем перенос строк! Теперь все в один ряд */
-            .clock-wrapper {
-                flex-wrap: nowrap;
-                row-gap: 0;
-                width: 100%;
-                max-width: 100vw;
-                padding: 0 5px;
-                gap: var(--gap);
-            }
+            /* Поднимаем счетчик на мобилках */
+            .main-content { margin-bottom: 12vh; }
 
-            /* Отменяем правило, которое ставило дни на отдельную строку */
-            .clock-wrapper > .time-group:nth-child(1) {
-                flex-basis: auto;
-                margin-bottom: 0;
-            }
-            .clock-wrapper > .time-group {
-                flex: 0 1 auto;
-            }
+            /* Возвращаем декор на мобилки! */
+            .tree { display: block !important; width: 60px; height: 100px; opacity: 0.35; z-index: 1; }
+            .tree.left { left: 0px; } .tree.right { right: 0px; }
+            .tree-star { bottom: 82px; font-size: 12px; }
+
+            .snowman { display: block !important; transform: scale(0.45); left: 10px; bottom: 0px; opacity: 0.4; z-index: 1; transform-origin: bottom left; }
+            .gifts { display: block !important; transform: scale(0.5); right: 10px; bottom: 10px; opacity: 0.4; z-index: 1; transform-origin: bottom right; }
+
+            /* Фон Рамадана на телефонах (смещаем на мечеть) */
+            #ramadan-bg { background-position: 20% 80%; }
+
+            .clock-wrapper { flex-wrap: nowrap; row-gap: 0; width: 100%; max-width: 100vw; padding: 0 5px; gap: var(--gap); }
+            .clock-wrapper > .time-group:nth-child(1) { flex-basis: auto; margin-bottom: 0; }
+            .clock-wrapper > .time-group { flex: 0 1 auto; }
 
             .time-label { margin-top: 6px; }
             .top-controls { top: 15px; right: 10px; padding: 4px 8px; }
@@ -209,13 +221,17 @@
             .menu-btn { top: 15px; left: 10px; width: 40px; height: 40px; font-size: 20px; }
             .sidebar { width: 260px; padding-top: 70px; }
             .seo-text { font-size: 9px; bottom: 5px; }
-            .tree, .snowman, .gifts { display: none !important; }
+
+            .ramadan-decor { font-size: 45px; top: 10%; }
+            .birthday-decor { font-size: 45px; top: 10%; }
         }
     </style>
 </head>
 <body class="theme-newyear">
 
 <div id="ramadan-bg"></div>
+<div class="ramadan-decor">🌙</div>
+<div class="birthday-decor">🎈 🎂 🎉</div>
 
 <button class="menu-btn" id="menu-btn">☰</button>
 <div class="overlay" id="overlay"></div>
