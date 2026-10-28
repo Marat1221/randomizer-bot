@@ -27,7 +27,6 @@
             transition: background 0.5s ease;
         }
 
-        /* Скан-линии */
         body::after {
             content: " "; display: block; position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
@@ -35,7 +34,6 @@
             z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
 
-        /* Слой для фона Рамадана */
         #ramadan-bg {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('/ramadan.jpg') no-repeat center center; background-size: cover;
@@ -50,10 +48,7 @@
             border-color: #ffd700;
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1);
         }
-        body.theme-ramadan .digit {
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
-        }
+        body.theme-ramadan .digit { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5); }
         body.theme-ramadan h1 { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         body.theme-ramadan .time-label { color: #ffd700; }
 
@@ -64,21 +59,16 @@
             border-color: #ff3b5c;
             box-shadow: 0 0 25px rgba(255, 59, 92, 0.3), inset 0 0 20px rgba(255, 59, 92, 0.1);
         }
-        body.theme-birthday .digit {
-            color: #ff3b5c;
-            text-shadow: 0 0 10px rgba(255, 59, 92, 0.8), 0 0 20px rgba(255, 59, 92, 0.5);
-        }
+        body.theme-birthday .digit { color: #ff3b5c; text-shadow: 0 0 10px rgba(255, 59, 92, 0.8), 0 0 20px rgba(255, 59, 92, 0.5); }
         body.theme-birthday h1 { color: #ff3b5c; text-shadow: 0 0 15px rgba(255, 59, 92, 0.8); }
         body.theme-birthday .time-label { color: #ff3b5c; }
 
-        /* Скрываем зимний декор, если тема НЕ новый год */
         body:not(.theme-newyear) .garland,
         body:not(.theme-newyear) .icicles,
         body:not(.theme-newyear) .tree,
         body:not(.theme-newyear) .snowman,
         body:not(.theme-newyear) .gifts { display: none !important; }
 
-        /* --- КАНВАСЫ --- */
         #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
         }
@@ -105,6 +95,7 @@
             z-index: 1000; padding: 80px 20px 20px 20px;
             transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             backdrop-filter: blur(15px); display: flex; flex-direction: column; gap: 15px;
+            overflow-y: auto; /* ДОБАВЛЕНО: прокрутка для маленьких экранов */
         }
         .sidebar.open { left: 0; }
         .sidebar-title { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; padding-left: 10px; }
@@ -119,9 +110,8 @@
         .menu-item:hover { background: rgba(60, 100, 180, 0.8); transform: translateX(5px); }
         .menu-item.active { background: rgba(60, 100, 180, 0.9); border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); }
 
-        /* Ссылка на добавление ДР */
         .add-birthday-link {
-            display: block; text-align: center; padding: 12px; margin-top: auto;
+            display: block; text-align: center; padding: 15px 12px; margin-top: auto;
             color: #ffd700; font-size: 13px; text-decoration: none;
             border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 10px;
             transition: all 0.3s;
@@ -179,11 +169,43 @@
 
         .seo-text { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #475569; font-size: 11px; line-height: 1.4; max-width: 700px; margin: 0 auto; opacity: 0.5; pointer-events: none; }
 
+        /* ========================================================= */
+        /* ==================== МОБИЛЬНАЯ ВЕРСИЯ =================== */
+        /* ========================================================= */
         @media (max-width: 768px) {
-            :root { --digit-w: 34px; --digit-h: 54px; --digit-font: 42px; --pad: 6px 12px; --gap: 8px; --title-size: 16px; --title-spacing: 2px; --label-size: 10px; --label-spacing: 1px; }
-            .clock-wrapper { flex-wrap: wrap; max-width: 100vw; padding: 0 10px; row-gap: 15px; }
-            .clock-wrapper > .time-group:nth-child(1) { flex-basis: 100%; margin-bottom: 5px; }
-            .clock-wrapper > .time-group:nth-child(2), .clock-wrapper > .time-group:nth-child(3), .clock-wrapper > .time-group:nth-child(4) { flex: 1 1 30%; min-width: 85px; }
+            :root {
+                /* Уменьшаем цифры, чтобы 9 штук поместились в один ряд */
+                --digit-w: 22px;
+                --digit-h: 38px;
+                --digit-font: 28px;
+                --pad: 4px 6px;
+                --gap: 4px;
+                --title-size: 14px;
+                --title-spacing: 1px;
+                --label-size: 9px;
+                --label-spacing: 0px;
+            }
+
+            /* Убираем перенос строк! Теперь все в один ряд */
+            .clock-wrapper {
+                flex-wrap: nowrap;
+                row-gap: 0;
+                width: 100%;
+                max-width: 100vw;
+                padding: 0 5px;
+                gap: var(--gap);
+            }
+
+            /* Отменяем правило, которое ставило дни на отдельную строку */
+            .clock-wrapper > .time-group:nth-child(1) {
+                flex-basis: auto;
+                margin-bottom: 0;
+            }
+            .clock-wrapper > .time-group {
+                flex: 0 1 auto;
+            }
+
+            .time-label { margin-top: 6px; }
             .top-controls { top: 15px; right: 10px; padding: 4px 8px; }
             .ctrl-btn { padding: 6px 10px; } .ctrl-btn .text { display: none; } .ctrl-btn .icon { font-size: 18px; }
             .menu-btn { top: 15px; left: 10px; width: 40px; height: 40px; font-size: 20px; }
@@ -230,7 +252,6 @@
 <div class="snowman"><div class="snowman-ball bottom"></div><div class="snowman-ball middle"></div><div class="snowman-ball top"></div><div class="snowman-eye l"></div><div class="snowman-eye r"></div><div class="snowman-nose"></div><div class="snowman-scarf"></div></div>
 <div class="gifts"><div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div></div>
 
-<!-- АУДИО ПЛЕЕР -->
 <audio id="bg-music" loop preload="auto"></audio>
 
 <div class="main-content" id="main-content">
@@ -249,19 +270,16 @@
 </div>
 
 <script>
-    // ===== НАСТРОЙКИ =====
     const telegramUsername = "Marat1221";
     const tgText = encodeURIComponent("Хочу чтобы мой др добавили в список");
     document.getElementById('add-birthday-link').href = `https://t.me/${telegramUsername}?text=${tgText}`;
 
-    // ===== КАРТА МУЗЫКИ (ПРИВЯЗКА К СОБЫТИЯМ) =====
     const musicMap = {
-        'newyear': '/music.mp3',      // Новогодняя (твой старый файл)
-        'ramadan': '/ramadan.mp3',    // Для Рамадана
-        'adina':   '/birthday.mp3'    // Для Дня Рождения Адины
+        'newyear': '/music.mp3',
+        'ramadan': '/ramadan.mp3',
+        'adina':   '/birthday.mp3'
     };
 
-    // ===== ОБЩЕЕ =====
     let digitHeight = 110;
     let timeOffset = 0;
     const isMobile = window.innerWidth < 640;
@@ -281,7 +299,6 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr); return ctx;
     }
 
-    // ===== МЕНЮ =====
     const menuBtn = document.getElementById('menu-btn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
@@ -293,14 +310,12 @@
     menuBtn.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
 
-    // ===== ЗАГРУЗКА СОБЫТИЙ =====
     async function loadEvents() {
         try {
             const response = await fetch('/api/events');
             if (response.ok) {
                 allEvents = await response.json();
                 renderMenu();
-
                 const hash = window.location.hash.substring(1);
                 const startEvent = allEvents.find(e => e.id === hash) || allEvents[0];
                 selectEvent(startEvent.id);
@@ -324,7 +339,6 @@
         });
     }
 
-    // ===== ЛОГИКА ПЕРЕКЛЮЧЕНИЯ И СМЕНЫ ТЕМ =====
     function selectEvent(id) {
         currentEvent = allEvents.find(e => e.id === id);
         if (!currentEvent) return;
@@ -333,7 +347,6 @@
             btn.classList.toggle('active', btn.dataset.id === id);
         });
 
-        // 1. СМЕНА ТЕМЫ
         document.body.className = '';
         if (id === 'newyear') {
             document.body.classList.add('theme-newyear');
@@ -348,38 +361,29 @@
             snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         }
 
-        // 2. СМЕНА МУЗЫКИ
         const wasPlaying = !bgMusic.paused;
         bgMusic.src = musicMap[id] || '/music.mp3';
-        bgMusic.load(); // Заставляем браузер загрузить новый трек
-        if (wasPlaying) {
-            bgMusic.play().catch(e => console.log("Браузер заблокировал автоплей нового трека"));
-        }
+        bgMusic.load();
+        if (wasPlaying) { bgMusic.play().catch(e => console.log("Autoplay blocked")); }
 
-        // 3. АНИМАЦИЯ КОНТЕНТА
         const mainTitle = document.getElementById('main-title');
         const clockWrapper = document.getElementById('main-clock');
-
         mainTitle.classList.add('fade-out');
         clockWrapper.classList.add('fade-out');
 
         setTimeout(() => {
             mainTitle.innerText = currentEvent.name;
-
             let parsedDate = new Date(currentEvent.date);
             let now = new Date(Date.now() + timeOffset);
             while (parsedDate < now) { parsedDate.setFullYear(parsedDate.getFullYear() + 1); }
             targetDate = parsedDate;
-
             window.history.replaceState(null, null, '#' + id);
             calculateCountdown();
-
             mainTitle.classList.remove('fade-out');
             clockWrapper.classList.remove('fade-out');
         }, 400);
     }
 
-    // ===== ЗВУК =====
     const bgMusic = document.getElementById('bg-music');
     bgMusic.volume = 0.15;
     document.getElementById('music-btn').addEventListener('click', (e) => {
@@ -393,7 +397,6 @@
         }
     });
 
-    // ===== СЧЁТЧИК =====
     const tapes = ['d-hundreds', 'd-tens', 'd-ones', 'h-tens', 'h-ones', 'm-tens', 'm-ones', 's-tens', 's-ones'];
     tapes.forEach(id => {
         const el = document.getElementById(id);
@@ -425,7 +428,6 @@
         const now = new Date(Date.now() + timeOffset);
         const diff = targetDate - now;
         if (diff <= 0) { updateDisplay(0, 0, 0, 0); return; }
-
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((diff / 1000 / 60) % 60);
@@ -433,7 +435,6 @@
         updateDisplay(days, hours, minutes, seconds);
     }
 
-    // ===== АНИМАЦИИ =====
     const starsCtx = setupCanvas(document.getElementById('stars-canvas'));
     const stars = [];
     for (let i = 0; i < (isMobile ? 40 : 180); i++) {
@@ -483,7 +484,6 @@
     }
     requestAnimationFrame(drawSnow);
 
-    // ===== СТАРТ =====
     async function syncTime() {
         try {
             const startTime = Date.now();
