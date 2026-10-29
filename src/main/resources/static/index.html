@@ -27,116 +27,94 @@
             transition: background 0.5s ease;
         }
 
-        /* Скан-линии (только для Нового Года) */
         body::after {
             content: " "; display: block; position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
             z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
-        /* Убираем скан-линии для других тем, чтобы не было черных пикселей */
         body:not(.theme-newyear)::after { display: none; }
 
-        /* --- ЭКРАН ЗАГРУЗКИ (ПРЕЛОАДЕР) --- */
+        /* --- БАННЕР СОГЛАСИЯ НА ОБРАБОТКУ ДАННЫХ --- */
+        #privacy-banner {
+            position: fixed; bottom: -200px; left: 0; width: 100%;
+            background: rgba(5, 11, 20, 0.95); border-top: 1px solid rgba(140, 190, 255, 0.3);
+            z-index: 10000; padding: 20px; display: flex; justify-content: center; align-items: center; gap: 20px;
+            backdrop-filter: blur(10px); transition: bottom 0.5s ease; flex-wrap: wrap;
+        }
+        #privacy-banner.show { bottom: 0; }
+        #privacy-banner p { margin: 0; color: #a8d8ff; font-size: 13px; max-width: 600px; line-height: 1.4; }
+        #privacy-banner button {
+            background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; font-family: inherit; transition: background 0.2s;
+        }
+        #privacy-banner button:hover { background: #2563eb; }
+
+        /* --- ЭКРАН ЗАГРУЗКИ --- */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #050b14; z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.6s ease;
         }
-        .spinner {
-            width: 50px; height: 50px; border: 3px solid rgba(140, 190, 255, 0.3);
-            border-top-color: #a8d8ff; border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(140, 190, 255, 0.3); border-top-color: #a8d8ff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .preloader-text { color: #a8d8ff; font-size: 18px; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
         @keyframes pulseText { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-        /* Фон Рамадана */
         #ramadan-bg {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0b1a14 url('/ramadan.jpg') no-repeat center center; background-size: cover;
             z-index: -1; opacity: 0; transition: opacity 0.5s ease;
         }
 
-        /* Декор */
         .ramadan-decor { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 70px; text-shadow: 0 0 30px #ffd700, 0 0 60px #ff9900; z-index: 1; opacity: 0; animation: floatMoon 4s infinite ease-in-out; }
         .birthday-decor { display: none; position: absolute; top: 15%; width: 100%; text-align: center; font-size: 60px; z-index: 1; opacity: 0; animation: floatBday 3s infinite ease-in-out; filter: drop-shadow(0 0 20px #ff3b5c); }
         @keyframes floatMoon { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -15px); } }
         @keyframes floatBday { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } }
 
-        /* --- ТЕМА: РАМАДАН --- */
         body.theme-ramadan { background: #0b1a14; }
         body.theme-ramadan #ramadan-bg { display: block; opacity: 1; }
         body.theme-ramadan .ramadan-decor { display: block; opacity: 1; }
-        body.theme-ramadan .counter-container {
-            background: linear-gradient(145deg, rgba(16, 64, 45, 0.9), rgba(8, 33, 22, 0.9));
-            border-color: #ffd700;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2);
-        }
+        body.theme-ramadan .counter-container { background: linear-gradient(145deg, rgba(16, 64, 45, 0.9), rgba(8, 33, 22, 0.9)); border-color: #ffd700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2); }
         body.theme-ramadan .digit { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5); }
         body.theme-ramadan h1 { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         body.theme-ramadan .time-label { color: #ffd700; }
 
-        /* --- ТЕМА: ДЕНЬ РОЖДЕНИЯ --- */
         body.theme-birthday { background: radial-gradient(circle at center, #2a0845 0%, #000000 100%); }
         body.theme-birthday .birthday-decor { display: block; opacity: 1; }
-        body.theme-birthday .counter-container {
-            background: linear-gradient(145deg, rgba(74, 30, 42, 0.9), rgba(32, 10, 16, 0.9));
-            border-color: #ff3b5c;
-            box-shadow: 0 0 25px rgba(255, 59, 92, 0.4), inset 0 0 20px rgba(255, 59, 92, 0.2);
-        }
+        body.theme-birthday .counter-container { background: linear-gradient(145deg, rgba(74, 30, 42, 0.9), rgba(32, 10, 16, 0.9)); border-color: #ff3b5c; box-shadow: 0 0 25px rgba(255, 59, 92, 0.4), inset 0 0 20px rgba(255, 59, 92, 0.2); }
         body.theme-birthday .digit { color: #ff3b5c; text-shadow: 0 0 10px rgba(255, 59, 92, 0.8), 0 0 20px rgba(255, 59, 92, 0.5); }
         body.theme-birthday h1 { color: #ff3b5c; text-shadow: 0 0 15px rgba(255, 59, 92, 0.8); }
         body.theme-birthday .time-label { color: #ff3b5c; }
 
-        body:not(.theme-newyear) .garland,
-        body:not(.theme-newyear) .icicles,
-        body:not(.theme-newyear) .tree,
-        body:not(.theme-newyear) .snowman,
-        body:not(.theme-newyear) .gifts { display: none !important; }
+        body:not(.theme-newyear) .garland, body:not(.theme-newyear) .icicles, body:not(.theme-newyear) .tree, body:not(.theme-newyear) .snowman, body:not(.theme-newyear) .gifts { display: none !important; }
 
-        /* --- КАНВАСЫ --- */
         #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
         #aurora-canvas { z-index: 1; opacity: 0.55; } #stars-canvas { z-index: 2; } #snow-canvas { z-index: 3; } #particles-canvas { z-index: 4; }
 
-        /* --- БОКОВОЕ МЕНЮ --- */
-        .menu-btn {
-            position: fixed; top: 20px; left: 20px; z-index: 1001;
-            width: 50px; height: 50px; border-radius: 12px;
-            background: rgba(10, 20, 40, 0.8); border: 1px solid rgba(140, 190, 255, 0.5);
-            color: #a8d8ff; font-size: 26px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 15px rgba(100, 180, 255, 0.3); backdrop-filter: blur(8px);
-            transition: all 0.3s;
-        }
+        /* --- МЕНЮ --- */
+        .menu-btn { position: fixed; top: 20px; left: 20px; z-index: 1001; width: 50px; height: 50px; border-radius: 12px; background: rgba(10, 20, 40, 0.8); border: 1px solid rgba(140, 190, 255, 0.5); color: #a8d8ff; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(100, 180, 255, 0.3); backdrop-filter: blur(8px); transition: all 0.3s; }
         .menu-btn:hover { background: rgba(30, 50, 90, 0.9); box-shadow: 0 0 25px rgba(100, 180, 255, 0.7); }
 
-        .sidebar {
-            position: fixed; top: 0; left: -320px; width: 300px; height: 100vh;
-            background: rgba(5, 11, 20, 0.95); border-right: 1px solid rgba(140, 190, 255, 0.3);
-            z-index: 1000; padding: 80px 20px 20px 20px;
-            transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            backdrop-filter: blur(15px); display: flex; flex-direction: column; gap: 15px;
-            overflow-y: auto;
-        }
+        .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100vh; background: rgba(5, 11, 20, 0.95); border-right: 1px solid rgba(140, 190, 255, 0.3); z-index: 1000; padding: 80px 20px 20px 20px; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); backdrop-filter: blur(15px); display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
         .sidebar.open { left: 0; }
         .sidebar-title { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; padding-left: 10px; }
         .menu-items-wrapper { display: flex; flex-direction: column; gap: 10px; }
-        .menu-item {
-            display: flex; align-items: center; padding: 15px 20px; border-radius: 12px;
-            background: rgba(30, 50, 90, 0.4); border: 1px solid rgba(140, 190, 255, 0.2);
-            color: #a8d8ff; font-size: 16px; cursor: pointer; transition: all 0.2s;
-        }
+
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-radius: 12px; background: rgba(30, 50, 90, 0.4); border: 1px solid rgba(140, 190, 255, 0.2); color: #a8d8ff; font-size: 16px; cursor: pointer; transition: all 0.2s; }
         .menu-item:hover { background: rgba(60, 100, 180, 0.8); transform: translateX(5px); }
         .menu-item.active { background: rgba(60, 100, 180, 0.9); border-color: #00f2fe; box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); }
 
-        .add-birthday-link {
-            display: block; text-align: center; padding: 15px 12px; margin-top: 10px;
-            color: #ffd700; font-size: 13px; text-decoration: none;
-            border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 10px; transition: all 0.3s;
-        }
+        /* Выпадающее подменю */
+        .submenu-toggle { position: relative; }
+        .submenu-arrow { font-size: 12px; transition: transform 0.3s; }
+        .submenu-toggle.open .submenu-arrow { transform: rotate(90deg); }
+        .submenu { display: none; flex-direction: column; gap: 8px; padding-left: 20px; margin-top: 8px; }
+        .submenu.open { display: flex; }
+        .submenu .menu-item { font-size: 14px; padding: 12px 15px; background: rgba(20, 30, 50, 0.6); }
+
+        .add-birthday-link { display: block; text-align: center; padding: 15px 12px; margin-top: 10px; color: #ffd700; font-size: 13px; text-decoration: none; border: 1px dashed rgba(255, 215, 0, 0.5); border-radius: 10px; transition: all 0.3s; }
         .add-birthday-link:hover { background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
@@ -184,9 +162,6 @@
 
         .seo-text { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #475569; font-size: 11px; line-height: 1.4; max-width: 700px; margin: 0 auto; opacity: 0.5; pointer-events: none; }
 
-        /* ========================================================= */
-        /* ==================== МОБИЛЬНАЯ ВЕРСИЯ =================== */
-        /* ========================================================= */
         @media (max-width: 768px) {
             :root { --digit-w: 22px; --digit-h: 38px; --digit-font: 28px; --pad: 4px 6px; --gap: 4px; --title-size: 14px; --title-spacing: 1px; --label-size: 9px; --label-spacing: 0px; }
             .main-content { margin-bottom: 12vh; }
@@ -205,12 +180,20 @@
             .sidebar { width: 260px; padding-top: 70px; }
             .seo-text { font-size: 9px; bottom: 5px; }
             .ramadan-decor { font-size: 45px; top: 10%; } .birthday-decor { font-size: 45px; top: 10%; }
+            /* На мобилках подменю открывается вниз (внутри сайдбара) */
+            .submenu { padding-left: 10px; }
         }
     </style>
 </head>
 <body class="theme-newyear">
 
-<!-- ЭКРАН ЗАГРУЗКИ -->
+<!-- Баннер о согласии -->
+<div id="privacy-banner">
+    <p>Мы используем ваш IP-адрес и данные браузера исключительно для отправки анонимных уведомлений о посещении сайта. Продолжая пользоваться сайтом, вы соглашаетесь с обработкой этих данных.</p>
+    <button id="accept-privacy">Согласен</button>
+</div>
+
+<!-- Экран загрузки -->
 <div id="preloader">
     <div class="spinner"></div>
     <div class="preloader-text">Загрузка...</div>
@@ -263,19 +246,15 @@
 </div>
 
 <div class="seo-text">
-    Счётчики событий. Узнайте, сколько дней осталось до Нового Года, Рамадана и дня рождения Адины. Онлайн-таймер с красивым дизайном и музыкой.
+    Счётчики событий. Узнайте, сколько дней осталось до Нового Года, Рамадана и дней рождения. Онлайн-таймер с красивым дизайном и музыкой.
 </div>
 
 <script>
-    const telegramUsername = "maratSQL";
+    const telegramUsername = "Marat1221";
     const tgText = encodeURIComponent("Хочу чтобы мой др добавили в список");
     document.getElementById('add-birthday-link').href = `https://t.me/${telegramUsername}?text=${tgText}`;
 
-    const musicMap = {
-        'newyear': '/music.mp3',
-        'ramadan': '/ramadan.mp3',
-        'adina':   '/birthday.mp3'
-    };
+    const musicMap = { 'newyear': '/music.mp3', 'ramadan': '/ramadan.mp3', 'adina': '/birthday.mp3' };
 
     let digitHeight = 110;
     let timeOffset = 0;
@@ -287,7 +266,17 @@
     let targetDate = null;
     let isSnowEnabled = true;
 
-    // Ждем полной загрузки страницы, чтобы убрать прелоадер
+    // ===== ПРОВЕРКА СОГЛАСИЯ НА ОБРАБОТКУ ДАННЫХ =====
+    if (!localStorage.getItem('privacy_accepted')) {
+        setTimeout(() => document.getElementById('privacy-banner').classList.add('show'), 1500);
+    }
+
+    document.getElementById('accept-privacy').addEventListener('click', () => {
+        localStorage.setItem('privacy_accepted', 'true');
+        document.getElementById('privacy-banner').classList.remove('show');
+        notifyVisit(); // Отправляем уведомление только после согласия
+    });
+
     window.addEventListener('load', () => {
         const preloader = document.getElementById('preloader');
         preloader.style.opacity = '0';
@@ -336,7 +325,13 @@
     function renderMenu() {
         const container = document.getElementById('menu-items-container');
         container.innerHTML = '';
-        allEvents.forEach(event => {
+
+        // Разделяем события на обычные и дни рождения
+        const standardEvents = allEvents.filter(e => e.id !== 'adina');
+        const birthdayEvents = allEvents.filter(e => e.id === 'adina');
+
+        // Рендерим обычные события
+        standardEvents.forEach(event => {
             const btn = document.createElement('div');
             btn.className = 'menu-item';
             btn.dataset.id = event.id;
@@ -344,6 +339,39 @@
             btn.onclick = () => { selectEvent(event.id); toggleMenu(); };
             container.appendChild(btn);
         });
+
+        // Если есть дни рождения, создаем подменю
+        if (birthdayEvents.length > 0) {
+            const toggleBtn = document.createElement('div');
+            toggleBtn.className = 'menu-item submenu-toggle';
+            toggleBtn.innerHTML = `<span>🎂 Дни рождения</span><span class="submenu-arrow">▶</span>`;
+
+            const submenuDiv = document.createElement('div');
+            submenuDiv.className = 'submenu';
+
+            birthdayEvents.forEach(event => {
+                const subBtn = document.createElement('div');
+                subBtn.className = 'menu-item';
+                subBtn.dataset.id = event.id;
+                subBtn.innerText = event.name.replace('До дня рождения ', '');
+                subBtn.onclick = (e) => {
+                    e.stopPropagation(); // Чтобы не закрывать родительское меню
+                    selectEvent(event.id);
+                    toggleMenu();
+                };
+                submenuDiv.appendChild(subBtn);
+            });
+
+            // Логика открытия подменю
+            toggleBtn.onclick = (e) => {
+                e.stopPropagation();
+                toggleBtn.classList.toggle('open');
+                submenuDiv.classList.toggle('open');
+            };
+
+            container.appendChild(toggleBtn);
+            container.appendChild(submenuDiv);
+        }
     }
 
     function selectEvent(id) {
@@ -365,23 +393,20 @@
             snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         }
 
-        // === УМНАЯ ЗАГРУЗКА МУЗЫКИ ===
         const wasPlaying = !bgMusic.paused;
         const newTrack = musicMap[id] || '/music.mp3';
 
-        // Если трек меняется, показываем загрузку
         if (bgMusic.src.indexOf(newTrack) === -1) {
             iconSpan.textContent = '⏳';
             musicBtn.disabled = true;
             bgMusic.src = newTrack;
             bgMusic.load();
 
-            // Ждем, пока трек загрузится
             bgMusic.addEventListener('canplay', function onCanPlay() {
                 musicBtn.disabled = false;
                 iconSpan.textContent = wasPlaying ? '🎶' : '🎵';
                 if (wasPlaying) bgMusic.play().catch(e => console.log("Autoplay blocked"));
-                bgMusic.removeEventListener('canplay', onCanPlay); // Убираем слушатель
+                bgMusic.removeEventListener('canplay', onCanPlay);
             });
         }
 
@@ -406,7 +431,7 @@
     bgMusic.volume = 0.15;
     musicBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (musicBtn.disabled) return; // Если грузится, ничего не делаем
+        if (musicBtn.disabled) return;
         if (bgMusic.paused) {
             bgMusic.play().then(() => { iconSpan.textContent = '🎶'; musicBtn.classList.add('playing'); }).catch(() => {});
         } else {
@@ -509,6 +534,12 @@
         } catch (e) {}
     }
 
+    function notifyVisit() {
+        if (sessionStorage.getItem('visit_notified')) return;
+        sessionStorage.setItem('visit_notified', '1');
+        fetch('/api/notify-visit').catch(() => {});
+    }
+
     window.addEventListener('resize', () => {
         setupCanvas(document.getElementById('stars-canvas'));
         setupCanvas(document.getElementById('snow-canvas'));
@@ -519,6 +550,11 @@
         await syncTime();
         await loadEvents();
         setInterval(calculateCountdown, 1000);
+
+        // Если уже давали согласие ранее, отправляем уведомление
+        if (localStorage.getItem('privacy_accepted')) {
+            notifyVisit();
+        }
     }
     init();
 </script>

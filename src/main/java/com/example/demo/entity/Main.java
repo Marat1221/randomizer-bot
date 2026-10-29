@@ -12,6 +12,8 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.List;
+
 @SpringBootApplication(exclude = {
         org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
 })
@@ -26,7 +28,6 @@ public class Main {
     @RequestMapping("/api")
     public static class CounterController {
 
-        // Токен и chat_id берутся из application.properties (или переменных окружения Amvera)
         @Value("${telegram.bot.token:}")
         private String botToken;
 
@@ -42,21 +43,23 @@ public class Main {
             return telegramClient;
         }
 
-        // Точное время сервера для синхронизации счётчика
+        // 1. Отдаем время сервера
         @GetMapping("/value")
         public long getServerTime() {
             return System.currentTimeMillis();
         }
+
+        // 2. Отдаем список событий для меню
         @GetMapping("/events")
-        public java.util.List<EventDto> getEvents() {
-            return java.util.List.of(
+        public List<EventDto> getEvents() {
+            return List.of(
                     new EventDto("newyear", "До Нового Года", "2027-01-01T00:00:00+03:00"),
                     new EventDto("ramadan", "До Рамадана", "2027-02-08T00:00:00+03:00"),
                     new EventDto("adina", "До дня рождения Адины", "2027-08-30T00:00:00+03:00")
             );
         }
 
-        // Уведомление о заходе на сайт
+        // 3. Отправляем уведомление в Telegram
         @GetMapping("/notify-visit")
         public String notifyVisit(HttpServletRequest request) {
             TelegramClient client = getTelegramClient();
@@ -90,7 +93,6 @@ public class Main {
         }
 
         private String getClientIp(HttpServletRequest request) {
-            // Amvera (и другие прокси) передают реальный IP в X-Forwarded-For
             String xff = request.getHeader("X-Forwarded-For");
             if (xff != null && !xff.isBlank()) {
                 return xff.split(",")[0].trim();
