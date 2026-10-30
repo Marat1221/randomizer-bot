@@ -78,6 +78,7 @@ public class Main {
             if (referer != null && !referer.isBlank()) {
                 text.append("\nОткуда: ").append(referer);
             }
+            text.append("\n Хозяин как вы? \n если устали вспомните о об о мне :)");
 
             try {
                 SendMessage message = SendMessage.builder()
