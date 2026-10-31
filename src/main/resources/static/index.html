@@ -8,24 +8,9 @@
 
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        html, body {
-            margin: 0; padding: 0; min-height: 100%;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
-
-        body {
-            display: flex; flex-direction: column;
-            background: linear-gradient(-45deg, #0a1428, #1a1a3e, #2a1a4a, #0a1428);
-            background-size: 400% 400%;
-            animation: gradientBG 18s ease infinite;
-            color: #fff;
-            overflow-x: hidden;
-        }
-        @keyframes gradientBG {
-            0%, 100% { background-position: 0% 50%; }
-            50%      { background-position: 100% 50%; }
-        }
+        html, body { margin: 0; padding: 0; min-height: 100%; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { display: flex; flex-direction: column; background: linear-gradient(-45deg, #0a1428, #1a1a3e, #2a1a4a, #0a1428); background-size: 400% 400%; animation: gradientBG 18s ease infinite; color: #fff; overflow-x: hidden; }
+        @keyframes gradientBG { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 
         /* ФОН */
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0; }
@@ -38,117 +23,24 @@
         @keyframes float2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-100px,-80px) scale(1.15); } }
         @keyframes float3 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-60px,100px) scale(1.1); } }
 
-        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .stars::before, .stars::after {
-            content: ""; position: absolute; width: 2px; height: 2px;
-            border-radius: 50%; background: #fff;
-            box-shadow: 50px 100px 0 -1px #fff, 200px 50px 0 -1px #fff, 350px 200px 0 -1px #fff,
-            500px 80px 0 -1px #fff, 650px 300px 0 -1px #fff, 800px 150px 0 -1px #fff,
-            950px 250px 0 -1px #fff, 1100px 100px 0 -1px #fff, 1250px 350px 0 -1px #fff,
-            1400px 200px 0 -1px #fff, 150px 400px 0 -1px #fff, 400px 500px 0 -1px #fff,
-            700px 450px 0 -1px #fff, 1000px 550px 0 -1px #fff, 1300px 500px 0 -1px #fff;
-            animation: twinkle 4s infinite alternate;
-        }
-        .stars::after {
-            width: 1px; height: 1px;
-            box-shadow: 80px 250px 0 0 #a8d8ff, 280px 150px 0 0 #a8d8ff, 450px 350px 0 0 #a8d8ff,
-            600px 500px 0 0 #a8d8ff, 750px 100px 0 0 #a8d8ff, 900px 400px 0 0 #a8d8ff,
-            1050px 250px 0 0 #a8d8ff, 1200px 150px 0 0 #a8d8ff, 1350px 450px 0 0 #a8d8ff;
-            animation: twinkle 3s infinite alternate-reverse;
-        }
-        @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 1; } }
-
         /* ШАПКА */
-        .topbar {
-            position: relative; z-index: 10;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            background: rgba(10, 20, 40, 0.4);
-        }
+        .topbar { position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); background: rgba(10, 20, 40, 0.4); }
         .logo { display: flex; align-items: center; gap: 12px; color: #fff; font-weight: 700; font-size: 18px; letter-spacing: 1px; }
-        .logo-icon {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: linear-gradient(135deg, #3b82f6, #b83bff);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-        }
-        .live-clock {
-            font-family: 'Courier New', monospace;
-            color: #a8d8ff; font-size: 15px; letter-spacing: 2px;
-            background: rgba(255,255,255,0.05);
-            padding: 8px 16px; border-radius: 8px;
-            border: 1px solid rgba(168, 216, 255, 0.2);
-        }
+        .logo-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #3b82f6, #b83bff); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .live-clock { font-family: 'Courier New', monospace; color: #a8d8ff; font-size: 15px; letter-spacing: 2px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(168, 216, 255, 0.2); }
 
-        /* ОСНОВНОЙ КОНТЕНТ */
+        /* КОНТЕНТ */
         main { position: relative; z-index: 10; padding: 50px 40px 80px; flex: 1; }
-
         .hero { text-align: center; margin-bottom: 50px; }
-        .hero h1 {
-            font-size: 52px; font-weight: 200; letter-spacing: 6px;
-            margin: 0 0 15px; text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(168, 216, 255, 0.8), 0 0 50px rgba(184, 59, 255, 0.4);
-        }
+        .hero h1 { font-size: 52px; font-weight: 200; letter-spacing: 6px; margin: 0 0 15px; text-transform: uppercase; text-shadow: 0 0 20px rgba(168, 216, 255, 0.8), 0 0 50px rgba(184, 59, 255, 0.4); }
         .hero p { color: #94a3b8; font-size: 16px; margin: 0 0 25px; letter-spacing: 1px; }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 18px; border-radius: 30px;
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #a8d8ff; font-size: 13px; font-weight: 600;
-        }
-        .hero-badge .pulse-dot {
-            width: 8px; height: 8px; border-radius: 50%; background: #3bff7d;
-            animation: pulseDot 1.5s infinite;
-        }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 30px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #a8d8ff; font-size: 13px; font-weight: 600; }
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #3bff7d; animation: pulseDot 1.5s infinite; }
         @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } }
 
-        .nearest {
-            max-width: 800px; margin: 0 auto 60px;
-            padding: 30px 40px; border-radius: 20px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(20px);
-            text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-        .nearest-label {
-            display: inline-block; padding: 5px 14px;
-            background: rgba(255, 59, 92, 0.15);
-            border: 1px solid rgba(255, 59, 92, 0.4);
-            color: #ff6b8a; border-radius: 20px;
-            font-size: 11px; font-weight: 700; letter-spacing: 2px;
-            margin-bottom: 15px; text-transform: uppercase;
-        }
-        .nearest-name { font-size: 24px; font-weight: 600; margin-bottom: 20px; }
-        .nearest-countdown {
-            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-        }
-        .nc-unit { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
-        .nc-value {
-            font-family: 'Courier New', monospace; font-size: 32px; font-weight: 700;
-            color: #a8d8ff; text-shadow: 0 0 15px rgba(168, 216, 255, 0.6);
-        }
-        .nc-label { font-size: 10px; letter-spacing: 2px; color: #64748b; text-transform: uppercase; margin-top: 5px; }
-
         .hub-container { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-bottom: 70px; }
-        .hub-card {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 240px; height: 280px; border-radius: 24px;
-            text-decoration: none; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            position: relative; overflow: hidden;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-        .hub-card::before {
-            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transform: skewX(-20deg); transition: 0.7s;
-        }
+        .hub-card { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 240px; height: 280px; border-radius: 24px; text-decoration: none; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+        .hub-card::before { content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transform: skewX(-20deg); transition: 0.7s; }
         .hub-card:hover::before { left: 150%; }
         .hub-card:hover { transform: translateY(-12px) scale(1.04); }
         .hub-icon { font-size: 76px; margin-bottom: 20px; filter: drop-shadow(0 0 20px currentColor); transition: transform 0.4s; }
@@ -162,71 +54,15 @@
         .card-birthday:hover { box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(255, 59, 92, 0.5); border-color: #ff3b5c; }
         .card-birthday .hub-icon { color: #ff3b5c; }
 
-        .stats {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 20px; max-width: 800px; margin: 0 auto;
-        }
-        .stat {
-            padding: 25px 20px; text-align: center; border-radius: 16px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-        }
-        .stat-value {
-            font-size: 32px; font-weight: 700; color: #a8d8ff;
-            text-shadow: 0 0 15px rgba(168, 216, 255, 0.4);
-            margin-bottom: 5px;
-        }
-        .stat-label {
-            color: #64748b; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
-        }
-
-        .footer {
-            position: relative; z-index: 10;
-            padding: 30px 40px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            background: rgba(10, 20, 40, 0.4);
-            backdrop-filter: blur(10px);
-            display: flex; justify-content: space-between; align-items: center;
-            color: #64748b; font-size: 13px; flex-wrap: wrap; gap: 10px;
-        }
+        .footer { position: relative; z-index: 10; padding: 30px 40px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(10, 20, 40, 0.4); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; color: #64748b; font-size: 13px; flex-wrap: wrap; gap: 10px; }
 
         /* ЧАТ */
-        .chat-btn {
-            position: fixed; bottom: 24px; right: 24px; z-index: 100;
-            width: 60px; height: 60px; border-radius: 50%;
-            background: linear-gradient(145deg, #3b82f6, #1e40af);
-            border: none; cursor: pointer; font-size: 26px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
-            transition: all 0.3s; color: white;
-        }
+        .chat-btn { position: fixed; bottom: 24px; right: 24px; z-index: 100; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(145deg, #3b82f6, #1e40af); border: none; cursor: pointer; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); transition: all 0.3s; color: white; }
         .chat-btn:hover { transform: scale(1.1); box-shadow: 0 10px 35px rgba(59, 130, 246, 0.8); }
-        .chat-btn .dot {
-            position: absolute; top: 4px; right: 4px; width: 14px; height: 14px;
-            background: #ff3b5c; border-radius: 50%; border: 2px solid #0a1428;
-            animation: pulseDot 2s infinite;
-        }
-        .chat-modal {
-            position: fixed; bottom: 100px; right: 24px;
-            width: 340px; max-width: calc(100vw - 48px);
-            height: 480px; max-height: calc(100vh - 120px);
-            background: rgba(10, 20, 40, 0.98);
-            border: 1px solid rgba(140, 190, 255, 0.3);
-            border-radius: 20px; z-index: 99;
-            display: flex; flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            opacity: 0; pointer-events: none;
-            transform: translateY(20px) scale(0.95);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(20px);
-        }
+        .chat-btn .dot { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background: #ff3b5c; border-radius: 50%; border: 2px solid #0a1428; animation: pulseDot 2s infinite; }
+        .chat-modal { position: fixed; bottom: 100px; right: 24px; width: 340px; max-width: calc(100vw - 48px); height: 480px; max-height: calc(100vh - 120px); background: rgba(10, 20, 40, 0.98); border: 1px solid rgba(140, 190, 255, 0.3); border-radius: 20px; z-index: 99; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.8); opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); backdrop-filter: blur(20px); }
         .chat-modal.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
-        .chat-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 20px; border-bottom: 1px solid rgba(140, 190, 255, 0.2);
-            color: #a8d8ff; font-weight: 600; font-size: 16px;
-        }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid rgba(140, 190, 255, 0.2); color: #a8d8ff; font-weight: 600; font-size: 16px; }
         #chat-close { background: none; border: none; color: #a8d8ff; font-size: 20px; cursor: pointer; padding: 0; }
         .chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
         .chat-empty { color: #64748b; font-size: 13px; text-align: center; margin-top: 40px; line-height: 1.6; }
@@ -234,14 +70,10 @@
         @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .chat-msg.mine { align-self: flex-end; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-bottom-right-radius: 4px; }
         .chat-msg.admin { align-self: flex-start; background: linear-gradient(135deg, #10b981, #059669); color: white; border-bottom-left-radius: 4px; }
-        .chat-msg.error { align-self: center; background: rgba(255, 59, 92, 0.2); color: #ff3b5c; font-size: 12px; border: 1px solid rgba(255, 59, 92, 0.3); }
-        .chat-msg.success { align-self: center; background: rgba(59, 255, 125, 0.15); color: #3bff7d; font-size: 12px; border: 1px solid rgba(59, 255, 125, 0.3); }
         .chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid rgba(140, 190, 255, 0.2); }
         #chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(140, 190, 255, 0.3); border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 14px; font-family: inherit; outline: none; }
         #chat-input:focus { border-color: #a8d8ff; box-shadow: 0 0 10px rgba(168, 216, 255, 0.3); }
         #chat-send { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; font-size: 18px; cursor: pointer; transition: all 0.2s; }
-        #chat-send:hover { transform: scale(1.05); }
-        #chat-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         @media (max-width: 768px) {
             .topbar { padding: 15px 20px; }
@@ -250,23 +82,13 @@
             .live-clock { font-size: 12px; padding: 6px 10px; letter-spacing: 1px; }
             main { padding: 30px 20px 60px; }
             .hero h1 { font-size: 28px; letter-spacing: 4px; }
-            .hero p { font-size: 13px; }
-            .nearest { padding: 25px 20px; margin-bottom: 40px; }
-            .nearest-name { font-size: 18px; }
-            .nc-value { font-size: 24px; }
-            .nc-unit { min-width: 45px; }
-            .nc-label { font-size: 9px; letter-spacing: 1px; }
             .hub-container { flex-direction: column; gap: 15px; align-items: center; margin-bottom: 40px; }
             .hub-card { width: 100%; max-width: 320px; height: 95px; flex-direction: row; justify-content: flex-start; padding-left: 25px; border-radius: 16px; }
             .hub-icon { font-size: 42px; margin-bottom: 0; margin-right: 20px; }
             .hub-title { font-size: 17px; }
-            .stats { grid-template-columns: 1fr; gap: 12px; }
-            .stat { padding: 18px 15px; }
-            .stat-value { font-size: 24px; }
             .footer { padding: 20px; font-size: 11px; flex-direction: column; text-align: center; }
             .chat-btn { bottom: 16px; right: 16px; width: 54px; height: 54px; font-size: 22px; }
             .chat-modal { bottom: 80px; right: 12px; left: 12px; width: auto; height: 60vh; }
-            .orb { filter: blur(50px); }
         }
     </style>
 </head>
@@ -278,7 +100,6 @@
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
 </div>
-<div class="stars"></div>
 
 <header class="topbar">
     <div class="logo">
@@ -298,17 +119,6 @@
         </div>
     </div>
 
-    <div class="nearest" id="nearest">
-        <div class="nearest-label">🔥 Ближайшее событие</div>
-        <div class="nearest-name" id="nearest-name">Загрузка...</div>
-        <div class="nearest-countdown">
-            <div class="nc-unit"><div class="nc-value" id="nc-days">--</div><div class="nc-label">Дней</div></div>
-            <div class="nc-unit"><div class="nc-value" id="nc-hours">--</div><div class="nc-label">Часов</div></div>
-            <div class="nc-unit"><div class="nc-value" id="nc-minutes">--</div><div class="nc-label">Минут</div></div>
-            <div class="nc-unit"><div class="nc-value" id="nc-seconds">--</div><div class="nc-label">Секунд</div></div>
-        </div>
-    </div>
-
     <div class="hub-container">
         <a href="/newyear.html" class="hub-card card-newyear">
             <div class="hub-icon">❄️</div>
@@ -322,12 +132,6 @@
             <div class="hub-icon">🎂</div>
             <div class="hub-title">Дни рождения</div>
         </a>
-    </div>
-
-    <div class="stats">
-        <div class="stat"><div class="stat-value">3</div><div class="stat-label">События</div></div>
-        <div class="stat"><div class="stat-value">24/7</div><div class="stat-label">Онлайн</div></div>
-        <div class="stat"><div class="stat-value">0₽</div><div class="stat-label">Бесплатно</div></div>
     </div>
 </main>
 
@@ -351,92 +155,30 @@
 </div>
 
 <script>
-    // ===== ЧАСЫ (КРАСНОЯРСК) =====
+    // Часы
     function updateClock() {
-        const now = new Date();
-        const options = {
-            timeZone: 'Asia/Krasnoyarsk',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        };
-        document.getElementById('live-clock').textContent = now.toLocaleTimeString('ru-RU', options);
+        const options = { timeZone: 'Asia/Krasnoyarsk', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        document.getElementById('live-clock').textContent = new Date().toLocaleTimeString('ru-RU', options);
     }
     updateClock();
     setInterval(updateClock, 1000);
-
-    // ===== ГОД =====
     document.getElementById('current-year').textContent = new Date().getFullYear();
 
-    // ===== БЛИЖАЙШЕЕ СОБЫТИЕ =====
-    let nearestTarget = null;
-    async function loadNearestEvent() {
-        let events = [];
-        try {
-            const res = await fetch('/api/events');
-            if (res.ok) events = await res.json();
-            else throw new Error('API error');
-        } catch (e) {
-            events = [
-                { id: 'newyear', name: 'Новый Год', date: '2027-01-01T00:00:00+03:00' },
-                { id: 'ramadan', name: 'Рамадан', date: '2027-02-08T00:00:00+03:00' },
-                { id: 'adina', name: 'День рождения Адины', date: '2027-08-30T00:00:00+03:00' }
-            ];
-        }
-        const now = new Date();
-        let nearest = null, minDiff = Infinity;
-        events.forEach(ev => {
-            let date = new Date(ev.date);
-            while (date < now) date.setFullYear(date.getFullYear() + 1);
-            const diff = date - now;
-            if (diff < minDiff) {
-                minDiff = diff;
-                nearest = { name: ev.name.replace('До ', ''), date };
-            }
-        });
-        if (nearest) {
-            nearestTarget = nearest.date;
-            document.getElementById('nearest-name').textContent = nearest.name;
-        }
-    }
-    function updateNearestCountdown() {
-        if (!nearestTarget) return;
-        const diff = nearestTarget - new Date();
-        if (diff <= 0) return;
-        document.getElementById('nc-days').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
-        document.getElementById('nc-hours').textContent = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-        document.getElementById('nc-minutes').textContent = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
-        document.getElementById('nc-seconds').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-    }
-    loadNearestEvent().then(() => {
-        updateNearestCountdown();
-        setInterval(updateNearestCountdown, 1000);
-    });
-
-    // ===== ЧАТ =====
+    // Чат
     let sessionId = localStorage.getItem('feedback_session');
     if (!sessionId) {
         sessionId = 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 4);
         localStorage.setItem('feedback_session', sessionId);
     }
-    let chatHistory = [];
-    let lastCount = -1;
-    let isClosed = false;
-
-    const chatBtn = document.getElementById('chat-btn');
-    const chatModal = document.getElementById('chat-modal');
-    const chatClose = document.getElementById('chat-close');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const chatSend = document.getElementById('chat-send');
+    let chatHistory = [], lastCount = -1, isClosed = false;
+    const chatBtn = document.getElementById('chat-btn'), chatModal = document.getElementById('chat-modal');
+    const chatClose = document.getElementById('chat-close'), chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input'), chatSend = document.getElementById('chat-send');
     const chatDot = chatBtn.querySelector('.dot');
 
     function renderChat() {
         chatMessages.innerHTML = '';
-        if (chatHistory.length === 0) {
-            chatMessages.innerHTML = '<div class="chat-empty">Привет! 👋<br>Напишите сообщение — мы ответим при первой возможности.</div>';
-        }
+        if (chatHistory.length === 0) chatMessages.innerHTML = '<div class="chat-empty">Привет! 👋<br>Напишите сообщение.</div>';
         chatHistory.forEach(m => {
             const div = document.createElement('div');
             div.className = 'chat-msg ' + (m.type || 'mine');
@@ -444,9 +186,7 @@
             chatMessages.appendChild(div);
         });
         if (isClosed) {
-            const c = document.createElement('div');
-            c.className = 'chat-msg error';
-            c.textContent = 'Диалог завершён. Спасибо за обращение!';
+            const c = document.createElement('div'); c.className = 'chat-msg error'; c.textContent = 'Диалог завершён.';
             chatMessages.appendChild(c);
         }
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -458,79 +198,35 @@
             if (!res.ok) return;
             const data = await res.json();
             if (data.messages && data.messages.length !== lastCount) {
-                chatHistory = data.messages.map(m => ({
-                    text: m.text,
-                    type: m.from === 'admin' ? 'admin' : 'mine',
-                    time: m.time
-                }));
+                chatHistory = data.messages.map(m => ({ text: m.text, type: m.from === 'admin' ? 'admin' : 'mine' }));
                 isClosed = data.closed === true;
                 lastCount = data.messages.length;
                 renderChat();
-                if (isClosed) {
-                    chatInput.disabled = true;
-                    chatSend.disabled = true;
-                    chatInput.placeholder = 'Диалог закрыт';
-                }
+                if (isClosed) { chatInput.disabled = true; chatSend.disabled = true; chatInput.placeholder = 'Диалог закрыт'; }
             }
         } catch (e) {}
     }
 
-    chatBtn.onclick = () => {
-        chatModal.classList.add('open');
-        chatDot.style.display = 'none';
-        pollFeedback();
-        setTimeout(() => chatInput.focus(), 300);
-    };
+    chatBtn.onclick = () => { chatModal.classList.add('open'); chatDot.style.display = 'none'; pollFeedback(); setTimeout(() => chatInput.focus(), 300); };
     chatClose.onclick = () => chatModal.classList.remove('open');
 
     async function sendChat() {
         const text = chatInput.value.trim();
-        if (text.length < 2) { showChatError('Сообщение должно содержать минимум 2 символа'); return; }
-        if (isClosed) { showChatError('Диалог уже закрыт'); return; }
-        chatSend.disabled = true;
-        chatInput.disabled = true;
-        chatInput.value = '';
+        if (text.length < 2) return;
+        if (isClosed) return;
+        chatSend.disabled = true; chatInput.disabled = true; chatInput.value = '';
         try {
             const res = await fetch('/api/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ sessionId, message: text })
             });
-            const result = await res.text();
-            if (result === 'ok') showChatError('✅ Отправлено!', 'success');
-            else if (result === 'closed') { showChatError('❌ Диалог закрыт'); isClosed = true; }
-            else if (result === 'cooldown') showChatError('⏳ Подождите 5 секунд');
-            else if (result === 'toolong') showChatError('Сообщение слишком длинное (макс. 500)');
-            else if (result === 'disabled') showChatError('❌ Обратная связь временно недоступна');
-            else showChatError('❌ Не удалось отправить');
+            await res.text();
             pollFeedback();
-        } catch (e) {
-            showChatError('❌ Нет соединения с сервером');
-        } finally {
-            if (!isClosed) {
-                chatSend.disabled = false;
-                chatInput.disabled = false;
-                chatInput.focus();
-            }
-        }
+        } catch (e) {} finally { if (!isClosed) { chatSend.disabled = false; chatInput.disabled = false; chatInput.focus(); } }
     }
-
-    function showChatError(text, type = 'error') {
-        const div = document.createElement('div');
-        div.className = 'chat-msg ' + (type === 'success' ? 'success' : 'error');
-        div.textContent = text;
-        chatMessages.appendChild(div);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        setTimeout(() => { if (div.parentNode) div.remove(); }, 4000);
-    }
-
     chatSend.onclick = sendChat;
     chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendChat(); });
-
-    // Опрос новых сообщений раз в 3 секунды, пока чат открыт
-    setInterval(() => {
-        if (chatModal.classList.contains('open')) pollFeedback();
-    }, 3000);
+    setInterval(() => { if (chatModal.classList.contains('open')) pollFeedback(); }, 3000);
 </script>
 </body>
 </html>
