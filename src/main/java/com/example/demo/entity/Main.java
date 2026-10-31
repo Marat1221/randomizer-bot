@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -64,24 +65,21 @@ public class Main {
             );
         }
 
+        @Autowired private FeedbackService feedbackService;
+        @Autowired private FeedbackBot feedbackBot;
+
         @GetMapping("/notify-visit")
         public String notifyVisit(HttpServletRequest request) {
-            TelegramClient client = getTelegramClient();
+            TelegramClient client = feedbackBot.getClient();
+            String chatId = feedbackBot.getAdminChatId();
             if (client == null || chatId == null || chatId.isBlank()) return "disabled";
-
             String ip = getClientIp(request);
-            String userAgent = request.getHeader("User-Agent");
-            String referer = request.getHeader("Referer");
-
-            StringBuilder text = new StringBuilder();
-            text.append("🚨 Новый заход на сайт!\n");
-            text.append("IP: ").append(ip).append("\n");
-            text.append("Браузер: ").append(userAgent != null ? userAgent : "—");
-            if (referer != null && !referer.isBlank()) text.append("\nОткуда: ").append(referer);
-
+            String ua = request.getHeader("User-Agent");
             try {
-                SendMessage message = SendMessage.builder().chatId(chatId).text(text.toString()).build();
-                client.execute(message);
+                client.execute(SendMessage.builder()
+                        .chatId(chatId)
+                        .text("🚨 Новый заход на сайт!\nIP: " + ip + "\nБраузер: " + ua)
+                        .build());
                 return "ok";
             } catch (Exception e) { e.printStackTrace(); return "error"; }
         }

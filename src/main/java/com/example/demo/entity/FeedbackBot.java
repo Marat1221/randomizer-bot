@@ -31,7 +31,6 @@ public class FeedbackBot implements SpringLongPollingBot {
     private final FeedbackService feedbackService;
     private TelegramClient client;
 
-    // chatId админа -> sessionId, для которого ждём ответ
     private final Map<String, String> awaitingReply = new ConcurrentHashMap<>();
 
     public FeedbackBot(FeedbackService feedbackService) {
@@ -43,6 +42,15 @@ public class FeedbackBot implements SpringLongPollingBot {
         if (botToken != null && !botToken.isBlank()) {
             client = new OkHttpTelegramClient(botToken);
         }
+    }
+
+    // Геттер, чтобы контроллер использовал ТОТ ЖЕ клиент
+    public TelegramClient getClient() {
+        return client;
+    }
+
+    public String getAdminChatId() {
+        return adminChatId;
     }
 
     @Override
@@ -90,7 +98,7 @@ public class FeedbackBot implements SpringLongPollingBot {
 
     private void handleAdminMessage(Update update) throws Exception {
         String chatId = update.getMessage().getChatId().toString();
-        if (!chatId.equals(adminChatId)) return; // только ты
+        if (!chatId.equals(adminChatId)) return;
 
         String text = update.getMessage().getText().trim();
         String sessionId = awaitingReply.get(chatId);
@@ -107,11 +115,9 @@ public class FeedbackBot implements SpringLongPollingBot {
         }
     }
 
-    // Вызывается из контроллера — отправляет сообщение админу с кнопками
     public boolean notifyAdmin(String sessionId, String ip, String message) {
         if (client == null || adminChatId == null || adminChatId.isBlank()) return false;
         try {
-            // ВАЖНО: используем InlineKeyboardRow вместо List<List<...>>
             InlineKeyboardRow row = new InlineKeyboardRow(
                     InlineKeyboardButton.builder()
                             .text("✏️ Ответить")
