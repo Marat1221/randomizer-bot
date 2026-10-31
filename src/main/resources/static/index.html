@@ -27,7 +27,7 @@
             50%      { background-position: 100% 50%; }
         }
 
-        /* ===== ФОН (орбы и звёзды) ===== */
+        /* ФОН */
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0; }
         .orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.5; will-change: transform; }
         .orb-1 { width: 350px; height: 350px; top: -10%; left: -10%; background: radial-gradient(circle, #00f2fe, transparent 70%); animation: float1 20s ease-in-out infinite; }
@@ -58,7 +58,7 @@
         }
         @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* ===== ШАПКА ===== */
+        /* ШАПКА */
         .topbar {
             position: relative; z-index: 10;
             display: flex; justify-content: space-between; align-items: center;
@@ -82,19 +82,16 @@
             border: 1px solid rgba(168, 216, 255, 0.2);
         }
 
-        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+        /* ОСНОВНОЙ КОНТЕНТ */
         main { position: relative; z-index: 10; padding: 50px 40px 80px; flex: 1; }
 
-        /* Hero */
         .hero { text-align: center; margin-bottom: 50px; }
         .hero h1 {
             font-size: 52px; font-weight: 200; letter-spacing: 6px;
             margin: 0 0 15px; text-transform: uppercase;
             text-shadow: 0 0 20px rgba(168, 216, 255, 0.8), 0 0 50px rgba(184, 59, 255, 0.4);
         }
-        .hero p {
-            color: #94a3b8; font-size: 16px; margin: 0 0 25px; letter-spacing: 1px;
-        }
+        .hero p { color: #94a3b8; font-size: 16px; margin: 0 0 25px; letter-spacing: 1px; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 8px 18px; border-radius: 30px;
@@ -108,7 +105,6 @@
         }
         @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } }
 
-        /* Ближайшее событие */
         .nearest {
             max-width: 800px; margin: 0 auto 60px;
             padding: 30px 40px; border-radius: 20px;
@@ -137,7 +133,6 @@
         }
         .nc-label { font-size: 10px; letter-spacing: 2px; color: #64748b; text-transform: uppercase; margin-top: 5px; }
 
-        /* Карточки */
         .hub-container { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-bottom: 70px; }
         .hub-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -167,7 +162,6 @@
         .card-birthday:hover { box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(255, 59, 92, 0.5); border-color: #ff3b5c; }
         .card-birthday .hub-icon { color: #ff3b5c; }
 
-        /* Статистика */
         .stats {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 20px; max-width: 800px; margin: 0 auto;
@@ -187,7 +181,6 @@
             color: #64748b; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* Футер */
         .footer {
             position: relative; z-index: 10;
             padding: 30px 40px;
@@ -197,10 +190,8 @@
             display: flex; justify-content: space-between; align-items: center;
             color: #64748b; font-size: 13px; flex-wrap: wrap; gap: 10px;
         }
-        .footer a { color: #a8d8ff; text-decoration: none; }
-        .footer a:hover { text-decoration: underline; }
 
-        /* ===== ЧАТ ===== */
+        /* ЧАТ */
         .chat-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 100;
             width: 60px; height: 60px; border-radius: 50%;
@@ -242,6 +233,7 @@
         .chat-msg { padding: 10px 14px; border-radius: 14px; max-width: 85%; font-size: 14px; line-height: 1.4; word-wrap: break-word; animation: msgIn 0.3s ease; }
         @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .chat-msg.mine { align-self: flex-end; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-bottom-right-radius: 4px; }
+        .chat-msg.admin { align-self: flex-start; background: linear-gradient(135deg, #10b981, #059669); color: white; border-bottom-left-radius: 4px; }
         .chat-msg.error { align-self: center; background: rgba(255, 59, 92, 0.2); color: #ff3b5c; font-size: 12px; border: 1px solid rgba(255, 59, 92, 0.3); }
         .chat-msg.success { align-self: center; background: rgba(59, 255, 125, 0.15); color: #3bff7d; font-size: 12px; border: 1px solid rgba(59, 255, 125, 0.3); }
         .chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid rgba(140, 190, 255, 0.2); }
@@ -251,7 +243,6 @@
         #chat-send:hover { transform: scale(1.05); }
         #chat-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* ===== АДАПТИВ ===== */
         @media (max-width: 768px) {
             .topbar { padding: 15px 20px; }
             .logo { font-size: 15px; }
@@ -281,7 +272,6 @@
 </head>
 <body>
 
-<!-- ФОН -->
 <div class="bg-layer">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -290,7 +280,6 @@
 </div>
 <div class="stars"></div>
 
-<!-- ШАПКА -->
 <header class="topbar">
     <div class="logo">
         <div class="logo-icon">⏱</div>
@@ -299,7 +288,6 @@
     <div class="live-clock" id="live-clock">--:--:--</div>
 </header>
 
-<!-- ОСНОВНОЙ КОНТЕНТ -->
 <main>
     <div class="hero">
         <h1>Выберите событие</h1>
@@ -310,7 +298,6 @@
         </div>
     </div>
 
-    <!-- Ближайшее событие -->
     <div class="nearest" id="nearest">
         <div class="nearest-label">🔥 Ближайшее событие</div>
         <div class="nearest-name" id="nearest-name">Загрузка...</div>
@@ -322,7 +309,6 @@
         </div>
     </div>
 
-    <!-- Карточки событий -->
     <div class="hub-container">
         <a href="/newyear.html" class="hub-card card-newyear">
             <div class="hub-icon">❄️</div>
@@ -338,33 +324,20 @@
         </a>
     </div>
 
-    <!-- Статистика -->
     <div class="stats">
-        <div class="stat">
-            <div class="stat-value">3</div>
-            <div class="stat-label">События</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value">24/7</div>
-            <div class="stat-label">Онлайн</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value">0₽</div>
-            <div class="stat-label">Бесплатно</div>
-        </div>
+        <div class="stat"><div class="stat-value">3</div><div class="stat-label">События</div></div>
+        <div class="stat"><div class="stat-value">24/7</div><div class="stat-label">Онлайн</div></div>
+        <div class="stat"><div class="stat-value">0₽</div><div class="stat-label">Бесплатно</div></div>
     </div>
 </main>
 
-<!-- ФУТЕР -->
 <footer class="footer">
     <div>© <span id="current-year">2026</span> Марат | Countdown Hub</div>
     <div>Сделано с ❤️ для праздников</div>
 </footer>
 
-<!-- Кнопка чата -->
 <button class="chat-btn" id="chat-btn">💬<div class="dot"></div></button>
 
-<!-- Модальное окно чата -->
 <div class="chat-modal" id="chat-modal">
     <div class="chat-header">
         <span>Обратная связь</span>
@@ -378,25 +351,26 @@
 </div>
 
 <script>
-    // ===== ЖИВЫЕ ЧАСЫ =====
-    // ===== ЖИВЫЕ ЧАСЫ (ИСПРАВЛЕНО) =====
+    // ===== ЧАСЫ (КРАСНОЯРСК) =====
     function updateClock() {
         const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        const ss = String(now.getSeconds()).padStart(2, '0');
-        document.getElementById('live-clock').textContent = `${hh}:${mm}:${ss}`;
+        const options = {
+            timeZone: 'Asia/Krasnoyarsk',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        };
+        document.getElementById('live-clock').textContent = now.toLocaleTimeString('ru-RU', options);
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    // ===== ГОД В ФУТЕРЕ =====
+    // ===== ГОД =====
     document.getElementById('current-year').textContent = new Date().getFullYear();
 
     // ===== БЛИЖАЙШЕЕ СОБЫТИЕ =====
     let nearestTarget = null;
-    let nearestName = '';
-
     async function loadNearestEvent() {
         let events = [];
         try {
@@ -404,21 +378,16 @@
             if (res.ok) events = await res.json();
             else throw new Error('API error');
         } catch (e) {
-            // Резервные данные, если бэкенд недоступен
             events = [
                 { id: 'newyear', name: 'Новый Год', date: '2027-01-01T00:00:00+03:00' },
                 { id: 'ramadan', name: 'Рамадан', date: '2027-02-08T00:00:00+03:00' },
                 { id: 'adina', name: 'День рождения Адины', date: '2027-08-30T00:00:00+03:00' }
             ];
         }
-
         const now = new Date();
-        let nearest = null;
-        let minDiff = Infinity;
-
+        let nearest = null, minDiff = Infinity;
         events.forEach(ev => {
             let date = new Date(ev.date);
-            // Если дата прошла — добавляем год
             while (date < now) date.setFullYear(date.getFullYear() + 1);
             const diff = date - now;
             if (diff < minDiff) {
@@ -426,31 +395,20 @@
                 nearest = { name: ev.name.replace('До ', ''), date };
             }
         });
-
         if (nearest) {
             nearestTarget = nearest.date;
-            nearestName = nearest.name;
-            document.getElementById('nearest-name').textContent = nearestName;
+            document.getElementById('nearest-name').textContent = nearest.name;
         }
     }
-
     function updateNearestCountdown() {
         if (!nearestTarget) return;
-        const now = new Date();
-        const diff = nearestTarget - now;
+        const diff = nearestTarget - new Date();
         if (diff <= 0) return;
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-
-        document.getElementById('nc-days').textContent = days;
-        document.getElementById('nc-hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('nc-minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('nc-seconds').textContent = String(seconds).padStart(2, '0');
+        document.getElementById('nc-days').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('nc-hours').textContent = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+        document.getElementById('nc-minutes').textContent = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+        document.getElementById('nc-seconds').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
     }
-
     loadNearestEvent().then(() => {
         updateNearestCountdown();
         setInterval(updateNearestCountdown, 1000);
@@ -462,7 +420,9 @@
         sessionId = 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 4);
         localStorage.setItem('feedback_session', sessionId);
     }
-    let chatHistory = JSON.parse(localStorage.getItem('feedback_history') || '[]');
+    let chatHistory = [];
+    let lastCount = -1;
+    let isClosed = false;
 
     const chatBtn = document.getElementById('chat-btn');
     const chatModal = document.getElementById('chat-modal');
@@ -483,13 +443,42 @@
             div.textContent = m.text;
             chatMessages.appendChild(div);
         });
+        if (isClosed) {
+            const c = document.createElement('div');
+            c.className = 'chat-msg error';
+            c.textContent = 'Диалог завершён. Спасибо за обращение!';
+            chatMessages.appendChild(c);
+        }
         chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function pollFeedback() {
+        try {
+            const res = await fetch('/api/feedback/' + sessionId);
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.messages && data.messages.length !== lastCount) {
+                chatHistory = data.messages.map(m => ({
+                    text: m.text,
+                    type: m.from === 'admin' ? 'admin' : 'mine',
+                    time: m.time
+                }));
+                isClosed = data.closed === true;
+                lastCount = data.messages.length;
+                renderChat();
+                if (isClosed) {
+                    chatInput.disabled = true;
+                    chatSend.disabled = true;
+                    chatInput.placeholder = 'Диалог закрыт';
+                }
+            }
+        } catch (e) {}
     }
 
     chatBtn.onclick = () => {
         chatModal.classList.add('open');
         chatDot.style.display = 'none';
-        renderChat();
+        pollFeedback();
         setTimeout(() => chatInput.focus(), 300);
     };
     chatClose.onclick = () => chatModal.classList.remove('open');
@@ -497,10 +486,9 @@
     async function sendChat() {
         const text = chatInput.value.trim();
         if (text.length < 2) { showChatError('Сообщение должно содержать минимум 2 символа'); return; }
-        chatSend.disabled = true; chatInput.disabled = true;
-        chatHistory.push({ text, type: 'mine', time: Date.now() });
-        localStorage.setItem('feedback_history', JSON.stringify(chatHistory));
-        renderChat();
+        if (isClosed) { showChatError('Диалог уже закрыт'); return; }
+        chatSend.disabled = true;
+        chatInput.disabled = true;
         chatInput.value = '';
         try {
             const res = await fetch('/api/feedback', {
@@ -510,14 +498,20 @@
             });
             const result = await res.text();
             if (result === 'ok') showChatError('✅ Отправлено!', 'success');
+            else if (result === 'closed') { showChatError('❌ Диалог закрыт'); isClosed = true; }
             else if (result === 'cooldown') showChatError('⏳ Подождите 5 секунд');
-            else if (result === 'toolong') showChatError('Сообщение слишком длинное (макс. 500 символов)');
+            else if (result === 'toolong') showChatError('Сообщение слишком длинное (макс. 500)');
             else if (result === 'disabled') showChatError('❌ Обратная связь временно недоступна');
-            else showChatError('❌ Не удалось отправить. Попробуйте позже.');
+            else showChatError('❌ Не удалось отправить');
+            pollFeedback();
         } catch (e) {
             showChatError('❌ Нет соединения с сервером');
         } finally {
-            chatSend.disabled = false; chatInput.disabled = false; chatInput.focus();
+            if (!isClosed) {
+                chatSend.disabled = false;
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
         }
     }
 
@@ -532,6 +526,11 @@
 
     chatSend.onclick = sendChat;
     chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendChat(); });
+
+    // Опрос новых сообщений раз в 3 секунды, пока чат открыт
+    setInterval(() => {
+        if (chatModal.classList.contains('open')) pollFeedback();
+    }, 3000);
 </script>
 </body>
 </html>
