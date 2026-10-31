@@ -1,27 +1,18 @@
 package com.example.demo.entity;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-@SpringBootApplication(exclude = {
-        org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
-})
+@SpringBootApplication
 @ComponentScan(basePackages = "com.example.demo")
 public class Main {
 
@@ -33,28 +24,12 @@ public class Main {
     @RequestMapping("/api")
     public static class CounterController {
 
-        @Value("${telegram.bot.token:}")
-        private String botToken;
+        @Autowired private FeedbackService feedbackService;
+        @Autowired private TelegramNotifier notifier;
 
-        @Value("${telegram.chat.id:}")
-        private String chatId;
-
-        private TelegramClient telegramClient;
-
-        // Кулдаун для обратной связи (IP -> время последнего сообщения)
-        private final Map<String, Long> feedbackCooldown = new ConcurrentHashMap<>();
-
-        private TelegramClient getTelegramClient() {
-            if (telegramClient == null && botToken != null && !botToken.isBlank()) {
-                telegramClient = new OkHttpTelegramClient(botToken);
-            }
-            return telegramClient;
-        }
-
+        // ===== ПУБЛИЧНЫЕ ЭНДПОИНТЫ =====
         @GetMapping("/value")
-        public long getServerTime() {
-            return System.currentTimeMillis();
-        }
+        public long getServerTime() { return System.currentTimeMillis(); }
 
         @GetMapping("/events")
         public List<EventDto> getEvents() {
@@ -65,62 +40,100 @@ public class Main {
             );
         }
 
-        @Autowired private FeedbackService feedbackService;
-        @Autowired private FeedbackBot feedbackBot;
-
         @GetMapping("/notify-visit")
         public String notifyVisit(HttpServletRequest request) {
-            TelegramClient client = feedbackBot.getClient();
-            String chatId = feedbackBot.getAdminChatId();
-            if (client == null || chatId == null || chatId.isBlank()) return "disabled";
             String ip = getClientIp(request);
             String ua = request.getHeader("User-Agent");
-            try {
-                client.execute(SendMessage.builder()
-                        .chatId(chatId)
-                        .text("🚨 Новый заход на сайт!\nIP: " + ip + "\nБраузер: " + ua)
-                        .build());
-                return "ok";
-            } catch (Exception e) { e.printStackTrace(); return "error"; }
+            notifier.sendNotification("🚨 Заход на сайт\nIP: " + ip + "\nБраузер: " + ua);
+            return "ok";
         }
 
-        // ===== НОВЫЙ ЭНДПОИНТ: ОБРАТНАЯ СВЯЗЬ =====
         @PostMapping("/feedback")
         public String feedback(@RequestBody Map<String, String> body, HttpServletRequest request) {
             String sessionId = body.get("sessionId");
             String message = body.get("message");
+            if (sessionId == null || message == null || message.trim().isEmpty()) return "invalid";
 
-            // Валидация
-            if (sessionId == null || sessionId.isBlank() || message == null || message.trim().isEmpty()) {
-                return "invalid";
-            }
-            if (message.length() > 500) {
-                return "toolong";
-            }
+            FeedbackService.Session s = feedbackService.getOrCreate(sessionId);
+            if (s.closed) return "closed";
 
-            // Защита от спама (5 сек между сообщениями с одного IP)
+            feedbackService.addUserMessage(sessionId, message);
             String ip = getClientIp(request);
-            Long last = feedbackCooldown.get(ip);
-            long now = System.currentTimeMillis();
-            if (last != null && now - last < 5000) {
-                return "cooldown";
+
+            // Отправляем уведомление в ТГ (без кнопок, просто текст)
+            notifier.sendNotification("💬 Новое сообщение!\nID: " + sessionId + "\nIP: " + ip + "\n\n" + message + "\n\n👉 Ответить: https://marat-marat112w.msk1.amvera.tech/admin.html");
+
+            return "ok";
+        }
+
+        @GetMapping("/feedback/{sessionId}")
+        public Map<String, Object> getFeedback(@PathVariable String sessionId) {
+            FeedbackService.Session s = feedbackService.get(sessionId);
+            if (s == null) return Map.of("messages", List.of(), "closed", false);
+            List<Map<String, Object>> msgs = new ArrayList<>();
+            for (FeedbackService.ChatMessage m : s.messages) {
+                msgs.add(Map.of("from", m.from, "text", m.text, "time", m.time));
             }
+            return Map.of("messages", msgs, "closed", s.closed);
+        }
 
-            TelegramClient client = getTelegramClient();
-            if (client == null || chatId == null || chatId.isBlank()) return "disabled";
-
-            try {
-                feedbackCooldown.put(ip, now);
-                String text = "💬 Обратная связь #" + sessionId + "\n" +
-                        "IP: " + ip + "\n\n" +
-                        message;
-                SendMessage sm = SendMessage.builder().chatId(chatId).text(text).build();
-                client.execute(sm);
+        // ===== АДМИН ПАНЕЛЬ =====
+        @PostMapping("/admin/login")
+        public String login(@RequestBody Map<String, String> body, HttpSession session) {
+            if ("admin123".equals(body.get("password"))) {
+                session.setAttribute("ADMIN", true);
+                session.setMaxInactiveInterval(30 * 24 * 60 * 60); // Не выкидывать 30 дней
                 return "ok";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "error";
             }
+            return "wrong";
+        }
+
+        @GetMapping("/admin/check")
+        public String checkAdmin(HttpSession session) {
+            return Boolean.TRUE.equals(session.getAttribute("ADMIN")) ? "ok" : "no";
+        }
+
+        @GetMapping("/admin/sessions")
+        public List<Map<String, Object>> getAllSessions(HttpSession session) {
+            if (!Boolean.TRUE.equals(session.getAttribute("ADMIN"))) return List.of();
+
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (Map.Entry<String, FeedbackService.Session> entry : feedbackService.getAllSessions().entrySet()) {
+                FeedbackService.Session s = entry.getValue();
+                List<Map<String, Object>> msgs = new ArrayList<>();
+                for (FeedbackService.ChatMessage m : s.messages) {
+                    msgs.add(Map.of("from", m.from, "text", m.text, "time", m.time));
+                }
+                result.add(Map.of(
+                        "sessionId", entry.getKey(),
+                        "closed", s.closed,
+                        "messages", msgs
+                ));
+            }
+            return result;
+        }
+
+        @PostMapping("/admin/reply")
+        public String reply(@RequestBody Map<String, String> body, HttpSession session) {
+            if (!Boolean.TRUE.equals(session.getAttribute("ADMIN"))) return "unauthorized";
+            String sessionId = body.get("sessionId");
+            String text = body.get("text");
+            if (sessionId != null && text != null) {
+                feedbackService.addAdminMessage(sessionId, text);
+                return "ok";
+            }
+            return "error";
+        }
+
+        @PostMapping("/admin/close")
+        public String closeChat(@RequestBody Map<String, String> body, HttpSession session) {
+            if (!Boolean.TRUE.equals(session.getAttribute("ADMIN"))) return "unauthorized";
+            String sessionId = body.get("sessionId");
+            if (sessionId != null) {
+                feedbackService.close(sessionId);
+                return "ok";
+            }
+            return "error";
         }
 
         private String getClientIp(HttpServletRequest request) {

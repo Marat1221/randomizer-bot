@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; height: 100vh; display: flex; font-family: 'Segoe UI', sans-serif; background: #0a1428; color: #fff; }
+        .login-screen { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; background: #0a1428; z-index: 100; }
+        .login-box { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .login-box input { padding: 12px; border-radius: 8px; border: 1px solid #444; background: #111; color: #fff; margin-bottom: 15px; width: 200px; text-align: center; font-size: 16px; }
+        .login-box button { padding: 12px 30px; border-radius: 8px; border: none; background: #3b82f6; color: #fff; font-weight: bold; cursor: pointer; width: 200px; }
+
+        .sidebar { width: 300px; border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar h2 { padding: 20px; margin: 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 18px; }
+        .chat-item { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; }
+        .chat-item:hover { background: rgba(255,255,255,0.05); }
+        .chat-item.active { background: rgba(59, 130, 246, 0.3); border-left: 3px solid #3b82f6; }
+        .chat-item .id { font-size: 12px; color: #a8d8ff; }
+        .chat-item .preview { font-size: 13px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 5px; }
+        .chat-item.closed { opacity: 0.5; }
+
+        .main-chat { flex: 1; display: flex; flex-direction: column; }
+        .chat-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-close { background: #ef4444; color: #fff; }
+        .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 12px; max-width: 70%; font-size: 14px; }
+        .msg.user { align-self: flex-start; background: #1e293b; }
+        .msg.admin { align-self: flex-end; background: #3b82f6; }
+        .input-area { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
+        .input-area input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #111; color: #fff; outline: none; }
+        .input-area button { padding: 12px 24px; background: #3b82f6; border: none; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .empty { margin: auto; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <h2>Вход в Админку</h2>
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="login()">Войти</button>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar" style="display:none">
+    <h2>Диалоги</h2>
+    <div id="chatList"></div>
+</div>
+
+<div class="main-chat" id="mainChat" style="display:none">
+    <div class="chat-header" id="chatHeader">
+        <span>Выберите диалог слева</span>
+    </div>
+    <div class="messages" id="messages">
+        <div class="empty">Нет выбранного диалога</div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="replyInput" placeholder="Написать ответ..." disabled>
+        <button id="replyBtn" disabled onclick="sendReply()">Отправить</button>
+    </div>
+</div>
+
+<script>
+    let currentSessionId = null;
+    let allSessions = [];
+
+    async function login() {
+        const pass = document.getElementById('password').value;
+        const res = await fetch('/api/admin/login', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({password: pass})
+        });
+        const result = await res.text();
+        if (result === 'ok') {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('sidebar').style.display = 'flex';
+            document.getElementById('mainChat').style.display = 'flex';
+            loadSessions();
+            setInterval(loadSessions, 3000);
+        } else {
+            alert('Неверный пароль!');
+        }
+    }
+
+    async function loadSessions() {
+        const res = await fetch('/api/admin/sessions');
+        allSessions = await res.json();
+
+        const list = document.getElementById('chatList');
+        list.innerHTML = '';
+
+        if (allSessions.length === 0) {
+            list.innerHTML = '<div style="padding:20px;color:#64748b;font-size:13px;">Пока нет сообщений</div>';
+            return;
+        }
+
+        allSessions.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'chat-item' + (s.sessionId === currentSessionId ? ' active' : '') + (s.closed ? ' closed' : '');
+            div.onclick = () => selectSession(s.sessionId);
+            const lastMsg = s.messages.length > 0 ? s.messages[s.messages.length-1].text : 'Нет сообщений';
+            div.innerHTML = `
+                    <div class="id">${s.sessionId} ${s.closed ? '🔒' : ''}</div>
+                    <div class="preview">${lastMsg}</div>
+                `;
+            list.appendChild(div);
+        });
+
+        if (currentSessionId) {
+            const current = allSessions.find(s => s.sessionId === currentSessionId);
+            if (current) renderMessages(current);
+        }
+    }
+
+    function selectSession(id) {
+        currentSessionId = id;
+        loadSessions();
+        const session = allSessions.find(s => s.sessionId === id);
+        if (session) {
+            renderMessages(session);
+            document.getElementById('replyInput').disabled = session.closed;
+            document.getElementById('replyBtn').disabled = session.closed;
+        }
+    }
+
+    function renderMessages(session) {
+        document.getElementById('chatHeader').innerHTML = `
+                <span>Диалог: ${session.sessionId}</span>
+                ${!session.closed ? `<button class="btn btn-close" onclick="closeChat()">Закрыть диалог</button>` : '<span style="color:#ef4444">Закрыт</span>'}
+            `;
+
+        const box = document.getElementById('messages');
+        box.innerHTML = '';
+        if (session.messages.length === 0) {
+            box.innerHTML = '<div class="empty">Сообщений нет</div>';
+        } else {
+            session.messages.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'msg ' + (m.from === 'admin' ? 'admin' : 'user');
+                div.textContent = m.text;
+                box.appendChild(div);
+            });
+        }
+        box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendReply() {
+        const text = document.getElementById('replyInput').value.trim();
+        if (!text || !currentSessionId) return;
+
+        document.getElementById('replyInput').value = '';
+        await fetch('/api/admin/reply', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({sessionId: currentSessionId, text: text})
+        });
+        loadSessions();
+    }
+
+    async function closeChat() {
+        if (!currentSessionId) return;
+        await fetch('/api/admin/close', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({sessionId: currentSessionId})
+        });
+        loadSessions();
+    }
+</script>
+</body>
+</html>
