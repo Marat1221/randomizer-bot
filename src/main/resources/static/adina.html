@@ -2,627 +2,485 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <meta name="theme-color" content="#0a1428">
-    <title>Админ-панель — Countdown Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Счетчик до дня  рождения Адины - сколько осталось дней</title>
+    <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/" />
+    <meta name="description" content="Красивый счётчик обратного отсчёта.">
+
     <style>
+        :root {
+            --digit-w: 75px; --digit-h: 110px; --digit-font: 85px;
+            --pad: 15px 30px; --gap: 45px;
+            --title-size: 38px; --title-spacing: 8px;
+            --label-size: 14px; --label-spacing: 4px;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body {
-            margin: 0; padding: 0;
-            height: 100dvh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: radial-gradient(circle at 50% 0%, #12203a 0%, #0a1428 60%);
-            color: #fff;
-            overflow: hidden;
-            overscroll-behavior: none;
-            -webkit-text-size-adjust: 100%;
-            touch-action: manipulation;
-        }
 
-        /* ========== Экран входа ========== */
-        .login-screen {
-            position: fixed; inset: 0;
-            display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle at 50% 0%, #12203a 0%, #0a1428 60%);
-            z-index: 1000;
-            padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
-        }
-        .login-box {
-            background: rgba(255,255,255,0.04);
-            padding: 36px 26px; border-radius: 24px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            width: 100%; max-width: 380px;
-            backdrop-filter: blur(10px);
-        }
-        .login-box h2 {
-            margin: 0 0 22px; font-size: 21px;
-            background: linear-gradient(135deg, #a8d8ff, #3b82f6);
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-        .login-box input {
-            padding: 14px; border-radius: 12px; border: 1px solid #334155;
-            background: rgba(15, 23, 42, 0.8); color: #fff;
-            margin-bottom: 14px; width: 100%;
-            text-align: center; font-size: 16px;
-            -webkit-appearance: none; transition: border-color 0.2s;
-        }
-        .login-box input:focus { outline: none; border-color: #3b82f6; }
-        .login-box button {
-            padding: 14px 30px; border-radius: 12px; border: none;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #fff; font-weight: bold; cursor: pointer;
-            width: 100%; font-size: 16px; min-height: 48px;
-            transition: transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 8px 20px rgba(59,130,246,0.3);
-        }
-        .login-box button:active { transform: scale(0.98); }
-
-        /* ========== Приложение ========== */
-        .app-container {
+        body {
+            margin: 0; height: 100vh;
             display: flex; flex-direction: column;
-            height: 100dvh; width: 100vw; position: relative;
+            justify-content: center; align-items: center;
+            background: radial-gradient(ellipse at center bottom, #0a1428 0%, #050b14 40%, #000205 100%);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden; position: relative;
+            transition: background 0.5s ease;
         }
 
-        /* ========== Верхняя панель ========== */
-        .top-panel {
-            display: flex; align-items: center;
-            padding: 10px 12px;
-            padding-top: calc(10px + env(safe-area-inset-top));
-            background: rgba(13, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            min-height: 60px;
-            flex-shrink: 0; gap: 10px;
+        /* Скан-линии (только для ПК и только для НГ) */
+        body::after {
+            content: " "; display: block; position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
+            z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
-        .menu-btn {
-            background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15));
-            border: 1px solid rgba(59,130,246,0.3);
-            color: #a8d8ff; font-size: 15px; font-weight: 600;
-            cursor: pointer; padding: 0 14px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            gap: 8px;
-            height: 42px; flex-shrink: 0;
-            transition: all 0.2s;
+        body:not(.theme-newyear)::after { display: none; }
+
+        /* --- БАННЕР СОГЛАСИЯ --- */
+        #privacy-banner {
+            position: fixed; bottom: -200px; left: 0; width: 100%;
+            background: rgba(5, 11, 20, 0.95); border-top: 1px solid rgba(140, 190, 255, 0.3);
+            z-index: 10000; padding: 20px; display: flex; justify-content: center; align-items: center; gap: 20px;
+            backdrop-filter: blur(10px); transition: bottom 0.5s ease; flex-wrap: wrap;
         }
-        .menu-btn:active { transform: scale(0.96); background: rgba(59,130,246,0.25); }
-        .menu-btn .icon { font-size: 18px; }
-        .menu-btn .text { display: inline; }
-        @media (max-width: 380px) {
-            .menu-btn .text { display: none; }
-            .menu-btn { padding: 0 12px; }
+        #privacy-banner.show { bottom: 0; }
+        #privacy-banner p { margin: 0; color: #a8d8ff; font-size: 13px; max-width: 600px; line-height: 1.4; }
+        #privacy-banner button {
+            background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; font-family: inherit; transition: background 0.2s;
         }
 
-        .chat-title {
-            font-weight: 600; font-size: 15px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            flex: 1; min-width: 0; color: #e2e8f0;
+        /* --- ЭКРАН ЗАГРУЗКИ --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #050b14; z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease;
         }
-        .top-actions { display: flex; align-items: center; flex-shrink: 0; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(140, 190, 255, 0.3); border-top-color: #a8d8ff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .preloader-text { color: #a8d8ff; font-size: 18px; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-        /* ========== Область чата ========== */
-        .main-chat {
-            flex: 1; display: flex; flex-direction: column;
-            background: transparent; min-width: 0; min-height: 0;
-        }
-
-        .messages {
-            flex: 1; overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            padding: 16px 14px;
-            display: flex; flex-direction: column; gap: 10px;
-            min-height: 0;
+        #ramadan-bg {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0b1a14 url('/ramadan.jpg') no-repeat center center; background-size: cover;
+            z-index: -1; opacity: 0; transition: opacity 0.5s ease;
         }
 
-        @keyframes msgIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .msg {
-            padding: 11px 15px; border-radius: 16px;
-            max-width: 85%; font-size: 15px; line-height: 1.45;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-            white-space: pre-wrap;
-            min-width: 0;
-            animation: msgIn 0.25s ease;
-        }
-        .msg.user {
-            align-self: flex-start;
-            background: linear-gradient(135deg, #1e293b, #1a2438);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-bottom-left-radius: 5px;
-        }
-        .msg.admin {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-bottom-right-radius: 5px;
-            box-shadow: 0 4px 14px rgba(59,130,246,0.28);
-        }
+        .ramadan-decor { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 70px; text-shadow: 0 0 30px #ffd700, 0 0 60px #ff9900; z-index: 1; opacity: 0; animation: floatMoon 4s infinite ease-in-out; }
+        .birthday-decor { display: none; position: absolute; top: 15%; width: 100%; text-align: center; font-size: 60px; z-index: 1; opacity: 0; animation: floatBday 3s infinite ease-in-out; filter: drop-shadow(0 0 20px #ff3b5c); }
+        @keyframes floatMoon { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -15px); } }
+        @keyframes floatBday { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } }
 
-        /* ========== Ввод ========== */
-        .input-area {
-            padding: 10px 12px;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
-            border-top: 1px solid rgba(255,255,255,0.07);
-            display: flex; gap: 8px; align-items: center;
-            background: rgba(13, 23, 42, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            flex-shrink: 0;
-        }
-        .input-area input {
-            flex: 1; padding: 12px 18px;
-            border-radius: 24px;
-            border: 1px solid #334155;
-            background: rgba(30, 41, 59, 0.7);
-            color: #fff; outline: none; font-size: 16px;
-            min-width: 0; font-family: inherit;
-            -webkit-appearance: none;
-            transition: border-color 0.2s, background 0.2s;
-        }
-        .input-area input:focus {
-            border-color: #3b82f6;
-            background: rgba(30, 41, 59, 0.95);
-        }
-        .input-area button {
-            width: 46px; height: 46px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: none; color: #fff;
-            border-radius: 50%; cursor: pointer;
-            font-size: 18px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 4px 14px rgba(59,130,246,0.35);
-            padding: 0;
-        }
-        .input-area button:active:not(:disabled) { transform: scale(0.92); }
-        .input-area button:disabled {
-            opacity: 0.35; cursor: not-allowed;
-            box-shadow: none;
-        }
+        body.theme-ramadan { background: #0b1a14; }
+        body.theme-ramadan #ramadan-bg { display: block; opacity: 1; }
+        body.theme-ramadan .ramadan-decor { display: block; opacity: 1; }
+        body.theme-ramadan .counter-container { background: linear-gradient(145deg, rgba(16, 64, 45, 0.9), rgba(8, 33, 22, 0.9)); border-color: #ffd700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2); }
+        body.theme-ramadan .digit { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5); }
+        body.theme-ramadan h1 { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+        body.theme-ramadan .time-label { color: #ffd700; }
 
-        .btn-close {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444; border: 1px solid rgba(239,68,68,0.5);
-            padding: 8px 14px; border-radius: 10px;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-            min-height: 36px; white-space: nowrap;
-            transition: all 0.2s;
-        }
-        .btn-close:active { background: #ef4444; color: #fff; transform: scale(0.96); }
-        .badge-closed {
-            color: #ef4444; font-weight: 600; font-size: 12px;
-            padding: 6px 10px; border: 1px solid rgba(239,68,68,0.5);
-            border-radius: 10px; background: rgba(239,68,68,0.1);
-        }
+        body.theme-birthday { background: radial-gradient(circle at center, #2a0845 0%, #000000 100%); }
+        body.theme-birthday .birthday-decor { display: block; opacity: 1; }
+        body.theme-birthday .counter-container { background: linear-gradient(145deg, rgba(74, 30, 42, 0.9), rgba(32, 10, 16, 0.9)); border-color: #ff3b5c; box-shadow: 0 0 25px rgba(255, 59, 92, 0.4), inset 0 0 20px rgba(255, 59, 92, 0.2); }
+        body.theme-birthday .digit { color: #ff3b5c; text-shadow: 0 0 10px rgba(255, 59, 92, 0.8), 0 0 20px rgba(255, 59, 92, 0.5); }
+        body.theme-birthday h1 { color: #ff3b5c; text-shadow: 0 0 15px rgba(255, 59, 92, 0.8); }
+        body.theme-birthday .time-label { color: #ff3b5c; }
 
-        .empty {
-            margin: auto; color: #64748b; text-align: center;
-            padding: 30px 20px; font-size: 14px; line-height: 1.6;
-        }
-        .empty .big-icon {
-            font-size: 52px; margin-bottom: 14px;
-            opacity: 0.5;
-        }
+        body:not(.theme-newyear) .garland, body:not(.theme-newyear) .icicles, body:not(.theme-newyear) .tree, body:not(.theme-newyear) .snowman, body:not(.theme-newyear) .gifts { display: none !important; }
 
-        /* ========== Сайдбар ========== */
-        .sidebar {
-            position: fixed; top: 0; left: -100%;
-            width: 100%;
-            max-width: 420px;
-            height: 100dvh;
-            background: linear-gradient(180deg, #0f1d35 0%, #0a1428 100%);
-            border-right: 1px solid rgba(255,255,255,0.08);
-            z-index: 100; transition: left 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-            display: flex; flex-direction: column;
-            box-shadow: 5px 0 40px rgba(0,0,0,0.5);
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .sidebar.open { left: 0; }
-        .sidebar-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0;
-        }
-        .sidebar-header h2 {
-            margin: 0; font-size: 18px; font-weight: 700;
-            background: linear-gradient(135deg, #a8d8ff, #3b82f6);
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .sidebar-header .count {
-            font-size: 12px; color: #64748b;
-            background: rgba(255,255,255,0.05);
-            padding: 3px 8px; border-radius: 10px;
-            margin-left: 8px;
-            -webkit-text-fill-color: #94a3b8;
-        }
-        .close-btn {
-            background: rgba(255,255,255,0.05); border: none;
-            color: #a8d8ff; font-size: 20px; cursor: pointer;
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 10px;
-            transition: background 0.2s;
-        }
-        .close-btn:active { background: rgba(255,255,255,0.15); }
+        #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #aurora-canvas { z-index: 1; opacity: 0.55; } #stars-canvas { z-index: 2; } #snow-canvas { z-index: 3; }
 
-        .chat-list {
-            flex: 1; overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
+        /* --- КНОПКА НАЗАД (ВМЕСТО МЕНЮ) --- */
+        .back-btn {
+            position: fixed; top: 20px; left: 20px; z-index: 1001;
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: 12px;
+            background: rgba(10, 20, 40, 0.8); border: 1px solid rgba(140, 190, 255, 0.5);
+            color: #a8d8ff; text-decoration: none; font-size: 15px; font-weight: 600;
+            box-shadow: 0 0 15px rgba(100, 180, 255, 0.3); backdrop-filter: blur(8px);
+            transition: all 0.3s;
         }
-        .chat-item {
-            padding: 14px 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            cursor: pointer; transition: background 0.15s;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .chat-item:active { background: rgba(255,255,255,0.06); }
-        .chat-item.active {
-            background: linear-gradient(90deg, rgba(59,130,246,0.2), transparent);
-            border-left: 3px solid #3b82f6;
-            padding-left: 15px;
-        }
-        .chat-item .avatar {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 18px;
-            flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(59,130,246,0.3);
-            color: #fff;
-        }
-        .chat-item.closed .avatar {
-            background: linear-gradient(135deg, #64748b, #475569);
-            box-shadow: none;
-        }
-        .chat-item .chat-info { flex: 1; min-width: 0; }
-        .chat-item .id {
-            font-size: 13px; color: #e2e8f0; font-weight: 600;
-            display: flex; align-items: center; gap: 6px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .chat-item .id .lock { font-size: 11px; opacity: 0.7; flex-shrink: 0; }
-        .chat-item .preview {
-            font-size: 13px; color: #94a3b8;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            margin-top: 3px;
-        }
-        .chat-item .badge-count {
-            font-size: 11px; font-weight: 700;
-            background: #3b82f6; color: #fff;
-            min-width: 20px; height: 20px; padding: 0 6px;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .chat-item.closed .badge-count {
-            background: #475569;
-        }
-        .chat-item.closed { opacity: 0.65; }
+        .back-btn:hover { background: rgba(30, 50, 90, 0.9); box-shadow: 0 0 25px rgba(100, 180, 255, 0.7); transform: translateX(-5px); }
 
-        /* Оверлей */
-        .overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.65);
-            z-index: 99; opacity: 0;
-            pointer-events: none; transition: opacity 0.3s;
-        }
-        .overlay.open { opacity: 1; pointer-events: auto; }
+        /* --- ЗИМНИЙ ДЕКОР --- */
+        .garland { position: absolute; top: 0; left: 0; right: 0; height: 60px; z-index: 15; pointer-events: none; overflow: hidden; }
+        .bulb { position: absolute; top: 14px; width: 14px; height: 18px; border-radius: 50% 50% 45% 45%; animation: bulbGlow 2s infinite alternate; }
+        .bulb:nth-child(1) { left: 3%; background: #ff3b5c; } .bulb:nth-child(2) { left: 10%; background: #ffd23f; } .bulb:nth-child(3) { left: 17%; background: #3bff7d; } .bulb:nth-child(4) { left: 24%; background: #3bbaff; } .bulb:nth-child(5) { left: 31%; background: #b83bff; } .bulb:nth-child(6) { left: 38%; background: #ff3b5c; } .bulb:nth-child(7) { left: 45%; background: #ffd23f; } .bulb:nth-child(8) { left: 52%; background: #3bff7d; } .bulb:nth-child(9) { left: 59%; background: #3bbaff; } .bulb:nth-child(10) { left: 66%; background: #b83bff; } .bulb:nth-child(11) { left: 73%; background: #ff3b5c; } .bulb:nth-child(12) { left: 80%; background: #ffd23f; } .bulb:nth-child(13) { left: 87%; background: #3bff7d; } .bulb:nth-child(14) { left: 94%; background: #3bbaff; }
+        @keyframes bulbGlow { 0% { box-shadow: 0 0 4px currentColor; filter: brightness(0.8); } 100% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; filter: brightness(1.4); } }
+        .icicles { position: absolute; top: 52px; left: 0; right: 0; height: 40px; z-index: 14; pointer-events: none; display: flex; justify-content: space-around; }
+        .icicle { width: 6px; height: 28px; background: linear-gradient(to bottom, rgba(180, 220, 255, 0.9), transparent); clip-path: polygon(0 0, 100% 0, 50% 100%); animation: icicleShine 3s infinite ease-in-out; }
+        @keyframes icicleShine { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .tree { position: absolute; bottom: 0; width: 140px; height: 220px; z-index: 6; transform-origin: bottom center; }
+        .tree.left { left: 10px; } .tree.right { right: 10px; transform: scaleX(-1); }
+        .tree-layer { position: absolute; left: 50%; transform: translateX(-50%); border-left: solid transparent; border-right: solid transparent; border-bottom: solid #0d4a2a; }
+        .tree-layer:nth-child(1) { bottom: 20px; border-left-width: 60px; border-right-width: 60px; border-bottom-width: 60px; border-bottom-color: #062f1a; } .tree-layer:nth-child(2) { bottom: 50px; border-left-width: 50px; border-right-width: 50px; border-bottom-width: 55px; border-bottom-color: #0a4025; } .tree-layer:nth-child(3) { bottom: 80px; border-left-width: 40px; border-right-width: 40px; border-bottom-width: 50px; border-bottom-color: #0d5a33; } .tree-layer:nth-child(4) { bottom: 110px; border-left-width: 30px; border-right-width: 30px; border-bottom-width: 45px; border-bottom-color: #127a44; } .tree-layer:nth-child(5) { bottom: 140px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 40px; border-bottom-color: #17a05a; }
+        .tree-star { position: absolute; bottom: 175px; left: 50%; transform: translateX(-50%); font-size: 22px; color: #ffd700; }
+        .snowman { position: absolute; bottom: 15px; left: 160px; width: 60px; height: 100px; z-index: 5; }
+        .snowman-ball { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, #d8e8ff 60%, #a8c4e0 100%); }
+        .snowman-ball.bottom { width: 60px; height: 60px; bottom: 0; } .snowman-ball.middle { width: 44px; height: 44px; bottom: 42px; } .snowman-ball.top { width: 32px; height: 32px; bottom: 80px; }
+        .snowman-eye { position: absolute; width: 4px; height: 4px; background: #1a1a2a; border-radius: 50%; bottom: 100px; } .snowman-eye.l { left: 26px; } .snowman-eye.r { right: 26px; }
+        .snowman-nose { position: absolute; width: 0; height: 0; border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-left: 8px solid #ff6600; bottom: 96px; left: 30px; }
+        .snowman-scarf { position: absolute; bottom: 72px; left: 50%; transform: translateX(-50%); width: 46px; height: 8px; background: linear-gradient(90deg, #ff3b5c, #b83bff); }
+        .gifts { position: absolute; bottom: 5px; right: 160px; width: 80px; height: 70px; z-index: 5; }
+        .gift { position: absolute; border-radius: 4px; }
+        .gift.g1 { width: 42px; height: 42px; bottom: 0; left: 0; background: #ff3b5c; } .gift.g2 { width: 34px; height: 34px; bottom: 0; left: 46px; background: #3bff7d; } .gift.g3 { width: 30px; height: 26px; bottom: 42px; left: 10px; background: #3bbaff; }
 
-        /* Тосты */
-        .toast {
-            position: fixed;
-            left: 50%; transform: translateX(-50%) translateY(-20px);
-            top: calc(20px + env(safe-area-inset-top));
-            background: #ef4444; color: #fff;
-            padding: 12px 22px; border-radius: 14px;
-            font-size: 14px; font-weight: 600;
-            opacity: 0; pointer-events: none;
-            transition: all 0.3s; z-index: 2000;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.5);
-            max-width: 90vw;
+        /* --- ЦЕНТРАЛЬНЫЙ БЛОК --- */
+        .main-content { display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 8; width: 100%; max-width: 1200px; margin-bottom: 6vh; }
+        h1 { color: #ffffff; margin-bottom: 40px; font-size: var(--title-size); font-weight: 300; letter-spacing: var(--title-spacing); text-transform: uppercase; text-align: center; transition: all 0.4s ease; }
+        .clock-wrapper { display: flex; gap: var(--gap); margin-bottom: 20px; justify-content: center; align-items: flex-start; transition: all 0.4s ease; }
+        .time-group { display: flex; flex-direction: column; align-items: center; }
+        .time-label { color: #a8d8ff; font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-spacing); margin-top: 14px; font-weight: 600; transition: color 0.4s; }
+        .counter-container { display: flex; padding: var(--pad); background: linear-gradient(145deg, #1e2a4a 0%, #0a1020 50%); border-radius: 14px; position: relative; border: 1px solid rgba(140, 190, 255, 0.35); transition: all 0.4s ease; }
+        .digit-box { position: relative; width: var(--digit-w); height: var(--digit-h); overflow: hidden; font-size: var(--digit-font); font-weight: 700; color: #cceeff; font-family: 'Courier New', monospace; z-index: 2; }
+        .digit-tape { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
+        .digit { width: var(--digit-w); height: var(--digit-h); display: flex; justify-content: center; align-items: center; transition: all 0.4s; }
+        .fade-out { opacity: 0; transform: scale(0.95); }
+
+        .top-controls { position: fixed; top: 20px; right: 20px; z-index: 50; display: flex; gap: 8px; background: rgba(10, 20, 40, 0.85); border-radius: 30px; padding: 6px 10px; border: 1px solid rgba(140, 190, 255, 0.3); backdrop-filter: blur(10px); }
+        .ctrl-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 20px; background: rgba(30, 50, 90, 0.6); border: 1px solid rgba(140, 190, 255, 0.4); color: #a8d8ff; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+        .ctrl-btn:hover { background: rgba(60, 100, 180, 0.8); }
+        .ctrl-btn:disabled { opacity: 0.6; cursor: wait; }
+
+        .seo-text { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #475569; font-size: 11px; line-height: 1.4; max-width: 700px; margin: 0 auto; opacity: 0.5; pointer-events: none; }
+
+        @media (max-width: 768px) {
+            :root { --digit-w: 22px; --digit-h: 38px; --digit-font: 28px; --pad: 4px 6px; --gap: 4px; --title-size: 14px; --title-spacing: 1px; --label-size: 9px; --label-spacing: 0px; }
+            .main-content { margin-bottom: 12vh; }
+            .tree { display: block !important; width: 60px; height: 100px; opacity: 0.35; z-index: 1; } .tree.left { left: 0px; } .tree.right { right: 0px; }
+            .tree-star { bottom: 82px; font-size: 12px; }
+            .snowman { display: block !important; transform: scale(0.45); left: 10px; bottom: 0px; opacity: 0.4; z-index: 1; transform-origin: bottom left; }
+            .gifts { display: block !important; transform: scale(0.5); right: 10px; bottom: 10px; opacity: 0.4; z-index: 1; transform-origin: bottom right; }
+            #ramadan-bg { background-position: 20% 80%; }
+            .clock-wrapper { flex-wrap: nowrap; row-gap: 0; width: 100%; max-width: 100vw; padding: 0 5px; gap: var(--gap); }
+            .clock-wrapper > .time-group:nth-child(1) { flex-basis: auto; margin-bottom: 0; }
+            .clock-wrapper > .time-group { flex: 0 1 auto; }
+            .time-label { margin-top: 6px; }
+            .top-controls { top: 15px; right: 10px; padding: 4px 8px; }
+            .ctrl-btn { padding: 6px 10px; } .ctrl-btn .text { display: none; } .ctrl-btn .icon { font-size: 18px; }
+            .back-btn { top: 15px; left: 10px; padding: 8px 12px; font-size: 13px; }
+            .seo-text { font-size: 9px; bottom: 5px; }
+            .ramadan-decor { font-size: 45px; top: 10%; } .birthday-decor { font-size: 45px; top: 10%; }
+            body::after { display: none; }
         }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
-<body>
+<body class="theme-newyear">
 
-<div class="toast" id="toast"></div>
+<!-- Баннер о согласии -->
+<div id="privacy-banner">
+    <p>Мы используем ваш IP-адрес и данные браузера исключительно для отправки анонимных уведомлений о посещении сайта. Продолжая пользоваться сайтом, вы соглашаетесь с обработкой этих данных.</p>
+    <button id="accept-privacy">Согласен</button>
+</div>
 
-<!-- Экран входа -->
-<div class="login-screen" id="loginScreen">
-    <div class="login-box">
-        <h2>Вход в Админку</h2>
-        <input type="password" id="password" placeholder="Пароль" autocomplete="current-password"
-               onkeypress="if(event.key==='Enter') login()">
-        <button onclick="login()">Войти</button>
+<!-- Экран загрузки -->
+<div id="preloader">
+    <div class="spinner"></div>
+    <div class="preloader-text">Загрузка...</div>
+</div>
+
+<div id="ramadan-bg"></div>
+<div class="ramadan-decor">🌙</div>
+<div class="birthday-decor">🎈 🎂 🎉</div>
+
+<!-- Кнопка Назад -->
+<a href="/birthdays.html" class="back-btn">← К списку ДР</a>
+
+<div class="top-controls">
+    <button class="ctrl-btn music-btn" id="music-btn" title="Музыка">
+        <span class="icon">🎵</span><span class="text">Музыка</span>
+    </button>
+</div>
+
+<canvas id="aurora-canvas"></canvas>
+<canvas id="stars-canvas"></canvas>
+<canvas id="snow-canvas"></canvas>
+<canvas id="particles-canvas"></canvas>
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="garland"><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div></div>
+<div class="icicles"><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div></div>
+<div class="tree left"><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-star">★</div></div>
+<div class="tree right"><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-star">★</div></div>
+<div class="snowman"><div class="snowman-ball bottom"></div><div class="snowman-ball middle"></div><div class="snowman-ball top"></div><div class="snowman-eye l"></div><div class="snowman-eye r"></div><div class="snowman-nose"></div><div class="snowman-scarf"></div></div>
+<div class="gifts"><div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div></div>
+
+<audio id="bg-music" loop preload="auto"></audio>
+
+<div class="main-content" id="main-content">
+    <h1 id="main-title">Загрузка...</h1>
+    <div class="clock-wrapper" id="main-clock">
+        <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div><div class="digit-box"><div class="digit-tape" id="d-tens"></div></div><div class="digit-box"><div class="digit-tape" id="d-ones"></div></div></div><div class="time-label">Дней</div></div>
+        <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="h-tens"></div></div><div class="digit-box"><div class="digit-tape" id="h-ones"></div></div></div><div class="time-label">Часов</div></div>
+        <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="m-tens"></div></div><div class="digit-box"><div class="digit-tape" id="m-ones"></div></div></div><div class="time-label">Минут</div></div>
+        <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="s-tens"></div></div><div class="digit-box"><div class="digit-tape" id="s-ones"></div></div></div><div class="time-label">Секунды</div></div>
     </div>
 </div>
 
-<!-- Оверлей -->
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-<!-- Основной интерфейс -->
-<div class="app-container" id="appContainer" style="display:none">
-
-    <div class="top-panel">
-        <button class="menu-btn" onclick="toggleSidebar()" aria-label="Список чатов">
-            <span class="icon">💬</span>
-            <span class="text">Чаты</span>
-        </button>
-        <div class="chat-title" id="chatTitle">Выберите диалог</div>
-        <div class="top-actions" id="chatActions"></div>
-    </div>
-
-    <div class="main-chat">
-        <div class="messages" id="messages">
-            <div class="empty">
-                <div class="big-icon">💬</div>
-                Нажмите на кнопку «Чаты» сверху,<br>чтобы выбрать диалог
-            </div>
-        </div>
-
-        <div class="input-area">
-            <input type="text" id="replyInput" placeholder="Написать ответ..."
-                   disabled enterkeyhint="send" autocomplete="off">
-            <button id="replyBtn" disabled onclick="sendReply()" aria-label="Отправить">➤</button>
-        </div>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>Диалоги <span class="count" id="chatCount">0</span></h2>
-            <button class="close-btn" onclick="toggleSidebar()" aria-label="Закрыть">✕</button>
-        </div>
-        <div class="chat-list" id="chatList">
-            <div style="padding:20px;color:#64748b;text-align:center;">Загрузка...</div>
-        </div>
-    </div>
+<div class="seo-text">
+    Счётчики событий. Узнайте, сколько дней осталось до Нового Года, Рамадана и дней рождения. Онлайн-таймер с красивым дизайном и музыкой.
 </div>
 
 <script>
-    let currentSessionId = null;
-    let allSessions = [];
-    let pollTimer = null;
+    // ===== ОПРЕДЕЛЕНИЕ СТРАНИЦЫ (SEO) =====
+    const path = window.location.pathname;
+    let startId = 'newyear';
 
-    // ===== Тост вместо alert =====
-    let toastTimer;
-    function toast(msg, color = '#ef4444') {
-        const el = document.getElementById('toast');
-        el.textContent = msg;
-        el.style.background = color;
-        el.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+    if (path.includes('ramadan')) startId = 'ramadan';
+    else if (path.includes('adina')) startId = 'adina';
+
+    // Меняем title и description динамически в зависимости от страницы
+    if (startId === 'ramadan') {
+        document.title = "Счётчик до Рамадана — сколько дней осталось";
+        document.querySelector('meta[name="description"]').content = "Узнайте, сколько дней осталось до Рамадана. Красивый счётчик с обратным отсчётом онлайн.";
+    } else if (startId === 'adina') {
+        document.title = "Счётчик до дня рождения — сколько дней осталось";
+        document.querySelector('meta[name="description"]').content = "Узнайте, сколько дней осталось до дня рождения. Красивый счётчик с обратным отсчётом онлайн.";
     }
 
-    // ===== Фикс клавиатуры (iOS) =====
-    function setupViewportHeight() {
-        const appEl = document.getElementById('appContainer');
-        if (!window.visualViewport) return;
-        const apply = () => {
-            if (window.visualViewport.height < window.innerHeight - 100) {
-                appEl.style.height = window.visualViewport.height + 'px';
-            } else {
-                appEl.style.height = '100dvh';
-            }
-        };
-        window.visualViewport.addEventListener('resize', apply);
-        window.visualViewport.addEventListener('scroll', apply);
+    const musicMap = { 'newyear': '/music.mp3', 'ramadan': '/ramadan.mp3', 'adina': '/birthday.mp3' };
+
+    let digitHeight = 110;
+    let timeOffset = 0;
+    const isMobile = window.innerWidth < 640;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+    let allEvents = [];
+    let currentEvent = null;
+    let targetDate = null;
+    let isSnowEnabled = true;
+
+    // ===== ПРОВЕРКА СОГЛАСИЯ =====
+    if (!localStorage.getItem('privacy_accepted')) {
+        setTimeout(() => document.getElementById('privacy-banner').classList.add('show'), 1500);
     }
 
-    // ===== Скролл вниз =====
-    function scrollToBottom(force = false) {
-        const box = document.getElementById('messages');
-        if (!box) return;
-        const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
-        if (force || nearBottom) {
-            requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
-        }
-    }
-
-    // ===== Авторизация =====
-    async function login() {
-        const pass = document.getElementById('password').value;
-        if (!pass) return toast('Введите пароль', '#f59e0b');
-        try {
-            const res = await fetch('/api/admin/login', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({password: pass})
-            });
-            const result = await res.text();
-            if (result === 'ok') startApp();
-            else toast('Неверный пароль!');
-        } catch(e) { toast('Ошибка соединения'); }
-    }
-
-    function startApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appContainer').style.display = 'flex';
-        setupViewportHeight();
-        loadSessions();
-        if (pollTimer) clearInterval(pollTimer);
-        pollTimer = setInterval(loadSessions, 3000);
-    }
-
-    // ===== Сайдбар =====
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('overlay').classList.toggle('open');
-    }
-
-    // ===== Загрузка сессий =====
-    async function loadSessions() {
-        try {
-            const res = await fetch('/api/admin/sessions');
-            allSessions = await res.json();
-
-            const list = document.getElementById('chatList');
-            const countEl = document.getElementById('chatCount');
-            list.innerHTML = '';
-
-            if (!allSessions || allSessions.length === 0) {
-                countEl.textContent = '0';
-                list.innerHTML = '<div style="padding:20px;color:#64748b;text-align:center;">Пока нет сообщений</div>';
-                return;
-            }
-
-            countEl.textContent = allSessions.length;
-
-            allSessions.forEach(s => {
-                const msgs = s.messages || [];
-                const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1].text : 'Нет сообщений';
-                const firstLetter = (s.sessionId || '?').trim().charAt(0).toUpperCase();
-
-                const div = document.createElement('div');
-                div.className = 'chat-item'
-                    + (s.sessionId === currentSessionId ? ' active' : '')
-                    + (s.closed ? ' closed' : '');
-                div.onclick = () => selectSession(s.sessionId);
-
-                // Аватарка
-                const av = document.createElement('div');
-                av.className = 'avatar';
-                av.textContent = firstLetter;
-
-                // Инфо
-                const info = document.createElement('div');
-                info.className = 'chat-info';
-
-                const idDiv = document.createElement('div');
-                idDiv.className = 'id';
-                idDiv.textContent = s.sessionId;
-                if (s.closed) {
-                    const lock = document.createElement('span');
-                    lock.className = 'lock';
-                    lock.textContent = '🔒';
-                    idDiv.appendChild(lock);
-                }
-
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'preview';
-                previewDiv.textContent = lastMsg;
-
-                info.appendChild(idDiv);
-                info.appendChild(previewDiv);
-
-                // Бейдж с количеством
-                const badge = document.createElement('div');
-                badge.className = 'badge-count';
-                badge.textContent = msgs.length;
-
-                div.appendChild(av);
-                div.appendChild(info);
-                div.appendChild(badge);
-                list.appendChild(div);
-            });
-
-            if (currentSessionId) {
-                const current = allSessions.find(s => s.sessionId === currentSessionId);
-                if (current) renderMessages(current);
-            }
-        } catch(e) { console.error("Ошибка загрузки сессий", e); }
-    }
-
-    function selectSession(id) {
-        currentSessionId = id;
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('overlay').classList.remove('open');
-
-        loadSessions();
-        const session = allSessions.find(s => s.sessionId === id);
-        if (session) {
-            renderMessages(session, true);
-            const input = document.getElementById('replyInput');
-            const btn = document.getElementById('replyBtn');
-            input.disabled = session.closed;
-            btn.disabled = session.closed;
-        }
-    }
-
-    function renderMessages(session, forceScroll = false) {
-        document.getElementById('chatTitle').textContent = `Диалог: ${session.sessionId}`;
-
-        const actions = document.getElementById('chatActions');
-        if (!session.closed) {
-            actions.innerHTML = `<button class="btn-close" onclick="closeChat()">Закрыть</button>`;
-        } else {
-            actions.innerHTML = `<span class="badge-closed">Закрыт</span>`;
-        }
-
-        const box = document.getElementById('messages');
-        box.innerHTML = '';
-
-        if (!session.messages || session.messages.length === 0) {
-            box.innerHTML = `<div class="empty">
-                <div class="big-icon">📭</div>
-                Сообщений нет
-            </div>`;
-        } else {
-            session.messages.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'msg ' + (m.from === 'admin' ? 'admin' : 'user');
-                div.textContent = m.text;
-                box.appendChild(div);
-            });
-        }
-        scrollToBottom(forceScroll);
-    }
-
-    async function sendReply() {
-        const input = document.getElementById('replyInput');
-        const text = input.value.trim();
-        if (!text || !currentSessionId) return;
-
-        input.value = '';
-        input.focus();
-        try {
-            await fetch('/api/admin/reply', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({sessionId: currentSessionId, text})
-            });
-            loadSessions();
-        } catch(e) { toast('Не удалось отправить'); }
-    }
-
-    async function closeChat() {
-        if (!currentSessionId) return;
-        if (!confirm('Закрыть диалог?')) return;
-        try {
-            await fetch('/api/admin/close', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({sessionId: currentSessionId})
-            });
-            loadSessions();
-        } catch(e) { toast('Ошибка'); }
-    }
-
-    document.getElementById('replyInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); sendReply(); }
+    document.getElementById('accept-privacy').addEventListener('click', () => {
+        localStorage.setItem('privacy_accepted', 'true');
+        document.getElementById('privacy-banner').classList.remove('show');
+        notifyVisit();
     });
 
-    window.onload = async () => {
+    window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        preloader.style.opacity = '0';
+        setTimeout(() => { preloader.style.display = 'none'; }, 600);
+    });
+
+    function setupCanvas(canvas) {
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr); return ctx;
+    }
+
+    const bgMusic = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    const iconSpan = musicBtn.querySelector('.icon');
+
+    async function loadEvents() {
         try {
-            const res = await fetch('/api/admin/check');
-            const status = await res.text();
-            if (status === 'ok') startApp();
-        } catch(e) {}
-    };
+            const response = await fetch('/api/events');
+            if (response.ok) {
+                allEvents = await response.json();
+                selectEvent(startId);
+            } else {
+                throw new Error("API error");
+            }
+        } catch (e) {
+            console.warn("Бэкенд не ответил, используем резервные данные", e);
+            allEvents = [
+                { id: 'newyear', name: 'До Нового Года', date: '2027-01-01T00:00:00+03:00' },
+                { id: 'ramadan', name: 'До Рамадана', date: '2027-02-08T00:00:00+03:00' },
+                { id: 'adina', name: 'До дня рождения Адины', date: '2027-08-30T00:00:00+03:00' }
+            ];
+            selectEvent(startId);
+        }
+    }
+
+    function selectEvent(id) {
+        currentEvent = allEvents.find(e => e.id === id);
+        if (!currentEvent) return;
+
+        document.body.className = '';
+        if (id === 'newyear') {
+            document.body.classList.add('theme-newyear'); isSnowEnabled = true;
+        } else if (id === 'ramadan') {
+            document.body.classList.add('theme-ramadan'); isSnowEnabled = false;
+            snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        } else {
+            document.body.classList.add('theme-birthday'); isSnowEnabled = false;
+            snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+
+        const wasPlaying = !bgMusic.paused;
+        const newTrack = musicMap[id] || '/music.mp3';
+
+        if (bgMusic.src.indexOf(newTrack) === -1) {
+            iconSpan.textContent = '⏳';
+            musicBtn.disabled = true;
+            bgMusic.src = newTrack;
+            bgMusic.load();
+
+            bgMusic.addEventListener('canplay', function onCanPlay() {
+                musicBtn.disabled = false;
+                iconSpan.textContent = wasPlaying ? '🎶' : '🎵';
+                if (wasPlaying) bgMusic.play().catch(e => console.log("Autoplay blocked"));
+                bgMusic.removeEventListener('canplay', onCanPlay);
+            });
+        }
+
+        const mainTitle = document.getElementById('main-title');
+        const clockWrapper = document.getElementById('main-clock');
+        mainTitle.classList.add('fade-out');
+        clockWrapper.classList.add('fade-out');
+
+        setTimeout(() => {
+            mainTitle.innerText = currentEvent.name;
+            let parsedDate = new Date(currentEvent.date);
+            let now = new Date(Date.now() + timeOffset);
+            while (parsedDate < now) { parsedDate.setFullYear(parsedDate.getFullYear() + 1); }
+            targetDate = parsedDate;
+            calculateCountdown();
+            mainTitle.classList.remove('fade-out');
+            clockWrapper.classList.remove('fade-out');
+        }, 400);
+    }
+
+    bgMusic.volume = 0.15;
+    musicBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (musicBtn.disabled) return;
+        if (bgMusic.paused) {
+            bgMusic.play().then(() => { iconSpan.textContent = '🎶'; musicBtn.classList.add('playing'); }).catch(() => {});
+        } else {
+            bgMusic.pause(); iconSpan.textContent = '🎵'; musicBtn.classList.remove('playing');
+        }
+    });
+
+    const tapes = ['d-hundreds', 'd-tens', 'd-ones', 'h-tens', 'h-ones', 'm-tens', 'm-ones', 's-tens', 's-ones'];
+    tapes.forEach(id => {
+        const el = document.getElementById(id);
+        for (let i = 0; i <= 9; i++) {
+            const div = document.createElement('div'); div.className = 'digit'; div.innerText = i; el.appendChild(div);
+        }
+    });
+
+    function recalcDigitHeight() { const sample = document.querySelector('.digit-box'); if (sample) digitHeight = sample.offsetHeight; }
+    recalcDigitHeight();
+
+    function moveTape(tapeId, value) {
+        const tape = document.getElementById(tapeId);
+        if (tape && tape.dataset.currentValue !== String(value)) {
+            tape.dataset.currentValue = value;
+            tape.style.transform = `translate3d(0, -${value * digitHeight}px, 0)`;
+        }
+    }
+
+    function updateDisplay(days, hours, minutes, seconds) {
+        moveTape('d-hundreds', Math.floor(days / 100)); moveTape('d-tens', Math.floor((days % 100) / 10)); moveTape('d-ones', days % 10);
+        moveTape('h-tens', Math.floor(hours / 10)); moveTape('h-ones', hours % 10);
+        moveTape('m-tens', Math.floor(minutes / 10)); moveTape('m-ones', minutes % 10);
+        moveTape('s-tens', Math.floor(seconds / 10)); moveTape('s-ones', seconds % 10);
+    }
+
+    function calculateCountdown() {
+        if (!targetDate) return;
+        const now = new Date(Date.now() + timeOffset);
+        const diff = targetDate - now;
+        if (diff <= 0) { updateDisplay(0, 0, 0, 0); return; }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        updateDisplay(days, hours, minutes, seconds);
+    }
+
+    const starsCtx = setupCanvas(document.getElementById('stars-canvas'));
+    const stars = [];
+    for (let i = 0; i < (isMobile ? 40 : 180); i++) {
+        stars.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight * 0.7, r: Math.random() * 1.4 + 0.3, phase: Math.random() * Math.PI * 2, speed: Math.random() * 0.02 + 0.01, baseAlpha: Math.random() * 0.5 + 0.4 });
+    }
+    let lastStarTime = 0;
+    function drawStars(timestamp) {
+        if (timestamp - lastStarTime < 16) { requestAnimationFrame(drawStars); return; }
+        lastStarTime = timestamp;
+        const w = window.innerWidth, h = window.innerHeight;
+        starsCtx.clearRect(0, 0, w, h);
+        for (const s of stars) {
+            s.phase += s.speed; const twinkle = Math.sin(s.phase) * 0.5 + 0.5;
+            starsCtx.fillStyle = `rgba(200, 230, 255, ${s.baseAlpha * (0.4 + twinkle * 0.6)})`;
+            starsCtx.beginPath(); starsCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); starsCtx.fill();
+        }
+        requestAnimationFrame(drawStars);
+    }
+    requestAnimationFrame(drawStars);
+
+    const snowCtx = setupCanvas(document.getElementById('snow-canvas'));
+    let flakes = []; let wind = 0;
+    function createFlakes() {
+        flakes = [];
+        const count = isMobile ? 25 : 80;
+        for (let i = 0; i < count; i++) {
+            const size = Math.random() * 2 + 0.8;
+            flakes.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, r: size, speed: Math.random() * 0.8 + 0.3 + size / 4, sway: Math.random() * 0.015, swayPhase: Math.random() * Math.PI * 2, alpha: Math.random() * 0.4 + 0.3 });
+        }
+    }
+    createFlakes();
+    let lastSnowTime = 0;
+    function drawSnow(timestamp) {
+        if (timestamp - lastSnowTime < 16) { requestAnimationFrame(drawSnow); return; }
+        lastSnowTime = timestamp;
+        if (!isSnowEnabled) { requestAnimationFrame(drawSnow); return; }
+
+        const w = window.innerWidth, h = window.innerHeight;
+        snowCtx.clearRect(0, 0, w, h); wind = Math.sin(Date.now() / 4000) * 0.4;
+        snowCtx.fillStyle = 'rgba(220, 240, 255, 0.8)';
+        for (const f of flakes) {
+            snowCtx.beginPath(); snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2); snowCtx.fill();
+            f.y += f.speed; f.swayPhase += f.sway; f.x += Math.sin(f.swayPhase) * 0.6 + wind;
+            if (f.y > h + 10) { f.y = -10; f.x = Math.random() * w; }
+        }
+        requestAnimationFrame(drawSnow);
+    }
+    requestAnimationFrame(drawSnow);
+
+    async function syncTime() {
+        try {
+            const startTime = Date.now();
+            const response = await fetch('/api/value');
+            if (response.ok) { const serverTime = await response.json(); timeOffset = (serverTime + (Date.now() - startTime) / 2) - Date.now(); }
+        } catch (e) {}
+    }
+
+    function notifyVisit() {
+        if (sessionStorage.getItem('visit_notified')) return;
+        sessionStorage.setItem('visit_notified', '1');
+        fetch('/api/notify-visit').catch(() => {});
+    }
+
+    window.addEventListener('resize', () => {
+        setupCanvas(document.getElementById('stars-canvas'));
+        setupCanvas(document.getElementById('snow-canvas'));
+        recalcDigitHeight(); createFlakes(); calculateCountdown();
+    });
+
+    async function init() {
+        await syncTime();
+        await loadEvents();
+        setInterval(calculateCountdown, 1000);
+
+        if (localStorage.getItem('privacy_accepted')) {
+            notifyVisit();
+        }
+    }
+    init();
 </script>
+<script async data-cfasync="false" src="https://bauval.org/14/01ddf1175c63ab0e55ed6b28be4fe201"></script>
 </body>
 </html>
