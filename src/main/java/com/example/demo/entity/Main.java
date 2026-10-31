@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -13,6 +15,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication(exclude = {
         org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
@@ -36,6 +40,9 @@ public class Main {
 
         private TelegramClient telegramClient;
 
+        // Кулдаун для обратной связи (IP -> время последнего сообщения)
+        private final Map<String, Long> feedbackCooldown = new ConcurrentHashMap<>();
+
         private TelegramClient getTelegramClient() {
             if (telegramClient == null && botToken != null && !botToken.isBlank()) {
                 telegramClient = new OkHttpTelegramClient(botToken);
@@ -43,13 +50,11 @@ public class Main {
             return telegramClient;
         }
 
-        // 1. Отдаем время сервера
         @GetMapping("/value")
         public long getServerTime() {
             return System.currentTimeMillis();
         }
 
-        // 2. Отдаем список событий для меню
         @GetMapping("/events")
         public List<EventDto> getEvents() {
             return List.of(
@@ -59,13 +64,10 @@ public class Main {
             );
         }
 
-        // 3. Отправляем уведомление в Telegram
         @GetMapping("/notify-visit")
         public String notifyVisit(HttpServletRequest request) {
             TelegramClient client = getTelegramClient();
-            if (client == null || chatId == null || chatId.isBlank()) {
-                return "disabled";
-            }
+            if (client == null || chatId == null || chatId.isBlank()) return "disabled";
 
             String ip = getClientIp(request);
             String userAgent = request.getHeader("User-Agent");
@@ -75,17 +77,47 @@ public class Main {
             text.append("🚨 Новый заход на сайт!\n");
             text.append("IP: ").append(ip).append("\n");
             text.append("Браузер: ").append(userAgent != null ? userAgent : "—");
-            if (referer != null && !referer.isBlank()) {
-                text.append("\nОткуда: ").append(referer);
-            }
-            text.append("\n Хозяин как вы? \n если устали вспомните о об о мне :)");
+            if (referer != null && !referer.isBlank()) text.append("\nОткуда: ").append(referer);
 
             try {
-                SendMessage message = SendMessage.builder()
-                        .chatId(chatId)
-                        .text(text.toString())
-                        .build();
+                SendMessage message = SendMessage.builder().chatId(chatId).text(text.toString()).build();
                 client.execute(message);
+                return "ok";
+            } catch (Exception e) { e.printStackTrace(); return "error"; }
+        }
+
+        // ===== НОВЫЙ ЭНДПОИНТ: ОБРАТНАЯ СВЯЗЬ =====
+        @PostMapping("/feedback")
+        public String feedback(@RequestBody Map<String, String> body, HttpServletRequest request) {
+            String sessionId = body.get("sessionId");
+            String message = body.get("message");
+
+            // Валидация
+            if (sessionId == null || sessionId.isBlank() || message == null || message.trim().isEmpty()) {
+                return "invalid";
+            }
+            if (message.length() > 500) {
+                return "toolong";
+            }
+
+            // Защита от спама (5 сек между сообщениями с одного IP)
+            String ip = getClientIp(request);
+            Long last = feedbackCooldown.get(ip);
+            long now = System.currentTimeMillis();
+            if (last != null && now - last < 5000) {
+                return "cooldown";
+            }
+
+            TelegramClient client = getTelegramClient();
+            if (client == null || chatId == null || chatId.isBlank()) return "disabled";
+
+            try {
+                feedbackCooldown.put(ip, now);
+                String text = "💬 Обратная связь #" + sessionId + "\n" +
+                        "IP: " + ip + "\n\n" +
+                        message;
+                SendMessage sm = SendMessage.builder().chatId(chatId).text(text).build();
+                client.execute(sm);
                 return "ok";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -95,9 +127,7 @@ public class Main {
 
         private String getClientIp(HttpServletRequest request) {
             String xff = request.getHeader("X-Forwarded-For");
-            if (xff != null && !xff.isBlank()) {
-                return xff.split(",")[0].trim();
-            }
+            if (xff != null && !xff.isBlank()) return xff.split(",")[0].trim();
             return request.getRemoteAddr();
         }
     }
