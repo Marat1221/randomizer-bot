@@ -41,7 +41,8 @@ public class Main {
             return List.of(
                     new EventDto("newyear", "До Нового Года", "2027-01-01T00:00:00+03:00"),
                     new EventDto("ramadan", "До Рамадана", "2027-02-08T00:00:00+03:00"),
-                    new EventDto("adina", "До дня рождения Адины", "2027-08-30T00:00:00+03:00")
+                    new EventDto("adina", "До дня рождения Адины", "2027-08-30T00:00:00+03:00"),
+                    new EventDto("myrzaiym", "До дня рождения Мырзайыма", "2027-01-21T00:00:00+03:00")
             );
         }
 

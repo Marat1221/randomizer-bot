@@ -6,11 +6,81 @@
 
   <title>Дни рождения — сколько дней осталось</title>
   <meta name="description" content="Счётчики обратного отсчёта до дней рождения. Выберите человека и узнайте, сколько дней осталось.">
-
-  <!-- ВОТ ЭТА СТРОЧКА ОБЯЗАТЕЛЬНА! Она говорит Яndex, что это самостоятельная страница -->
   <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/birthdays.html" />
 
   <style>
+    /* Стили для кнопки добавления */
+    .add-birthday-wrap {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 20px;
+    }
+    .add-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(34, 158, 217, 0.4); /* Синий цвет ТГ */
+      border-radius: 30px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .add-btn:hover {
+      background: rgba(34, 158, 217, 0.15);
+      border-color: #229ED9;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(34, 158, 217, 0.4);
+    }
+    .tg-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+    .add-btn:hover .tg-icon {
+      transform: scale(1.1) rotate(-10deg); /* Легкая анимация при наведении */
+    }
+    /* Стили для кнопки добавления */
+    .add-birthday-wrap {
+      text-align: center;
+      margin-top: 50px;
+      margin-bottom: 20px;
+    }
+    .add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 59, 92, 0.4);
+      border-radius: 30px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .add-btn:hover {
+      background: rgba(255, 59, 92, 0.15);
+      border-color: #ff3b5c;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 59, 92, 0.3);
+    }
+    .tg-icon {
+      font-size: 20px;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+    }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; min-height: 100%; font-family: 'Segoe UI', Roboto, sans-serif; }
     body {
@@ -59,27 +129,44 @@
     .hero p { color: #94a3b8; font-size: 16px; margin: 0; letter-spacing: 1px; }
 
     .hub-container { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; }
+
+    /* ОБНОВЛЕННЫЙ ДИЗАЙН КАРТОЧЕК */
     .hub-card {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      width: 240px; height: 280px; border-radius: 24px;
+      width: 220px; height: 260px; border-radius: 24px;
       text-decoration: none; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       position: relative; overflow: hidden;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 59, 92, 0.3);
+      border: 1px solid rgba(255, 59, 92, 0.2);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
     .hub-card::before {
       content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-      transform: skewX(-20deg); transition: 0.7s;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: skewX(-20deg); transition: 0.7s; pointer-events: none;
     }
     .hub-card:hover::before { left: 150%; }
-    .hub-card:hover { transform: translateY(-12px) scale(1.04); box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(255, 59, 92, 0.6); border-color: #ff3b5c; }
-    .hub-icon { font-size: 76px; margin-bottom: 20px; filter: drop-shadow(0 0 20px #ff3b5c); transition: transform 0.4s; }
-    .hub-card:hover .hub-icon { transform: scale(1.15) rotate(-5deg); }
-    .hub-title { color: #fff; font-size: 20px; font-weight: 600; letter-spacing: 1.5px; }
-    .hub-date { color: #64748b; font-size: 13px; margin-top: 8px; letter-spacing: 1px; }
+    .hub-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255, 59, 92, 0.4);
+      border-color: rgba(255, 59, 92, 0.6);
+    }
+
+    /* Красивая аватарка с иконкой внутри */
+    .avatar-circle {
+      width: 90px; height: 90px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(255,59,92,0.2), rgba(184,59,255,0.2));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.2);
+      transition: transform 0.4s;
+    }
+    .hub-card:hover .avatar-circle { transform: scale(1.1) rotate(5deg); }
+
+    .hub-title { color: #fff; font-size: 22px; font-weight: 600; letter-spacing: 1px; }
+    .hub-date { color: #94a3b8; font-size: 14px; margin-top: 6px; letter-spacing: 0.5px; }
 
     .empty-state {
       text-align: center; color: #64748b; padding: 60px 20px;
@@ -106,10 +193,16 @@
       .hero h1 { font-size: 28px; letter-spacing: 4px; }
       .hero p { font-size: 13px; }
       .hub-container { flex-direction: column; gap: 15px; align-items: center; }
-      .hub-card { width: 100%; max-width: 320px; height: 95px; flex-direction: row; justify-content: flex-start; padding-left: 25px; border-radius: 16px; }
-      .hub-icon { font-size: 42px; margin-bottom: 0; margin-right: 20px; }
-      .hub-title { font-size: 17px; }
-      .hub-date { position: absolute; bottom: 15px; right: 20px; margin: 0; font-size: 11px; }
+
+      /* Мобильный вид карточки (горизонтальный) */
+      .hub-card {
+        width: 100%; max-width: 340px; height: 90px;
+        flex-direction: row; justify-content: flex-start;
+        padding-left: 20px; border-radius: 20px;
+      }
+      .avatar-circle { width: 56px; height: 56px; font-size: 24px; margin-bottom: 0; margin-right: 18px; }
+      .hub-title { font-size: 18px; text-align: left; }
+      .hub-date { position: absolute; bottom: 18px; right: 20px; margin: 0; font-size: 12px; }
     }
   </style>
 </head>
@@ -133,6 +226,24 @@
   </div>
 
   <div class="hub-container" id="birthdays-list"></div>
+  <!-- Кнопка добавления ДР -->
+  <!-- Кнопка добавления ДР -->
+  <div class="add-birthday-wrap">
+    <a href="https://t.me/maratSQL?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D1%8C,%20%D0%BF%D0%BE%D0%B6%D0%B0%D0%BB%D1%83%D0%B9%D1%81%D1%82%D0%B0,%20%D0%BC%D0%BE%D0%B9%20%D0%94%D0%A0%20%D0%B2%20%D1%81%D0%BF%D0%B8%D1%81%D0%BE%D0%BA.%20%D0%9C%D0%BE%D1%8F%20%D0%B4%D0%B0%D1%82%D0%B0:%20" target="_blank" class="add-btn">
+
+      <!-- Значок Телеграм (SVG) -->
+      <span class="tg-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Круг -->
+          <circle cx="12" cy="12" r="12" fill="#229ED9"/>
+          <!-- Самолетик -->
+          <path d="M5.5 12L19 5L16 19L11.5 14.5L8.5 16.5L8.5 12.5L16.5 7.5L6.5 12.5L5.5 12Z" fill="#FFFFFF"/>
+        </svg>
+      </span>
+
+      Добавить свой ДР
+    </a>
+  </div>
 </main>
 
 <footer class="footer">© <span id="current-year">2026</span> Марат | Countdown Hub</footer>
@@ -140,9 +251,10 @@
 <script>
   document.getElementById('current-year').textContent = new Date().getFullYear();
 
-  // ⚠️ ЗДЕСЬ СПИСОК ЛЮДЕЙ. Чтобы добавить нового — просто добавь строку и создай файл имя.html
+  // ТУТ ДОБАВИЛИ МЫРЗАЙЫМ
   const birthdays = [
-    { id: 'adina', name: 'Адина', icon: '🎂', date: '30 августа' }
+    { id: 'adina', name: 'Адина', icon: '🎂', date: '30 августа' },
+    { id: 'myrzaiym', name: 'Мырзайым', icon: '🎀', date: '21 января' }
   ];
 
   const container = document.getElementById('birthdays-list');
@@ -152,13 +264,14 @@
   } else {
     birthdays.forEach(person => {
       const card = document.createElement('a');
+      // Ссылка ведет на страницу, например /myrzaiym.html
       card.href = '/' + person.id + '.html';
       card.className = 'hub-card';
       card.innerHTML = `
-                    <div class="hub-icon">${person.icon}</div>
-                    <div class="hub-title">${person.name}</div>
-                    <div class="hub-date">${person.date}</div>
-                `;
+        <div class="avatar-circle">${person.icon}</div>
+        <div class="hub-title">${person.name}</div>
+        <div class="hub-date">${person.date}</div>
+      `;
       container.appendChild(card);
     });
   }
