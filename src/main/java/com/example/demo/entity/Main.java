@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value; // <-- ДОБАВИЛИ ИМПОРТ
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,6 +27,10 @@ public class Main {
 
         @Autowired private FeedbackService feedbackService;
         @Autowired private TelegramNotifier notifier;
+
+        // ВОТ ТУТ ПОДТЯГИВАЕТСЯ ПАРОЛЬ ИЗ application.properties
+        @Value("${admin.code}")
+        private String adminCode;
 
         // ===== ПУБЛИЧНЫЕ ЭНДПОИНТЫ =====
         @GetMapping("/value")
@@ -80,7 +85,9 @@ public class Main {
         // ===== АДМИН ПАНЕЛЬ =====
         @PostMapping("/admin/login")
         public String login(@RequestBody Map<String, String> body, HttpSession session) {
-            if ("admin123".equals(body.get("password"))) {
+            // СВЕРЯЕМ С ПЕРЕМЕННОЙ ИЗ НАСТРОЕК
+            String incomingPass = body.get("password");
+            if (incomingPass != null && incomingPass.equals(adminCode)) {
                 session.setAttribute("ADMIN", true);
                 session.setMaxInactiveInterval(30 * 24 * 60 * 60); // Не выкидывать 30 дней
                 return "ok";
