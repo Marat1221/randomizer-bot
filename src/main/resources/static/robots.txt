@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /admin.html
+Sitemap: https://marat-marat112w.msk1.amvera.tech/sitemap.xml
