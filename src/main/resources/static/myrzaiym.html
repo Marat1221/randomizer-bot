@@ -138,6 +138,39 @@
             .seo-text { font-size: 9px; bottom: 5px; }
             .myrzaiym-decor { font-size: 45px; top: 10%; }
         }
+        /* ===== РЕЖИМ ДЛЯ СТРИМА (OBS) ===== */
+        body.stream-mode {
+            background: transparent !important; /* Убираем фон (для OBS) */
+        }
+        body.stream-mode::before {
+            display: none !important; /* Убираем затемнения и картинки фона */
+        }
+        /* Скрываем абсолютно все лишние элементы */
+        body.stream-mode .back-btn,
+        body.stream-mode .top-controls,
+        body.stream-mode .seo-text,
+        body.stream-mode #privacy-banner,
+        body.stream-mode .chat-btn,
+        body.stream-mode .birthday-decor,
+        body.stream-mode .ramadan-decor,
+        body.stream-mode .leto-decor,
+        body.stream-mode #preloader {
+            display: none !important;
+        }
+        /* Делаем коробочки под цифры более прозрачными для стрима */
+        body.stream-mode .counter-container {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            box-shadow: none !important;
+            backdrop-filter: blur(4px) !important;
+        }
+        /* Добавляем тень цифрам, чтобы они читались на любом фоне игры */
+        body.stream-mode .digit-box {
+            text-shadow: 0 4px 15px rgba(0,0,0,0.9) !important;
+        }
+        body.stream-mode h1 {
+            text-shadow: 0 4px 15px rgba(0,0,0,0.9) !important;
+        }
     </style>
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">

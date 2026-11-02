@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 
-    <!-- Очищенные SEO-теги -->
     <title>Счетчик событий — TimePulse | Онлайн таймеры</title>
-    <meta name="description" content="Красивые онлайн-таймеры и счетчики обратного отсчета до Нового Года, Рамадана и Дней рождения. Узнайте, сколько дней осталось до важного события.">
+    <meta name="description" content="Красивые онлайн-таймеры и счетчики обратного отсчета до Нового Года, Рамадана, Лета и Дней рождения. Узнайте, сколько дней осталось до важного события.">
     <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/" />
     <meta name="theme-color" content="#0a1428">
 
@@ -20,31 +19,29 @@
         }
         body {
             display: flex; flex-direction: column;
-            background: #0a1428;
+            /* Оптимизированный статичный фон (убран тяжелый animation) */
+            background: radial-gradient(circle at top right, #1a1a3e, #0a1428 60%);
             color: #fff; overflow-x: hidden;
             position: relative;
         }
 
-        /* ===== ФОН (GPU-оптимизированный) ===== */
-        body::before {
-            content: '';
-            position: fixed; inset: -20%;
-            background: linear-gradient(-45deg, #0a1428, #1a1a3e, #2a1a4a, #0a1428);
-            z-index: -3; pointer-events: none;
+        /* ===== ФОН (БЕЗ БЛЮРА И ТОРМОЗОВ) ===== */
+        .bg-layer {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden; pointer-events: none; z-index: -2;
+        }
+        .orb {
+            position: absolute; border-radius: 50%;
+            opacity: 0.4;
             will-change: transform;
-            animation: shiftBG 25s ease-in-out infinite;
+            /* Заменили filter: blur() на радиальный градиент - это работает в 10 раз быстрее */
         }
-        @keyframes shiftBG {
-            0%, 100% { transform: translate3d(-3%, 0, 0) scale(1.15); }
-            50% { transform: translate3d(3%, 0, 0) scale(1.3); }
-        }
+        .orb-1 { width: 400px; height: 400px; top: -10%; left: -10%; background: radial-gradient(circle, #00f2fe 0%, transparent 70%); animation: float1 25s ease-in-out infinite; }
+        .orb-2 { width: 500px; height: 500px; bottom: -15%; right: -10%; background: radial-gradient(circle, #b83bff 0%, transparent 70%); animation: float2 30s ease-in-out infinite; }
+        .orb-3 { width: 350px; height: 350px; top: 40%; right: 30%; background: radial-gradient(circle, #3bff7d 0%, transparent 70%); animation: float3 28s ease-in-out infinite; opacity: 0.2; }
+        .orb-4 { width: 300px; height: 300px; bottom: 20%; left: 20%; background: radial-gradient(circle, #ff3b5c 0%, transparent 70%); animation: float1 35s ease-in-out infinite reverse; opacity: 0.15; }
 
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: -2; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; will-change: transform; transform: translate3d(0,0,0); }
-        .orb-1 { width: 350px; height: 350px; top: -10%; left: -10%; background: radial-gradient(circle, #00f2fe, transparent 70%); animation: float1 20s ease-in-out infinite; }
-        .orb-2 { width: 400px; height: 400px; bottom: -15%; right: -10%; background: radial-gradient(circle, #b83bff, transparent 70%); animation: float2 25s ease-in-out infinite; }
-        .orb-3 { width: 300px; height: 300px; top: 40%; right: 30%; background: radial-gradient(circle, #3bff7d, transparent 70%); animation: float3 22s ease-in-out infinite; opacity: 0.3; }
-        .orb-4 { width: 250px; height: 250px; bottom: 20%; left: 20%; background: radial-gradient(circle, #ff3b5c, transparent 70%); animation: float1 28s ease-in-out infinite reverse; opacity: 0.25; }
         @keyframes float1 { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(80px,60px,0) scale(1.2); } }
         @keyframes float2 { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-100px,-80px,0) scale(1.15); } }
         @keyframes float3 { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-60px,100px,0) scale(1.1); } }
@@ -118,36 +115,34 @@
         .nc-label { font-size: 10px; letter-spacing: 2px; color: #64748b; text-transform: uppercase; margin-top: 5px; }
 
         /* ===== КАРТОЧКИ ===== */
-        .hub-container { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; margin-bottom: 70px; }
+        .hub-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 70px; }
         .hub-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 240px; height: 280px; border-radius: 24px;
+            width: 200px; height: 240px; border-radius: 24px;
             text-decoration: none;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s, border-color 0.4s;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s, border-color 0.3s;
             position: relative; overflow: hidden;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            contain: layout style;
         }
-        .hub-card::before {
-            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transform: skewX(-20deg); transition: left 0.7s;
-            pointer-events: none;
-        }
-        .hub-card:hover::before { left: 150%; }
-        .hub-card:hover { transform: translateY(-12px) scale(1.04); }
-        .hub-icon { font-size: 76px; margin-bottom: 20px; filter: drop-shadow(0 0 20px currentColor); transition: transform 0.4s; }
+        .hub-card:hover { transform: translateY(-10px) scale(1.03); }
+        .hub-icon { font-size: 64px; margin-bottom: 15px; filter: drop-shadow(0 0 20px currentColor); transition: transform 0.4s; }
         .hub-card:hover .hub-icon { transform: scale(1.15) rotate(-5deg); }
-        .hub-title { color: #fff; font-size: 20px; font-weight: 600; letter-spacing: 1.5px; }
+        .hub-title { color: #fff; font-size: 18px; font-weight: 600; letter-spacing: 1px; text-align: center; padding: 0 10px; }
 
-        .card-newyear:hover { box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(100, 180, 255, 0.6); border-color: #a8d8ff; }
+        /* Стили для каждой карточки */
+        .card-newyear:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(100, 180, 255, 0.6); border-color: #a8d8ff; }
         .card-newyear .hub-icon { color: #a8d8ff; }
-        .card-ramadan:hover { box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(255, 215, 0, 0.5); border-color: #ffd700; }
+
+        .card-ramadan:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255, 215, 0, 0.5); border-color: #ffd700; }
         .card-ramadan .hub-icon { color: #ffd700; }
-        .card-birthday:hover { box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(255, 59, 92, 0.5); border-color: #ff3b5c; }
+
+        .card-birthday:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255, 59, 92, 0.5); border-color: #ff3b5c; }
         .card-birthday .hub-icon { color: #ff3b5c; }
+
+        .card-leto:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255, 165, 0, 0.5); border-color: #ffa500; }
+        .card-leto .hub-icon { color: #ffa500; }
 
         /* ===== СТАТИСТИКА ===== */
         .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto; }
@@ -182,7 +177,6 @@
             box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
             transition: transform 0.25s, box-shadow 0.25s;
             color: white;
-            -webkit-tap-highlight-color: transparent;
         }
         .chat-btn:hover { transform: scale(1.08); box-shadow: 0 10px 35px rgba(59, 130, 246, 0.8); }
         .chat-btn:active { transform: scale(0.94); }
@@ -218,23 +212,14 @@
         }
         #chat-close { background: none; border: none; color: #a8d8ff; font-size: 20px; cursor: pointer; padding: 0; width: 32px; height: 32px; }
         .chat-body {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            contain: content;
-            padding: 16px;
-            display: flex; flex-direction: column; gap: 10px;
-            min-height: 0;
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain; contain: content;
+            padding: 16px; display: flex; flex-direction: column; gap: 10px; min-height: 0;
         }
         .chat-empty { color: #64748b; font-size: 13px; text-align: center; margin-top: 40px; line-height: 1.6; }
         .chat-msg {
-            padding: 10px 14px;
-            border-radius: 14px;
-            max-width: 85%;
-            font-size: 14px; line-height: 1.4;
-            overflow-wrap: break-word;
-            word-break: break-word;
+            padding: 10px 14px; border-radius: 14px; max-width: 85%;
+            font-size: 14px; line-height: 1.4; overflow-wrap: break-word; word-break: break-word;
             animation: msgIn 0.25s ease;
         }
         @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -242,71 +227,35 @@
         .chat-msg.admin { align-self: flex-start; background: linear-gradient(135deg, #10b981, #059669); color: white; border-bottom-left-radius: 4px; }
         .chat-msg.error { align-self: center; background: rgba(255, 59, 92, 0.2); color: #ff6b8a; font-size: 12px; border: 1px solid rgba(255, 59, 92, 0.3); text-align: center; }
         .chat-msg.closed {
-            align-self: center;
-            background: rgba(255,255,255,0.06);
-            color: #94a3b8;
-            font-size: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 8px 14px;
-            border-radius: 12px;
-            margin: 8px 0;
-            text-align: center;
-            animation: msgIn 0.25s ease;
+            align-self: center; background: rgba(255,255,255,0.06); color: #94a3b8; font-size: 12px;
+            border: 1px solid rgba(255,255,255,0.1); padding: 8px 14px; border-radius: 12px; margin: 8px 0;
+            text-align: center; animation: msgIn 0.25s ease;
         }
         .chat-msg.pending { opacity: 0.6; }
-        .chat-input-row {
-            display: flex; gap: 8px; padding: 12px;
-            border-top: 1px solid rgba(140, 190, 255, 0.2);
-            flex-shrink: 0;
-        }
+        .chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid rgba(140, 190, 255, 0.2); flex-shrink: 0; }
         #chat-input {
-            flex: 1;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(140, 190, 255, 0.3);
-            border-radius: 12px;
-            padding: 10px 14px;
-            color: #fff;
-            font-size: 16px;
-            font-family: inherit;
-            outline: none;
-            min-width: 0;
-            -webkit-appearance: none;
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(140, 190, 255, 0.3);
+            border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 16px;
+            font-family: inherit; outline: none; min-width: 0; -webkit-appearance: none;
         }
         #chat-input:focus { border-color: #a8d8ff; box-shadow: 0 0 10px rgba(168, 216, 255, 0.3); }
         #chat-input:disabled { opacity: 0.5; font-style: italic; }
         #chat-send {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: none; color: white; font-size: 18px; cursor: pointer;
-            transition: transform 0.15s, opacity 0.2s;
-            flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none; color: white; font-size: 18px; cursor: pointer; transition: transform 0.15s, opacity 0.2s; flex-shrink: 0;
         }
         #chat-send:active:not(:disabled) { transform: scale(0.92); }
         #chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* ===== ТОСТ ===== */
         .toast {
-            position: fixed;
-            top: calc(20px + env(safe-area-inset-top));
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: #ef4444;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s, transform 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-width: 90vw;
+            position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%;
+            transform: translateX(-50%) translateY(-20px); background: #ef4444; color: #fff;
+            padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
+            z-index: 2000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 90vw;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast.info { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
         .toast.success { background: #10b981; }
 
@@ -324,14 +273,14 @@
             .nc-value { font-size: 24px; }
             .nc-unit { min-width: 45px; }
             .nc-label { font-size: 9px; letter-spacing: 1px; }
-            .hub-container { flex-direction: column; gap: 15px; align-items: center; margin-bottom: 40px; }
+            .hub-container { flex-direction: column; gap: 12px; align-items: center; margin-bottom: 40px; }
             .hub-card {
-                width: 100%; max-width: 320px; height: 95px;
+                width: 100%; max-width: 320px; height: 85px;
                 flex-direction: row; justify-content: flex-start;
-                padding-left: 25px; border-radius: 16px;
+                padding-left: 20px; border-radius: 16px;
             }
-            .hub-icon { font-size: 42px; margin-bottom: 0; margin-right: 20px; }
-            .hub-title { font-size: 17px; }
+            .hub-icon { font-size: 36px; margin-bottom: 0; margin-right: 15px; }
+            .hub-title { font-size: 16px; text-align: left; }
             .stats { grid-template-columns: 1fr; gap: 12px; }
             .stat { padding: 18px 15px; }
             .stat-value { font-size: 24px; }
@@ -346,16 +295,12 @@
                 bottom: calc(80px + env(safe-area-inset-bottom));
                 right: calc(12px + env(safe-area-inset-right));
                 left: calc(12px + env(safe-area-inset-left));
-                width: auto;
-                height: 60dvh;
-                max-height: calc(100dvh - 100px);
+                width: auto; height: 60dvh; max-height: calc(100dvh - 100px);
             }
         }
 
-        /* Отключаем hover-эффекты на тач-устройствах */
         @media (hover: none) {
             .hub-card:hover { transform: none; }
-            .hub-card:hover::before { left: -100%; }
             .hub-card:hover .hub-icon { transform: none; }
             .chat-btn:hover { transform: none; }
         }
@@ -363,16 +308,13 @@
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
-        (function(m,e,t,r,i,k,a){
-            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113976175', 'ym');
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113976175', 'ym');
         ym(113976175, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/113976175" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
 
@@ -399,7 +341,7 @@
         <p>Красивые онлайн-таймеры обратного отсчёта</p>
         <div class="hero-badge">
             <div class="pulse-dot"></div>
-            <span>3 события онлайн</span>
+            <span>5 событий онлайн</span> <!-- Обновили на 5 -->
         </div>
     </div>
 
@@ -427,10 +369,15 @@
             <div class="hub-icon">🎂</div>
             <div class="hub-title">Дни рождения</div>
         </a>
+        <!-- НОВАЯ КАРТОЧКА ЛЕТО -->
+        <a href="/leto.html" class="hub-card card-leto">
+            <div class="hub-icon">☀️</div>
+            <div class="hub-title">Лето</div>
+        </a>
     </div>
 
     <div class="stats">
-        <div class="stat"><div class="stat-value">3</div><div class="stat-label">События</div></div>
+        <div class="stat"><div class="stat-value">4</div><div class="stat-label">События</div></div> <!-- Стало 4 карточки -->
         <div class="stat"><div class="stat-value">24/7</div><div class="stat-label">Онлайн</div></div>
         <div class="stat"><div class="stat-value">0₽</div><div class="stat-label">Бесплатно</div></div>
     </div>
@@ -441,8 +388,8 @@
     <div>Сделано с ❤️ для праздников</div>
 </footer>
 
+<!-- Чат -->
 <button class="chat-btn" id="chat-btn">💬<div class="dot"></div></button>
-
 <div class="chat-modal" id="chat-modal">
     <div class="chat-header">
         <span>Обратная связь</span>
@@ -456,17 +403,29 @@
 </div>
 
 <script>
-    // ===== ЧАСЫ =====
-    function updateClock() {
+    // ===== ЧАСЫ И ТАЙМЕР (Объединил в один интервал для оптимизации) =====
+    let nearestTarget = null;
+    let isFirstLoad = true;
+
+    function updateTimeAndCountdown() {
+        // Часы
         const options = { timeZone: 'Asia/Krasnoyarsk', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         document.getElementById('live-clock').textContent = new Date().toLocaleTimeString('ru-RU', options);
+
+        // Обратный отсчет ближайшего
+        if (!nearestTarget) return;
+        const diff = nearestTarget - new Date();
+        if (diff <= 0) return;
+
+        document.getElementById('nc-days').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('nc-hours').textContent = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+        document.getElementById('nc-minutes').textContent = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+        document.getElementById('nc-seconds').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
     }
-    updateClock();
-    setInterval(updateClock, 1000);
+
     document.getElementById('current-year').textContent = new Date().getFullYear();
 
-    // ===== БЛИЖАЙШЕЕ СОБЫТИЕ =====
-    let nearestTarget = null;
+    // ===== ЗАГРУЗКА СОБЫТИЙ ИЗ БЭКЕНДА =====
     async function loadNearestEvent() {
         let events = [];
         try {
@@ -474,16 +433,22 @@
             if (res.ok) events = await res.json();
             else throw new Error('API error');
         } catch (e) {
+            // Резервные данные (включая Лето)
             events = [
-                { id: 'newyear', name: 'Новый Год', date: '2027-01-01T00:00:00+03:00' },
-                { id: 'ramadan', name: 'Рамадан', date: '2027-02-08T00:00:00+03:00' },
-                { id: 'adina', name: 'День рождения Адины', date: '2027-08-30T00:00:00+03:00' }
+                { id: 'newyear', name: 'Новый Год', date: '2027-01-01T00:00:00' },
+                { id: 'ramadan', name: 'Рамадан', date: '2027-02-08T00:00:00' },
+                { id: 'adina', name: 'День рождения Адины', date: '2027-08-30T00:00:00' },
+                { id: 'myrzaiym', name: 'День рождения Мырзайыма', date: '2027-01-21T00:00:00' },
+                { id: 'leto', name: 'Лето', date: '2027-06-01T00:00:00' }
             ];
         }
+
         const now = new Date();
         let nearest = null, minDiff = Infinity;
+
         events.forEach(ev => {
             let date = new Date(ev.date);
+            // Если дата в этом году прошла, ставим на следующий год
             while (date < now) date.setFullYear(date.getFullYear() + 1);
             const diff = date - now;
             if (diff < minDiff) {
@@ -491,23 +456,17 @@
                 nearest = { name: ev.name.replace('До ', ''), date };
             }
         });
+
         if (nearest) {
             nearestTarget = nearest.date;
             document.getElementById('nearest-name').textContent = nearest.name;
         }
     }
-    function updateNearestCountdown() {
-        if (!nearestTarget) return;
-        const diff = nearestTarget - new Date();
-        if (diff <= 0) return;
-        document.getElementById('nc-days').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
-        document.getElementById('nc-hours').textContent = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-        document.getElementById('nc-minutes').textContent = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
-        document.getElementById('nc-seconds').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-    }
+
+    // Запускаем один интервал для всего
     loadNearestEvent().then(() => {
-        updateNearestCountdown();
-        setInterval(updateNearestCountdown, 1000);
+        updateTimeAndCountdown(); // Мгновенный первый вызов
+        setInterval(updateTimeAndCountdown, 1000);
     });
 
     // ===== ТОСТ =====
@@ -520,7 +479,7 @@
         toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
     }
 
-    // ===== ЧАТ (С КЭШЕМ И УМНЫМ ОПРОСОМ) =====
+    // ===== ЧАТ =====
     let sessionId = localStorage.getItem('feedback_session');
     if (!sessionId) {
         sessionId = 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 4);
@@ -528,7 +487,7 @@
     }
 
     const CHAT_CACHE_KEY = 'chat_cache_' + sessionId;
-    const CHAT_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 часа
+    const CHAT_CACHE_TTL = 24 * 60 * 60 * 1000;
     const POLL_BASE = 4000;
     const POLL_MAX = 60000;
 
@@ -537,8 +496,6 @@
     let lastServerCount = -1;
     let renderedCount = 0;
     let sending = false;
-
-    // Переменные для умного опроса (защита от 429)
     let pollFailures = 0;
     let pollTimer = null;
 
@@ -550,14 +507,10 @@
     const chatSend = document.getElementById('chat-send');
     const chatDot = chatBtn.querySelector('.dot');
 
-    // === КЭШ В LOCALSTORAGE ===
     function saveChatCache() {
         try {
             localStorage.setItem(CHAT_CACHE_KEY, JSON.stringify({
-                history: chatHistory,
-                closed: isClosed,
-                lastCount: lastServerCount,
-                ts: Date.now()
+                history: chatHistory, closed: isClosed, lastCount: lastServerCount, ts: Date.now()
             }));
         } catch(e) {}
     }
@@ -568,16 +521,14 @@
             if (!raw) return false;
             const d = JSON.parse(raw);
             if (Date.now() - d.ts > CHAT_CACHE_TTL) return false;
-
             chatHistory = d.history || [];
             isClosed = !!d.closed;
             lastServerCount = typeof d.lastCount === 'number' ? d.lastCount : -1;
-            renderedCount = 0; // Сбрасываем, чтобы отрисовать заново
+            renderedCount = 0;
             return chatHistory.length > 0;
         } catch(e) { return false; }
     }
 
-    // === Рендер: только новые сообщения ===
     function renderChat() {
         if (chatHistory.length < renderedCount) {
             chatMessages.innerHTML = '';
@@ -609,162 +560,94 @@
             existing.remove();
         }
 
-        requestAnimationFrame(() => {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        });
+        requestAnimationFrame(() => { chatMessages.scrollTop = chatMessages.scrollHeight; });
     }
 
     function updateInputState() {
         if (isClosed) {
-            chatInput.disabled = true;
-            chatSend.disabled = true;
-            chatInput.placeholder = 'Диалог закрыт';
-            chatInput.value = '';
+            chatInput.disabled = true; chatSend.disabled = true;
+            chatInput.placeholder = 'Диалог закрыт'; chatInput.value = '';
             if (document.activeElement === chatInput) chatInput.blur();
         } else if (!sending) {
-            chatInput.disabled = false;
-            chatSend.disabled = false;
+            chatInput.disabled = false; chatSend.disabled = false;
             chatInput.placeholder = 'Напишите сообщение...';
         }
     }
 
-    // === УМНЫЙ ОПРОС С BACKOFF ===
     function schedulePoll() {
         clearTimeout(pollTimer);
         if (!chatModal.classList.contains('open')) return;
-
-        // Если были ошибки, увеличиваем паузу (4с -> 8с -> 16с -> ... -> 60с)
-        const delay = pollFailures > 0
-            ? Math.min(POLL_MAX, POLL_BASE * Math.pow(2, pollFailures))
-            : POLL_BASE;
-
+        const delay = pollFailures > 0 ? Math.min(POLL_MAX, POLL_BASE * Math.pow(2, pollFailures)) : POLL_BASE;
         pollTimer = setTimeout(pollFeedback, delay);
     }
 
     async function pollFeedback() {
         try {
-            const res = await fetch('/api/feedback/' + sessionId, {
-                headers: { 'Cache-Control': 'no-cache' }
-            });
-
-            // Если сервер ответил 429 (Too many requests) или другой ошибкой
-            if (!res.ok) {
-                pollFailures = Math.min(pollFailures + 1, 5);
-                schedulePoll();
-                return;
-            }
-
-            pollFailures = 0; // Сбрасываем счетчик ошибок при успехе
+            const res = await fetch('/api/feedback/' + sessionId, { headers: { 'Cache-Control': 'no-cache' } });
+            if (!res.ok) { pollFailures = Math.min(pollFailures + 1, 5); schedulePoll(); return; }
+            pollFailures = 0;
             const data = await res.json();
             const msgs = data.messages || [];
             const newClosed = data.closed === true;
 
-            const countChanged = msgs.length !== lastServerCount;
-            const closedChanged = newClosed !== isClosed;
-
-            if (countChanged || closedChanged) {
+            if (msgs.length !== lastServerCount || newClosed !== isClosed) {
                 const wasClosed = isClosed;
-                chatHistory = msgs.map(m => ({
-                    text: m.text,
-                    type: m.from === 'admin' ? 'admin' : 'mine'
-                }));
+                chatHistory = msgs.map(m => ({ text: m.text, type: m.from === 'admin' ? 'admin' : 'mine' }));
                 lastServerCount = msgs.length;
                 isClosed = newClosed;
-
-                saveChatCache();
-                renderChat();
-                updateInputState();
-
-                if (isClosed && !wasClosed) {
-                    showToast('Диалог закрыт администратором', 'info');
-                }
+                saveChatCache(); renderChat(); updateInputState();
+                if (isClosed && !wasClosed) showToast('Диалог закрыт администратором', 'info');
             }
-            schedulePoll(); // Планируем следующий опрос
+            schedulePoll();
         } catch (e) {
             pollFailures = Math.min(pollFailures + 1, 5);
             schedulePoll();
         }
     }
 
-    // === ОТПРАВКА ===
     async function sendChat() {
         if (sending || isClosed) return;
         const text = chatInput.value.trim();
         if (text.length < 2) return;
 
-        sending = true;
-        chatSend.disabled = true;
-        chatInput.disabled = true;
+        sending = true; chatSend.disabled = true; chatInput.disabled = true;
         chatInput.value = '';
-
         const optimisticIndex = chatHistory.length;
         chatHistory.push({ text: text, type: 'mine', pending: true });
         renderChat();
 
         try {
             const res = await fetch('/api/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ sessionId, message: text })
             });
-
             if (res.status === 429) throw new Error('rate_limit');
             if (!res.ok) throw new Error('send_failed');
 
-            if (chatHistory[optimisticIndex]) {
-                chatHistory[optimisticIndex].pending = false;
-            }
-            saveChatCache();
-            await pollFeedback(); // Принудительно проверяем новые сообщения
+            if (chatHistory[optimisticIndex]) chatHistory[optimisticIndex].pending = false;
+            saveChatCache(); await pollFeedback();
         } catch (e) {
             if (chatHistory[optimisticIndex] && chatHistory[optimisticIndex].pending) {
-                chatHistory.splice(optimisticIndex, 1);
-                renderChat();
-                saveChatCache();
+                chatHistory.splice(optimisticIndex, 1); renderChat(); saveChatCache();
             }
-            if (e.message === 'rate_limit') {
-                showToast('Слишком много запросов. Подождите.', 'error');
-            } else {
-                showToast('Не удалось отправить сообщение', 'error');
-            }
+            if (e.message === 'rate_limit') showToast('Слишком много запросов. Подождите.', 'error');
+            else showToast('Не удалось отправить сообщение', 'error');
         } finally {
-            sending = false;
-            updateInputState();
+            sending = false; updateInputState();
             if (!isClosed) chatInput.focus();
         }
     }
 
-    // === ОТКРЫТИЕ / ЗАКРЫТИЕ ===
     chatBtn.onclick = () => {
-        chatModal.classList.add('open');
-        chatDot.style.display = 'none';
-        pollFailures = 0; // Сброс ошибок при открытии
-        pollFeedback();   // Сразу проверяем статус
-        if (!isClosed) {
-            setTimeout(() => chatInput.focus(), 320);
-        }
+        chatModal.classList.add('open'); chatDot.style.display = 'none';
+        pollFailures = 0; pollFeedback();
+        if (!isClosed) setTimeout(() => chatInput.focus(), 320);
     };
-
-    chatClose.onclick = () => {
-        chatModal.classList.remove('open');
-        chatInput.blur();
-        clearTimeout(pollTimer); // Останавливаем опрос
-    };
-
+    chatClose.onclick = () => { chatModal.classList.remove('open'); chatInput.blur(); clearTimeout(pollTimer); };
     chatSend.onclick = sendChat;
-    chatInput.addEventListener('keypress', e => {
-        if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
-    });
+    chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendChat(); } });
 
-    // === ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
-    // Мгновенно грузим кэш (без запросов к серверу)
-    loadChatCache();
-    renderChat();
-    updateInputState();
-
-    // ВАЖНО: Мы больше не вызываем pollFeedback() при загрузке страницы!
-    // Запросы пойдут только когда пользователь откроет чат (chatBtn.onclick).
-    // Это спасет сервер от ошибки 429 "Too many requests".
+    loadChatCache(); renderChat(); updateInputState();
 </script>
 </body>
 </html>

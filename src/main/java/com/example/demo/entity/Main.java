@@ -39,12 +39,14 @@ public class Main {
         @GetMapping("/events")
         public List<EventDto> getEvents() {
             return List.of(
-                    new EventDto("newyear", "До Нового Года", "2027-01-01T00:00:00+03:00"),
-                    new EventDto("ramadan", "До Рамадана", "2027-02-08T00:00:00+03:00"),
-                    new EventDto("adina", "До дня рождения Адины", "2027-08-30T00:00:00+03:00"),
-                    new EventDto("myrzaiym", "До дня рождения Мырзайыма", "2027-01-21T00:00:00+03:00")
+                    new EventDto("newyear", "До Нового Года", "2027-01-01T00:00:00"),
+                    new EventDto("ramadan", "До Рамадана", "2027-02-08T00:00:00"),
+                    new EventDto("adina", "До дня рождения Адины", "2027-08-30T00:00:00"),
+                    new EventDto("myrzaiym", "До дня рождения Мырзайыма", "2027-01-21T00:00:00"),
+                    new EventDto("leto", "До лета", "2027-06-01T00:00:00")
             );
         }
+
 
         @GetMapping("/notify-visit")
         public String notifyVisit(HttpServletRequest request) {

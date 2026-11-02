@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Счетчик до Рамадана - сколько осталось дней</title>
   <meta name="description" content="Обратный отсчет до начала священного месяца Рамадан. Узнайте точное количество дней до праздника.">
-  <!-- ВАЖНО: Здесь ссылка уже на саму страницу Рамадана! -->
   <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/ramadan.html" />
 
   <style>
@@ -28,7 +27,6 @@
       transition: background 0.5s ease;
     }
 
-    /* Скан-линии (только для ПК и только для НГ) */
     body::after {
       content: " "; display: block; position: absolute;
       top: 0; left: 0; bottom: 0; right: 0;
@@ -37,7 +35,6 @@
     }
     body:not(.theme-newyear)::after { display: none; }
 
-    /* --- БАННЕР СОГЛАСИЯ --- */
     #privacy-banner {
       position: fixed; bottom: -200px; left: 0; width: 100%;
       background: rgba(5, 11, 20, 0.95); border-top: 1px solid rgba(140, 190, 255, 0.3);
@@ -51,7 +48,6 @@
       cursor: pointer; font-weight: bold; font-family: inherit; transition: background 0.2s;
     }
 
-    /* --- ЭКРАН ЗАГРУЗКИ --- */
     #preloader {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: #050b14; z-index: 99999;
@@ -94,7 +90,6 @@
     #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
     #aurora-canvas { z-index: 1; opacity: 0.55; } #stars-canvas { z-index: 2; } #snow-canvas { z-index: 3; }
 
-    /* --- КНОПКА НАЗАД (ВМЕСТО МЕНЮ) --- */
     .back-btn {
       position: fixed; top: 20px; left: 20px; z-index: 1001;
       display: flex; align-items: center; gap: 8px;
@@ -106,7 +101,6 @@
     }
     .back-btn:hover { background: rgba(30, 50, 90, 0.9); box-shadow: 0 0 25px rgba(100, 180, 255, 0.7); transform: translateX(-5px); }
 
-    /* --- ЗИМНИЙ ДЕКОР --- */
     .garland { position: absolute; top: 0; left: 0; right: 0; height: 60px; z-index: 15; pointer-events: none; overflow: hidden; }
     .bulb { position: absolute; top: 14px; width: 14px; height: 18px; border-radius: 50% 50% 45% 45%; animation: bulbGlow 2s infinite alternate; }
     .bulb:nth-child(1) { left: 3%; background: #ff3b5c; } .bulb:nth-child(2) { left: 10%; background: #ffd23f; } .bulb:nth-child(3) { left: 17%; background: #3bff7d; } .bulb:nth-child(4) { left: 24%; background: #3bbaff; } .bulb:nth-child(5) { left: 31%; background: #b83bff; } .bulb:nth-child(6) { left: 38%; background: #ff3b5c; } .bulb:nth-child(7) { left: 45%; background: #ffd23f; } .bulb:nth-child(8) { left: 52%; background: #3bff7d; } .bulb:nth-child(9) { left: 59%; background: #3bbaff; } .bulb:nth-child(10) { left: 66%; background: #b83bff; } .bulb:nth-child(11) { left: 73%; background: #ff3b5c; } .bulb:nth-child(12) { left: 80%; background: #ffd23f; } .bulb:nth-child(13) { left: 87%; background: #3bff7d; } .bulb:nth-child(14) { left: 94%; background: #3bbaff; }
@@ -129,7 +123,6 @@
     .gift { position: absolute; border-radius: 4px; }
     .gift.g1 { width: 42px; height: 42px; bottom: 0; left: 0; background: #ff3b5c; } .gift.g2 { width: 34px; height: 34px; bottom: 0; left: 46px; background: #3bff7d; } .gift.g3 { width: 30px; height: 26px; bottom: 42px; left: 10px; background: #3bbaff; }
 
-    /* --- ЦЕНТРАЛЬНЫЙ БЛОК --- */
     .main-content { display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 8; width: 100%; max-width: 1200px; margin-bottom: 6vh; }
     h1 { color: #ffffff; margin-bottom: 40px; font-size: var(--title-size); font-weight: 300; letter-spacing: var(--title-spacing); text-transform: uppercase; text-align: center; transition: all 0.4s ease; }
     .clock-wrapper { display: flex; gap: var(--gap); margin-bottom: 20px; justify-content: center; align-items: flex-start; transition: all 0.4s ease; }
@@ -167,7 +160,19 @@
       .ramadan-decor { font-size: 45px; top: 10%; } .birthday-decor { font-size: 45px; top: 10%; }
       body::after { display: none; }
     }
+
+    /* ===== РЕЖИМ ДЛЯ СТРИМА (OBS) ===== */
+    body.stream-mode { background: transparent !important; }
+    body.stream-mode::after { display: none !important; }
+    body.stream-mode .back-btn, body.stream-mode .top-controls, body.stream-mode .seo-text,
+    body.stream-mode #privacy-banner, body.stream-mode .chat-btn, body.stream-mode .birthday-decor,
+    body.stream-mode .ramadan-decor, body.stream-mode .leto-decor, body.stream-mode #preloader,
+    body.stream-mode .garland, body.stream-mode .icicles, body.stream-mode .tree,
+    body.stream-mode .snowman, body.stream-mode .gifts { display: none !important; }
+    body.stream-mode .counter-container { background: rgba(0, 0, 0, 0.3) !important; border-color: rgba(255, 255, 255, 0.1) !important; box-shadow: none !important; backdrop-filter: blur(4px) !important; }
+    body.stream-mode .digit-box, body.stream-mode h1 { text-shadow: 0 4px 15px rgba(0,0,0,0.9) !important; }
   </style>
+
   <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
@@ -176,15 +181,12 @@
       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113976175', 'ym');
-
     ym(113976175, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/113976175" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
   <!-- /Yandex.Metrika counter -->
-
-
 </head>
-<body class="theme-newyear">
+<body class="theme-ramadan">
 
 <!-- Баннер о согласии -->
 <div id="privacy-banner">
@@ -241,14 +243,12 @@
 </div>
 
 <script>
-  // ===== ОПРЕДЕЛЕНИЕ СТРАНИЦЫ (SEO) =====
   const path = window.location.pathname;
   let startId = 'newyear';
 
   if (path.includes('ramadan')) startId = 'ramadan';
   else if (path.includes('adina')) startId = 'adina';
 
-  // Меняем title и description динамически в зависимости от страницы
   if (startId === 'ramadan') {
     document.title = "Счётчик до Рамадана — сколько дней осталось";
     document.querySelector('meta[name="description"]').content = "Узнайте, сколько дней осталось до Рамадана. Красивый счётчик с обратным отсчётом онлайн.";
@@ -269,7 +269,6 @@
   let targetDate = null;
   let isSnowEnabled = true;
 
-  // ===== ПРОВЕРКА СОГЛАСИЯ =====
   if (!localStorage.getItem('privacy_accepted')) {
     setTimeout(() => document.getElementById('privacy-banner').classList.add('show'), 1500);
   }
@@ -496,6 +495,22 @@
     }
   }
   init();
+</script>
+
+<!-- ===== ПРОВЕРКА РЕЖИМА СТРИМА (OBS) ===== -->
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('stream')) {
+    document.body.classList.add('stream-mode');
+
+    const streamerName = urlParams.get('name');
+    if (streamerName) {
+      const mainTitle = document.getElementById('main-title');
+      if (mainTitle) {
+        mainTitle.innerText = `До события (${streamerName})`;
+      }
+    }
+  }
 </script>
 </body>
 </html>
