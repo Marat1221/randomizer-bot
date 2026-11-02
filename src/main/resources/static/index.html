@@ -341,7 +341,7 @@
         <p>Красивые онлайн-таймеры обратного отсчёта</p>
         <div class="hero-badge">
             <div class="pulse-dot"></div>
-            <span>5 событий онлайн</span> <!-- Обновили на 5 -->
+            <span>5 событий онлайн</span>
         </div>
     </div>
 
@@ -369,7 +369,6 @@
             <div class="hub-icon">🎂</div>
             <div class="hub-title">Дни рождения</div>
         </a>
-        <!-- НОВАЯ КАРТОЧКА ЛЕТО -->
         <a href="/leto.html" class="hub-card card-leto">
             <div class="hub-icon">☀️</div>
             <div class="hub-title">Лето</div>
@@ -377,8 +376,14 @@
     </div>
 
     <div class="stats">
-        <div class="stat"><div class="stat-value">4</div><div class="stat-label">События</div></div> <!-- Стало 4 карточки -->
-        <div class="stat"><div class="stat-value">24/7</div><div class="stat-label">Онлайн</div></div>
+        <div class="stat"><div class="stat-value">4</div><div class="stat-label">События</div></div>
+
+        <!-- SQL СЧЕТЧИК ПОСЕЩЕНИЙ -->
+        <div class="stat">
+            <div class="stat-value" id="visit-counter">...</div>
+            <div class="stat-label">Заходов</div>
+        </div>
+
         <div class="stat"><div class="stat-value">0₽</div><div class="stat-label">Бесплатно</div></div>
     </div>
 </main>
@@ -648,6 +653,25 @@
     chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendChat(); } });
 
     loadChatCache(); renderChat(); updateInputState();
+
+    // ===== SQL СЧЕТЧИК ПОСЕЩЕНИЙ =====
+    async function trackVisit() {
+        try {
+            const res = await fetch('/api/visits/main');
+            if (res.ok) {
+                const count = await res.text();
+                document.getElementById('visit-counter').textContent = count;
+            } else {
+                document.getElementById('visit-counter').textContent = '0';
+            }
+        } catch (e) {
+            console.error('Ошибка счетчика посещений:', e);
+            document.getElementById('visit-counter').textContent = '0'; // Заглушка, если бэкенд не готов
+        }
+    }
+
+    // Вызываем счетчик
+    trackVisit();
 </script>
 </body>
 </html>

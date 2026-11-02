@@ -55,6 +55,23 @@ public class Main {
             notifier.sendNotification("🚨 Заход на сайт\nIP: " + ip + "\nБраузер: " + ua);
             return "ok";
         }
+        @Autowired private VisitStatsRepository visitRepo;
+
+        @GetMapping("/visits/main")
+        public Long incrementVisit() {
+            // 1. Ищем в БД запись с ID "main". Если нет — создаем новую с нулем.
+            VisitStats stats = visitRepo.findById("main")
+                    .orElse(new VisitStats("main", 0L));
+
+            // 2. Просто меняем поле в объекте Java
+            stats.setVisitCount(stats.getVisitCount() + 1);
+
+            // 3. Spring Boot сам сделает UPDATE (или INSERT), когда мы вызовем save()
+            visitRepo.save(stats);
+
+            // 4. Возвращаем число
+            return stats.getVisitCount();
+        }
 
         @PostMapping("/feedback")
         public String feedback(@RequestBody Map<String, String> body, HttpServletRequest request) {
