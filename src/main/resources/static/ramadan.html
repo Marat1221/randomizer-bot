@@ -2,175 +2,470 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Счетчик до Рамадана - сколько осталось дней</title>
   <meta name="description" content="Обратный отсчет до начала священного месяца Рамадан. Узнайте точное количество дней до праздника.">
   <link rel="canonical" href="https://marat-marat112w.msk1.amvera.tech/ramadan.html" />
+  <meta name="theme-color" content="#0a0812">
 
   <style>
     :root {
-      --digit-w: 75px; --digit-h: 110px; --digit-font: 85px;
-      --pad: 15px 30px; --gap: 45px;
-      --title-size: 38px; --title-spacing: 8px;
-      --label-size: 14px; --label-spacing: 4px;
+      --bg: #0a0812;
+      --text: #e8e2d4;
+      --text-muted: #8a7f96;
+      --text-dim: #4a4258;
+      --accent: #d4a95a;
+      --accent-bright: #f0d49a;
+      --accent-glow: rgba(212, 169, 90, 0.4);
+      --border: rgba(255, 255, 255, 0.06);
+      --border-strong: rgba(255, 255, 255, 0.13);
+      --digit-color-1: #ffffff;
+      --digit-color-2: #f5e6c8;
+      --digit-color-3: #d4a95a;
+      --digit-glow: rgba(212, 169, 90, 0.35);
+
+      --title-size: clamp(34px, 6.2vw, 74px);
+      --label-size: 10px;
+      --digit-w: clamp(28px, 5.2vw, 64px);
+      --digit-h: clamp(52px, 9.5vw, 112px);
+      --digit-font: clamp(42px, 8vw, 98px);
+
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', 'JetBrains Mono', 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+      --font-serif: Georgia, 'Times New Roman', serif;
+      --ease: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    body.theme-birthday {
+      --bg: #12060f;
+      --text: #e8dcd8;
+      --text-muted: #8a7080;
+      --text-dim: #4a3040;
+      --accent: #e89b9b;
+      --accent-bright: #f0c0c0;
+      --accent-glow: rgba(232, 155, 155, 0.4);
+      --digit-color-1: #ffffff;
+      --digit-color-2: #f5d8d8;
+      --digit-color-3: #e89b9b;
+      --digit-glow: rgba(232, 155, 155, 0.35);
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+    html, body {
+      margin: 0; padding: 0; min-height: 100%;
+      font-family: var(--font-sans);
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
+    }
+
     body {
-      margin: 0; height: 100vh;
       display: flex; flex-direction: column;
       justify-content: center; align-items: center;
-      background: radial-gradient(ellipse at center bottom, #0a1428 0%, #050b14 40%, #000205 100%);
-      font-family: 'Segoe UI', Roboto, sans-serif;
-      overflow: hidden; position: relative;
-      transition: background 0.5s ease;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background 0.6s ease, color 0.6s ease;
     }
 
-    body::after {
-      content: " "; display: block; position: absolute;
-      top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
-      z-index: 100; background-size: 100% 4px; pointer-events: none;
+    /* ========== ФОН ========== */
+    .bg-layer {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
+      overflow: hidden;
     }
-    body:not(.theme-newyear)::after { display: none; }
+    .bg-glow {
+      position: absolute;
+      border-radius: 50%;
+      will-change: transform;
+    }
+    .bg-glow-1 {
+      width: 90vw; height: 90vw;
+      top: -40%; left: -30%;
+      background: radial-gradient(circle, rgba(212, 169, 90, 0.10) 0%, transparent 55%);
+      animation: drift1 55s ease-in-out infinite;
+    }
+    .bg-glow-2 {
+      width: 80vw; height: 80vw;
+      bottom: -40%; right: -25%;
+      background: radial-gradient(circle, rgba(120, 90, 200, 0.09) 0%, transparent 55%);
+      animation: drift2 65s ease-in-out infinite;
+    }
+    @keyframes drift1 {
+      0%, 100% { transform: translate(0, 0); }
+      50%      { transform: translate(10vw, 12vh); }
+    }
+    @keyframes drift2 {
+      0%, 100% { transform: translate(0, 0); }
+      50%      { transform: translate(-8vw, -10vh); }
+    }
 
-    #privacy-banner {
-      position: fixed; bottom: -200px; left: 0; width: 100%;
-      background: rgba(5, 11, 20, 0.95); border-top: 1px solid rgba(140, 190, 255, 0.3);
-      z-index: 10000; padding: 20px; display: flex; justify-content: center; align-items: center; gap: 20px;
-      backdrop-filter: blur(10px); transition: bottom 0.5s ease; flex-wrap: wrap;
-    }
-    #privacy-banner.show { bottom: 0; }
-    #privacy-banner p { margin: 0; color: #a8d8ff; font-size: 13px; max-width: 600px; line-height: 1.4; }
-    #privacy-banner button {
-      background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px;
-      cursor: pointer; font-weight: bold; font-family: inherit; transition: background 0.2s;
+    .bg-noise {
+      position: fixed; inset: 0;
+      z-index: 1; pointer-events: none;
+      opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+      mix-blend-mode: overlay;
     }
 
+    #stars-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 2; pointer-events: none;
+    }
+
+    /* ========== ПРЕЛОАДЕР ========== */
     #preloader {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: #050b14; z-index: 99999;
+      position: fixed; inset: 0;
+      background: var(--bg); z-index: 99999;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       transition: opacity 0.6s ease;
     }
-    .spinner { width: 50px; height: 50px; border: 3px solid rgba(140, 190, 255, 0.3); border-top-color: #a8d8ff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 1.5px solid rgba(212, 169, 90, 0.18);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 22px;
+      box-shadow: 0 0 30px rgba(212, 169, 90, 0.15);
+    }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .preloader-text { color: #a8d8ff; font-size: 18px; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
-    @keyframes pulseText { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .preloader-text {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      animation: pulseText 1.8s infinite;
+    }
+    @keyframes pulseText { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
-    #ramadan-bg {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #0b1a14 url('/ramadan.jpg') no-repeat center center; background-size: cover;
-      z-index: -1; opacity: 0; transition: opacity 0.5s ease;
+    /* ========== БАННЕР ========== */
+    #privacy-banner {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: rgba(10, 8, 18, 0.96);
+      border-top: 1px solid var(--border-strong);
+      z-index: 10000; padding: 20px;
+      display: flex; justify-content: center; align-items: center; gap: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      flex-wrap: wrap;
+      transform: translateY(100%);
+      transition: transform 0.5s var(--ease);
+      max-height: 100vh; overflow-y: auto;
+    }
+    #privacy-banner.show { transform: translateY(0); }
+    #privacy-banner p {
+      margin: 0; color: var(--text-muted);
+      font-size: 12px; max-width: 600px; line-height: 1.6;
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
+    }
+    #privacy-banner button {
+      background: var(--accent); color: #1a1000;
+      border: none; padding: 10px 22px; border-radius: 8px;
+      cursor: pointer; font-weight: 600; font-family: inherit;
+      font-size: 11px; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(212, 169, 90, 0.25);
+    }
+    #privacy-banner button:hover {
+      box-shadow: 0 6px 22px rgba(212, 169, 90, 0.5);
+      transform: translateY(-1px);
     }
 
-    .ramadan-decor { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: 70px; text-shadow: 0 0 30px #ffd700, 0 0 60px #ff9900; z-index: 1; opacity: 0; animation: floatMoon 4s infinite ease-in-out; }
-    .birthday-decor { display: none; position: absolute; top: 15%; width: 100%; text-align: center; font-size: 60px; z-index: 1; opacity: 0; animation: floatBday 3s infinite ease-in-out; filter: drop-shadow(0 0 20px #ff3b5c); }
-    @keyframes floatMoon { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -15px); } }
-    @keyframes floatBday { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } }
-
-    body.theme-ramadan { background: #0b1a14; }
-    body.theme-ramadan #ramadan-bg { display: block; opacity: 1; }
-    body.theme-ramadan .ramadan-decor { display: block; opacity: 1; }
-    body.theme-ramadan .counter-container { background: linear-gradient(145deg, rgba(16, 64, 45, 0.9), rgba(8, 33, 22, 0.9)); border-color: #ffd700; box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2); }
-    body.theme-ramadan .digit { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5); }
-    body.theme-ramadan h1 { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
-    body.theme-ramadan .time-label { color: #ffd700; }
-
-    body.theme-birthday { background: radial-gradient(circle at center, #2a0845 0%, #000000 100%); }
-    body.theme-birthday .birthday-decor { display: block; opacity: 1; }
-    body.theme-birthday .counter-container { background: linear-gradient(145deg, rgba(74, 30, 42, 0.9), rgba(32, 10, 16, 0.9)); border-color: #ff3b5c; box-shadow: 0 0 25px rgba(255, 59, 92, 0.4), inset 0 0 20px rgba(255, 59, 92, 0.2); }
-    body.theme-birthday .digit { color: #ff3b5c; text-shadow: 0 0 10px rgba(255, 59, 92, 0.8), 0 0 20px rgba(255, 59, 92, 0.5); }
-    body.theme-birthday h1 { color: #ff3b5c; text-shadow: 0 0 15px rgba(255, 59, 92, 0.8); }
-    body.theme-birthday .time-label { color: #ff3b5c; }
-
-    body:not(.theme-newyear) .garland, body:not(.theme-newyear) .icicles, body:not(.theme-newyear) .tree, body:not(.theme-newyear) .snowman, body:not(.theme-newyear) .gifts { display: none !important; }
-
-    #aurora-canvas, #stars-canvas, #snow-canvas, #particles-canvas, #fireworks-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-    #aurora-canvas { z-index: 1; opacity: 0.55; } #stars-canvas { z-index: 2; } #snow-canvas { z-index: 3; }
-
+    /* ========== НАВИГАЦИЯ ========== */
     .back-btn {
-      position: fixed; top: 20px; left: 20px; z-index: 1001;
+      position: fixed; top: 22px; left: 22px; z-index: 1001;
       display: flex; align-items: center; gap: 8px;
-      padding: 10px 18px; border-radius: 12px;
-      background: rgba(10, 20, 40, 0.8); border: 1px solid rgba(140, 190, 255, 0.5);
-      color: #a8d8ff; text-decoration: none; font-size: 15px; font-weight: 600;
-      box-shadow: 0 0 15px rgba(100, 180, 255, 0.3); backdrop-filter: blur(8px);
-      transition: all 0.3s;
+      padding: 10px 16px; border-radius: 8px;
+      background: rgba(10, 8, 18, 0.6);
+      border: 1px solid var(--border-strong);
+      color: var(--text-muted); text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 500;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.35s var(--ease);
     }
-    .back-btn:hover { background: rgba(30, 50, 90, 0.9); box-shadow: 0 0 25px rgba(100, 180, 255, 0.7); transform: translateX(-5px); }
+    .back-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-bright);
+      transform: translateX(-3px);
+      box-shadow: 0 0 24px rgba(212, 169, 90, 0.2);
+    }
 
-    .garland { position: absolute; top: 0; left: 0; right: 0; height: 60px; z-index: 15; pointer-events: none; overflow: hidden; }
-    .bulb { position: absolute; top: 14px; width: 14px; height: 18px; border-radius: 50% 50% 45% 45%; animation: bulbGlow 2s infinite alternate; }
-    .bulb:nth-child(1) { left: 3%; background: #ff3b5c; } .bulb:nth-child(2) { left: 10%; background: #ffd23f; } .bulb:nth-child(3) { left: 17%; background: #3bff7d; } .bulb:nth-child(4) { left: 24%; background: #3bbaff; } .bulb:nth-child(5) { left: 31%; background: #b83bff; } .bulb:nth-child(6) { left: 38%; background: #ff3b5c; } .bulb:nth-child(7) { left: 45%; background: #ffd23f; } .bulb:nth-child(8) { left: 52%; background: #3bff7d; } .bulb:nth-child(9) { left: 59%; background: #3bbaff; } .bulb:nth-child(10) { left: 66%; background: #b83bff; } .bulb:nth-child(11) { left: 73%; background: #ff3b5c; } .bulb:nth-child(12) { left: 80%; background: #ffd23f; } .bulb:nth-child(13) { left: 87%; background: #3bff7d; } .bulb:nth-child(14) { left: 94%; background: #3bbaff; }
-    @keyframes bulbGlow { 0% { box-shadow: 0 0 4px currentColor; filter: brightness(0.8); } 100% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; filter: brightness(1.4); } }
-    .icicles { position: absolute; top: 52px; left: 0; right: 0; height: 40px; z-index: 14; pointer-events: none; display: flex; justify-content: space-around; }
-    .icicle { width: 6px; height: 28px; background: linear-gradient(to bottom, rgba(180, 220, 255, 0.9), transparent); clip-path: polygon(0 0, 100% 0, 50% 100%); animation: icicleShine 3s infinite ease-in-out; }
-    @keyframes icicleShine { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-    .tree { position: absolute; bottom: 0; width: 140px; height: 220px; z-index: 6; transform-origin: bottom center; }
-    .tree.left { left: 10px; } .tree.right { right: 10px; transform: scaleX(-1); }
-    .tree-layer { position: absolute; left: 50%; transform: translateX(-50%); border-left: solid transparent; border-right: solid transparent; border-bottom: solid #0d4a2a; }
-    .tree-layer:nth-child(1) { bottom: 20px; border-left-width: 60px; border-right-width: 60px; border-bottom-width: 60px; border-bottom-color: #062f1a; } .tree-layer:nth-child(2) { bottom: 50px; border-left-width: 50px; border-right-width: 50px; border-bottom-width: 55px; border-bottom-color: #0a4025; } .tree-layer:nth-child(3) { bottom: 80px; border-left-width: 40px; border-right-width: 40px; border-bottom-width: 50px; border-bottom-color: #0d5a33; } .tree-layer:nth-child(4) { bottom: 110px; border-left-width: 30px; border-right-width: 30px; border-bottom-width: 45px; border-bottom-color: #127a44; } .tree-layer:nth-child(5) { bottom: 140px; border-left-width: 20px; border-right-width: 20px; border-bottom-width: 40px; border-bottom-color: #17a05a; }
-    .tree-star { position: absolute; bottom: 175px; left: 50%; transform: translateX(-50%); font-size: 22px; color: #ffd700; }
-    .snowman { position: absolute; bottom: 15px; left: 160px; width: 60px; height: 100px; z-index: 5; }
-    .snowman-ball { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, #d8e8ff 60%, #a8c4e0 100%); }
-    .snowman-ball.bottom { width: 60px; height: 60px; bottom: 0; } .snowman-ball.middle { width: 44px; height: 44px; bottom: 42px; } .snowman-ball.top { width: 32px; height: 32px; bottom: 80px; }
-    .snowman-eye { position: absolute; width: 4px; height: 4px; background: #1a1a2a; border-radius: 50%; bottom: 100px; } .snowman-eye.l { left: 26px; } .snowman-eye.r { right: 26px; }
-    .snowman-nose { position: absolute; width: 0; height: 0; border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-left: 8px solid #ff6600; bottom: 96px; left: 30px; }
-    .snowman-scarf { position: absolute; bottom: 72px; left: 50%; transform: translateX(-50%); width: 46px; height: 8px; background: linear-gradient(90deg, #ff3b5c, #b83bff); }
-    .gifts { position: absolute; bottom: 5px; right: 160px; width: 80px; height: 70px; z-index: 5; }
-    .gift { position: absolute; border-radius: 4px; }
-    .gift.g1 { width: 42px; height: 42px; bottom: 0; left: 0; background: #ff3b5c; } .gift.g2 { width: 34px; height: 34px; bottom: 0; left: 46px; background: #3bff7d; } .gift.g3 { width: 30px; height: 26px; bottom: 42px; left: 10px; background: #3bbaff; }
+    .top-controls {
+      position: fixed; top: 22px; right: 22px; z-index: 50;
+      display: flex; gap: 8px;
+    }
+    .ctrl-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 8px;
+      background: rgba(10, 8, 18, 0.6);
+      border: 1px solid var(--border-strong);
+      color: var(--text-muted); cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 500;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.35s var(--ease);
+    }
+    .ctrl-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-bright);
+      box-shadow: 0 0 24px rgba(212, 169, 90, 0.2);
+    }
+    .ctrl-btn:disabled { opacity: 0.5; cursor: wait; }
+    .ctrl-btn .icon { font-size: 13px; }
 
-    .main-content { display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 8; width: 100%; max-width: 1200px; margin-bottom: 6vh; }
-    h1 { color: #ffffff; margin-bottom: 40px; font-size: var(--title-size); font-weight: 300; letter-spacing: var(--title-spacing); text-transform: uppercase; text-align: center; transition: all 0.4s ease; }
-    .clock-wrapper { display: flex; gap: var(--gap); margin-bottom: 20px; justify-content: center; align-items: flex-start; transition: all 0.4s ease; }
-    .time-group { display: flex; flex-direction: column; align-items: center; }
-    .time-label { color: #a8d8ff; font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-spacing); margin-top: 14px; font-weight: 600; transition: color 0.4s; }
-    .counter-container { display: flex; padding: var(--pad); background: linear-gradient(145deg, #1e2a4a 0%, #0a1020 50%); border-radius: 14px; position: relative; border: 1px solid rgba(140, 190, 255, 0.35); transition: all 0.4s ease; }
-    .digit-box { position: relative; width: var(--digit-w); height: var(--digit-h); overflow: hidden; font-size: var(--digit-font); font-weight: 700; color: #cceeff; font-family: 'Courier New', monospace; z-index: 2; }
-    .digit-tape { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform; }
-    .digit { width: var(--digit-w); height: var(--digit-h); display: flex; justify-content: center; align-items: center; transition: all 0.4s; }
-    .fade-out { opacity: 0; transform: scale(0.95); }
+    /* ========== ЦЕНТР ========== */
+    .main-content {
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 10;
+      width: 100%; max-width: 1200px;
+      padding: 0 24px;
+      position: relative;
+    }
 
-    .top-controls { position: fixed; top: 20px; right: 20px; z-index: 50; display: flex; gap: 8px; background: rgba(10, 20, 40, 0.85); border-radius: 30px; padding: 6px 10px; border: 1px solid rgba(140, 190, 255, 0.3); backdrop-filter: blur(10px); }
-    .ctrl-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 20px; background: rgba(30, 50, 90, 0.6); border: 1px solid rgba(140, 190, 255, 0.4); color: #a8d8ff; cursor: pointer; transition: all 0.2s; font-weight: 600; }
-    .ctrl-btn:hover { background: rgba(60, 100, 180, 0.8); }
-    .ctrl-btn:disabled { opacity: 0.6; cursor: wait; }
+    h1 {
+      margin: 0;
+      font-size: var(--title-size);
+      font-weight: 200;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      text-align: center;
+      color: var(--text);
+      animation: fadeUp 1s var(--ease) 0.05s both;
+    }
+    h1 em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      display: block;
+      margin-top: 0.06em;
+      text-shadow: 0 0 40px var(--accent-glow);
+    }
 
-    .seo-text { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; padding: 0 20px; z-index: 5; color: #475569; font-size: 11px; line-height: 1.4; max-width: 700px; margin: 0 auto; opacity: 0.5; pointer-events: none; }
+    /* Разделитель с полумесяцем */
+    .moon-divider {
+      display: flex; align-items: center;
+      gap: 18px;
+      margin: 30px 0 52px;
+      max-width: 380px;
+      width: 100%;
+      animation: fadeUp 1s var(--ease) 0.2s both;
+    }
+    .moon-divider::before,
+    .moon-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+    }
+    .moon-divider svg {
+      width: 18px; height: 18px;
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+      animation: moonGlow 4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes moonGlow {
+      0%, 100% { opacity: 0.55; }
+      50%      { opacity: 1; }
+    }
 
+    /* ========== СЧЁТЧИК ========== */
+    .clock-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: clamp(16px, 3.5vw, 46px);
+      animation: fadeUp 1s var(--ease) 0.35s both;
+      position: relative;
+    }
+
+    .time-group {
+      display: flex; flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .time-group:not(:last-child)::after {
+      content: ':';
+      position: absolute;
+      right: calc(-1 * clamp(8px, 1.75vw, 23px));
+      top: 0;
+      font-family: var(--font-mono);
+      font-size: clamp(28px, 6vw, 70px);
+      font-weight: 200;
+      line-height: 1;
+      color: var(--text-dim);
+      transform: translateX(50%);
+      height: var(--digit-h);
+      display: flex; align-items: center;
+      opacity: 0.4;
+    }
+
+    .counter-container {
+      display: flex;
+      position: relative;
+    }
+
+    .digit-box {
+      position: relative;
+      width: var(--digit-w);
+      height: var(--digit-h);
+      overflow: hidden;
+      font-size: var(--digit-font);
+      font-weight: 300;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      z-index: 2;
+    }
+
+    .digit-tape {
+      position: absolute; top: 0; left: 0;
+      display: flex; flex-direction: column;
+      transition: transform 0.7s var(--ease);
+      will-change: transform;
+    }
+
+    .digit {
+      width: var(--digit-w);
+      height: var(--digit-h);
+      display: flex; justify-content: center; align-items: center;
+      color: transparent;
+      background: linear-gradient(180deg,
+      var(--digit-color-1) 0%,
+      var(--digit-color-2) 60%,
+      var(--digit-color-3) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 24px var(--digit-glow);
+      letter-spacing: -0.04em;
+      transition: opacity 0.4s;
+    }
+
+    .time-label {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.34em;
+      margin-top: 18px;
+      font-weight: 500;
+      transition: color 0.4s;
+    }
+
+    .fade-out { opacity: 0; }
+
+    /* ========== SEO ========== */
+    .seo-text {
+      position: fixed;
+      bottom: 14px; left: 0; right: 0;
+      text-align: center;
+      padding: 0 20px;
+      z-index: 5;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      line-height: 1.7;
+      max-width: 700px; margin: 0 auto;
+      opacity: 0.55;
+      pointer-events: none;
+      text-transform: uppercase;
+    }
+
+    /* ========== АНИМАЦИИ ========== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    /* ========== МОБИЛЬНАЯ ========== */
     @media (max-width: 768px) {
-      :root { --digit-w: 22px; --digit-h: 38px; --digit-font: 28px; --pad: 4px 6px; --gap: 4px; --title-size: 14px; --title-spacing: 1px; --label-size: 9px; --label-spacing: 0px; }
-      .main-content { margin-bottom: 12vh; }
-      .tree { display: block !important; width: 60px; height: 100px; opacity: 0.35; z-index: 1; } .tree.left { left: 0px; } .tree.right { right: 0px; }
-      .tree-star { bottom: 82px; font-size: 12px; }
-      .snowman { display: block !important; transform: scale(0.45); left: 10px; bottom: 0px; opacity: 0.4; z-index: 1; transform-origin: bottom left; }
-      .gifts { display: block !important; transform: scale(0.5); right: 10px; bottom: 10px; opacity: 0.4; z-index: 1; transform-origin: bottom right; }
-      #ramadan-bg { background-position: 20% 80%; }
-      .clock-wrapper { flex-wrap: nowrap; row-gap: 0; width: 100%; max-width: 100vw; padding: 0 5px; gap: var(--gap); }
-      .clock-wrapper > .time-group:nth-child(1) { flex-basis: auto; margin-bottom: 0; }
-      .clock-wrapper > .time-group { flex: 0 1 auto; }
-      .time-label { margin-top: 6px; }
-      .top-controls { top: 15px; right: 10px; padding: 4px 8px; }
-      .ctrl-btn { padding: 6px 10px; } .ctrl-btn .text { display: none; } .ctrl-btn .icon { font-size: 18px; }
-      .back-btn { top: 15px; left: 10px; padding: 8px 12px; font-size: 13px; }
-      .seo-text { font-size: 9px; bottom: 5px; }
-      .ramadan-decor { font-size: 45px; top: 10%; } .birthday-decor { font-size: 45px; top: 10%; }
-      body::after { display: none; }
+      :root {
+        --title-size: 32px;
+        --label-size: 8px;
+        --digit-w: 24px;
+        --digit-h: 46px;
+        --digit-font: 36px;
+      }
+      .main-content { padding: 0 10px; }
+      .moon-divider { margin: 22px 0 36px; gap: 12px; max-width: 280px; }
+      .moon-divider svg { width: 15px; height: 15px; }
+
+      .back-btn { top: 14px; left: 14px; padding: 7px 11px; font-size: 9px; letter-spacing: 0.12em; }
+      .top-controls { top: 14px; right: 14px; }
+      .ctrl-btn { padding: 7px 10px; }
+      .ctrl-btn .text { display: none; }
+      .ctrl-btn .icon { font-size: 15px; }
+
+      .clock-wrapper { gap: 12px; }
+      .time-group:not(:last-child)::after {
+        font-size: 26px;
+        right: -6px;
+      }
+      .time-label { margin-top: 10px; letter-spacing: 0.22em; }
+
+      .seo-text { font-size: 7px; bottom: 6px; letter-spacing: 0.1em; }
     }
 
-    /* ===== РЕЖИМ ДЛЯ СТРИМА (OBS) ===== */
+    /* ========== OBS ========== */
     body.stream-mode { background: transparent !important; }
-    body.stream-mode::after { display: none !important; }
-    body.stream-mode .back-btn, body.stream-mode .top-controls, body.stream-mode .seo-text,
-    body.stream-mode #privacy-banner, body.stream-mode .chat-btn, body.stream-mode .birthday-decor,
-    body.stream-mode .ramadan-decor, body.stream-mode .leto-decor, body.stream-mode #preloader,
-    body.stream-mode .garland, body.stream-mode .icicles, body.stream-mode .tree,
-    body.stream-mode .snowman, body.stream-mode .gifts { display: none !important; }
-    body.stream-mode .counter-container { background: rgba(0, 0, 0, 0.3) !important; border-color: rgba(255, 255, 255, 0.1) !important; box-shadow: none !important; backdrop-filter: blur(4px) !important; }
-    body.stream-mode .digit-box, body.stream-mode h1 { text-shadow: 0 4px 15px rgba(0,0,0,0.9) !important; }
+    body.stream-mode .bg-layer,
+    body.stream-mode .bg-noise,
+    body.stream-mode #stars-canvas { display: none !important; }
+    body.stream-mode .back-btn,
+    body.stream-mode .top-controls,
+    body.stream-mode .seo-text,
+    body.stream-mode #privacy-banner,
+    body.stream-mode #preloader,
+    body.stream-mode .moon-divider { display: none !important; }
+    body.stream-mode .digit {
+      -webkit-text-fill-color: currentColor !important;
+      background: none !important;
+      color: #ffffff !important;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95) !important;
+    }
+    body.stream-mode h1,
+    body.stream-mode h1 em {
+      color: #ffffff !important;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95) !important;
+    }
+    body.stream-mode .time-label {
+      color: #ffffff !important;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
+    }
+    body.stream-mode .time-group:not(:last-child)::after {
+      color: #ffffff !important;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
+    }
   </style>
 
   <!-- Yandex.Metrika counter -->
@@ -184,333 +479,455 @@
     ym(113976175, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/113976175" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  <!-- /Yandex.Metrika counter -->
 </head>
 <body class="theme-ramadan">
 
-<!-- Баннер о согласии -->
-<div id="privacy-banner">
+<!-- Фон -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+</div>
+<div class="bg-noise" aria-hidden="true"></div>
+<canvas id="stars-canvas" aria-hidden="true"></canvas>
+
+<!-- Баннер согласия -->
+<div id="privacy-banner" role="region" aria-label="Согласие на обработку данных">
   <p>Мы используем ваш IP-адрес и данные браузера исключительно для отправки анонимных уведомлений о посещении сайта. Продолжая пользоваться сайтом, вы соглашаетесь с обработкой этих данных.</p>
-  <button id="accept-privacy">Согласен</button>
+  <button id="accept-privacy" type="button">Согласен</button>
 </div>
 
-<!-- Экран загрузки -->
+<!-- Прелоадер -->
 <div id="preloader">
   <div class="spinner"></div>
-  <div class="preloader-text">Загрузка...</div>
+  <div class="preloader-text">Загрузка</div>
 </div>
 
-<div id="ramadan-bg"></div>
-<div class="ramadan-decor">🌙</div>
-<div class="birthday-decor">🎈 🎂 🎉</div>
-
-<!-- Кнопка Назад -->
+<!-- Навигация -->
 <a href="/" class="back-btn">← На главную</a>
 
 <div class="top-controls">
-  <button class="ctrl-btn music-btn" id="music-btn" title="Музыка">
-    <span class="icon">🎵</span><span class="text">Музыка</span>
+  <button class="ctrl-btn music-btn" id="music-btn" type="button" title="Музыка" aria-label="Включить музыку">
+    <span class="icon" aria-hidden="true">♪</span><span class="text">Музыка</span>
   </button>
 </div>
 
-<canvas id="aurora-canvas"></canvas>
-<canvas id="stars-canvas"></canvas>
-<canvas id="snow-canvas"></canvas>
-<canvas id="particles-canvas"></canvas>
-<canvas id="fireworks-canvas"></canvas>
-
-<div class="garland"><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div></div>
-<div class="icicles"><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div><div class="icicle"></div></div>
-<div class="tree left"><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-star">★</div></div>
-<div class="tree right"><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-layer"></div><div class="tree-star">★</div></div>
-<div class="snowman"><div class="snowman-ball bottom"></div><div class="snowman-ball middle"></div><div class="snowman-ball top"></div><div class="snowman-eye l"></div><div class="snowman-eye r"></div><div class="snowman-nose"></div><div class="snowman-scarf"></div></div>
-<div class="gifts"><div class="gift g1"></div><div class="gift g2"></div><div class="gift g3"></div></div>
-
-<audio id="bg-music" loop preload="auto"></audio>
-
+<!-- Центр -->
 <div class="main-content" id="main-content">
-  <h1 id="main-title">Счетчик до Рамадана</h1>
+  <h1 id="main-title">Счётчик до<em>Рамадана</em></h1>
+
+  <div class="moon-divider" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+    </svg>
+  </div>
+
   <div class="clock-wrapper" id="main-clock">
-    <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div><div class="digit-box"><div class="digit-tape" id="d-tens"></div></div><div class="digit-box"><div class="digit-tape" id="d-ones"></div></div></div><div class="time-label">Дней</div></div>
-    <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="h-tens"></div></div><div class="digit-box"><div class="digit-tape" id="h-ones"></div></div></div><div class="time-label">Часов</div></div>
-    <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="m-tens"></div></div><div class="digit-box"><div class="digit-tape" id="m-ones"></div></div></div><div class="time-label">Минут</div></div>
-    <div class="time-group"><div class="counter-container"><div class="digit-box"><div class="digit-tape" id="s-tens"></div></div><div class="digit-box"><div class="digit-tape" id="s-ones"></div></div></div><div class="time-label">Секунды</div></div>
+    <div class="time-group">
+      <div class="counter-container">
+        <div class="digit-box"><div class="digit-tape" id="d-hundreds"></div></div>
+        <div class="digit-box"><div class="digit-tape" id="d-tens"></div></div>
+        <div class="digit-box"><div class="digit-tape" id="d-ones"></div></div>
+      </div>
+      <div class="time-label">Дней</div>
+    </div>
+    <div class="time-group">
+      <div class="counter-container">
+        <div class="digit-box"><div class="digit-tape" id="h-tens"></div></div>
+        <div class="digit-box"><div class="digit-tape" id="h-ones"></div></div>
+      </div>
+      <div class="time-label">Часов</div>
+    </div>
+    <div class="time-group">
+      <div class="counter-container">
+        <div class="digit-box"><div class="digit-tape" id="m-tens"></div></div>
+        <div class="digit-box"><div class="digit-tape" id="m-ones"></div></div>
+      </div>
+      <div class="time-label">Минут</div>
+    </div>
+    <div class="time-group">
+      <div class="counter-container">
+        <div class="digit-box"><div class="digit-tape" id="s-tens"></div></div>
+        <div class="digit-box"><div class="digit-tape" id="s-ones"></div></div>
+      </div>
+      <div class="time-label">Секунд</div>
+    </div>
   </div>
 </div>
 
 <div class="seo-text">
-  Счётчики событий. Узнайте, сколько дней осталось до Нового Года, Рамадана и дней рождения. Онлайн-таймер с красивым дизайном и музыкой.
+  Точный счётчик обратного отсчёта до начала священного месяца Рамадан. Узнайте, сколько дней осталось.
 </div>
 
+<audio id="bg-music" loop preload="auto"></audio>
+
 <script>
-  const path = window.location.pathname;
-  let startId = 'newyear';
+  (function () {
+    'use strict';
 
-  if (path.includes('ramadan')) startId = 'ramadan';
-  else if (path.includes('adina')) startId = 'adina';
+    /* ===== SEO ===== */
+    const path = window.location.pathname;
+    let startId = 'newyear';
+    if (path.includes('ramadan')) startId = 'ramadan';
+    else if (path.includes('adina')) startId = 'adina';
 
-  if (startId === 'ramadan') {
-    document.title = "Счётчик до Рамадана — сколько дней осталось";
-    document.querySelector('meta[name="description"]').content = "Узнайте, сколько дней осталось до Рамадана. Красивый счётчик с обратным отсчётом онлайн.";
-  } else if (startId === 'adina') {
-    document.title = "Счётчик до дня рождения — сколько дней осталось";
-    document.querySelector('meta[name="description"]').content = "Узнайте, сколько дней осталось до дня рождения. Красивый счётчик с обратным отсчётом онлайн.";
-  }
+    const setMeta = (title, desc) => {
+      document.title = title;
+      const m = document.querySelector('meta[name="description"]');
+      if (m) m.setAttribute('content', desc);
+    };
 
-  const musicMap = { 'newyear': '/music.mp3', 'ramadan': '/ramadan.mp3', 'adina': '/birthday.mp3' };
+    if (startId === 'ramadan') setMeta(
+            "Счётчик до Рамадана — сколько дней осталось",
+            "Узнайте, сколько дней осталось до Рамадана. Красивый счётчик с обратным отсчётом онлайн."
+    );
+    else if (startId === 'adina') setMeta(
+            "Счётчик до дня рождения — сколько дней осталось",
+            "Узнайте, сколько дней осталось до дня рождения. Красивый счётчик с обратным отсчётом онлайн."
+    );
 
-  let digitHeight = 110;
-  let timeOffset = 0;
-  const isMobile = window.innerWidth < 640;
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const THEME_MAP = {
+      newyear: 'theme-newyear',
+      ramadan: 'theme-ramadan',
+      adina:   'theme-birthday'
+    };
+    const MUSIC_MAP = {
+      newyear: '/music.mp3',
+      ramadan: '/ramadan.mp3',
+      adina:   '/birthday.mp3'
+    };
+    const THEMES = ['theme-newyear', 'theme-ramadan', 'theme-birthday'];
 
-  let allEvents = [];
-  let currentEvent = null;
-  let targetDate = null;
-  let isSnowEnabled = true;
+    let digitHeight = 112;
+    let timeOffset = 0;
+    const isMobile = () => window.innerWidth <= 768;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-  if (!localStorage.getItem('privacy_accepted')) {
-    setTimeout(() => document.getElementById('privacy-banner').classList.add('show'), 1500);
-  }
+    let allEvents = [];
+    let currentEvent = null;
+    let targetDate = null;
+    let titleGen = 0;
 
-  document.getElementById('accept-privacy').addEventListener('click', () => {
-    localStorage.setItem('privacy_accepted', 'true');
-    document.getElementById('privacy-banner').classList.remove('show');
-    notifyVisit();
-  });
+    /* ===== ПРЕЛОАДЕР ===== */
+    let preloaderHidden = false;
+    function hidePreloader() {
+      if (preloaderHidden) return;
+      preloaderHidden = true;
+      const p = document.getElementById('preloader');
+      if (!p) return;
+      p.style.opacity = '0';
+      setTimeout(() => { p.style.display = 'none'; }, 600);
+    }
+    window.addEventListener('load', hidePreloader);
+    setTimeout(hidePreloader, 2500);
 
-  window.addEventListener('load', () => {
-    const preloader = document.getElementById('preloader');
-    preloader.style.opacity = '0';
-    setTimeout(() => { preloader.style.display = 'none'; }, 600);
-  });
+    /* ===== БАННЕР ===== */
+    const privacyBanner = document.getElementById('privacy-banner');
+    if (!localStorage.getItem('privacy_accepted')) {
+      setTimeout(() => privacyBanner.classList.add('show'), 1500);
+    }
+    document.getElementById('accept-privacy').addEventListener('click', () => {
+      try { localStorage.setItem('privacy_accepted', 'true'); } catch (e) {}
+      privacyBanner.classList.remove('show');
+      notifyVisit();
+    });
 
-  function setupCanvas(canvas) {
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr); return ctx;
-  }
+    /* ===== ЗВЁЗДЫ ===== */
+    const starsCanvas = document.getElementById('stars-canvas');
+    let starsCtx = null;
+    if (starsCanvas) {
+      starsCtx = starsCanvas.getContext('2d');
+      starsCanvas.width = window.innerWidth * dpr;
+      starsCanvas.height = window.innerHeight * dpr;
+      starsCanvas.style.width = window.innerWidth + 'px';
+      starsCanvas.style.height = window.innerHeight + 'px';
+      starsCtx.scale(dpr, dpr);
+    }
 
-  const bgMusic = document.getElementById('bg-music');
-  const musicBtn = document.getElementById('music-btn');
-  const iconSpan = musicBtn.querySelector('.icon');
-
-  async function loadEvents() {
-    try {
-      const response = await fetch('/api/events');
-      if (response.ok) {
-        allEvents = await response.json();
-        selectEvent(startId);
-      } else {
-        throw new Error("API error");
+    let stars = [];
+    function createStars() {
+      stars = [];
+      const count = isMobile() ? 55 : 220;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.2 + 0.25,
+          phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.014 + 0.008,
+          baseAlpha: Math.random() * 0.5 + 0.35
+        });
       }
-    } catch (e) {
-      console.warn("Бэкенд не ответил, используем резервные данные", e);
-      allEvents = [
-        { id: 'newyear', name: 'До Нового Года', date: '2027-01-01T00:00:00+03:00' },
-        { id: 'ramadan', name: 'До Рамадана', date: '2027-02-08T00:00:00+03:00' },
-        { id: 'adina', name: 'До дня рождения Адины', date: '2027-08-30T00:00:00+03:00' }
-      ];
-      selectEvent(startId);
     }
-  }
+    createStars();
 
-  function selectEvent(id) {
-    currentEvent = allEvents.find(e => e.id === id);
-    if (!currentEvent) return;
-
-    document.body.className = '';
-    if (id === 'newyear') {
-      document.body.classList.add('theme-newyear'); isSnowEnabled = true;
-    } else if (id === 'ramadan') {
-      document.body.classList.add('theme-ramadan'); isSnowEnabled = false;
-      snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    } else {
-      document.body.classList.add('theme-birthday'); isSnowEnabled = false;
-      snowCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    }
-
-    const wasPlaying = !bgMusic.paused;
-    const newTrack = musicMap[id] || '/music.mp3';
-
-    if (bgMusic.src.indexOf(newTrack) === -1) {
-      iconSpan.textContent = '⏳';
-      musicBtn.disabled = true;
-      bgMusic.src = newTrack;
-      bgMusic.load();
-
-      bgMusic.addEventListener('canplay', function onCanPlay() {
-        musicBtn.disabled = false;
-        iconSpan.textContent = wasPlaying ? '🎶' : '🎵';
-        if (wasPlaying) bgMusic.play().catch(e => console.log("Autoplay blocked"));
-        bgMusic.removeEventListener('canplay', onCanPlay);
-      });
-    }
-
-    const mainTitle = document.getElementById('main-title');
-    const clockWrapper = document.getElementById('main-clock');
-    mainTitle.classList.add('fade-out');
-    clockWrapper.classList.add('fade-out');
-
-    setTimeout(() => {
-      mainTitle.innerText = currentEvent.name;
-      let parsedDate = new Date(currentEvent.date);
-      let now = new Date(Date.now() + timeOffset);
-      while (parsedDate < now) { parsedDate.setFullYear(parsedDate.getFullYear() + 1); }
-      targetDate = parsedDate;
-      calculateCountdown();
-      mainTitle.classList.remove('fade-out');
-      clockWrapper.classList.remove('fade-out');
-    }, 400);
-  }
-
-  bgMusic.volume = 0.15;
-  musicBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (musicBtn.disabled) return;
-    if (bgMusic.paused) {
-      bgMusic.play().then(() => { iconSpan.textContent = '🎶'; musicBtn.classList.add('playing'); }).catch(() => {});
-    } else {
-      bgMusic.pause(); iconSpan.textContent = '🎵'; musicBtn.classList.remove('playing');
-    }
-  });
-
-  const tapes = ['d-hundreds', 'd-tens', 'd-ones', 'h-tens', 'h-ones', 'm-tens', 'm-ones', 's-tens', 's-ones'];
-  tapes.forEach(id => {
-    const el = document.getElementById(id);
-    for (let i = 0; i <= 9; i++) {
-      const div = document.createElement('div'); div.className = 'digit'; div.innerText = i; el.appendChild(div);
-    }
-  });
-
-  function recalcDigitHeight() { const sample = document.querySelector('.digit-box'); if (sample) digitHeight = sample.offsetHeight; }
-  recalcDigitHeight();
-
-  function moveTape(tapeId, value) {
-    const tape = document.getElementById(tapeId);
-    if (tape && tape.dataset.currentValue !== String(value)) {
-      tape.dataset.currentValue = value;
-      tape.style.transform = `translate3d(0, -${value * digitHeight}px, 0)`;
-    }
-  }
-
-  function updateDisplay(days, hours, minutes, seconds) {
-    moveTape('d-hundreds', Math.floor(days / 100)); moveTape('d-tens', Math.floor((days % 100) / 10)); moveTape('d-ones', days % 10);
-    moveTape('h-tens', Math.floor(hours / 10)); moveTape('h-ones', hours % 10);
-    moveTape('m-tens', Math.floor(minutes / 10)); moveTape('m-ones', minutes % 10);
-    moveTape('s-tens', Math.floor(seconds / 10)); moveTape('s-ones', seconds % 10);
-  }
-
-  function calculateCountdown() {
-    if (!targetDate) return;
-    const now = new Date(Date.now() + timeOffset);
-    const diff = targetDate - now;
-    if (diff <= 0) { updateDisplay(0, 0, 0, 0); return; }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / 1000 / 60) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-    updateDisplay(days, hours, minutes, seconds);
-  }
-
-  const starsCtx = setupCanvas(document.getElementById('stars-canvas'));
-  const stars = [];
-  for (let i = 0; i < (isMobile ? 40 : 180); i++) {
-    stars.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight * 0.7, r: Math.random() * 1.4 + 0.3, phase: Math.random() * Math.PI * 2, speed: Math.random() * 0.02 + 0.01, baseAlpha: Math.random() * 0.5 + 0.4 });
-  }
-  let lastStarTime = 0;
-  function drawStars(timestamp) {
-    if (timestamp - lastStarTime < 16) { requestAnimationFrame(drawStars); return; }
-    lastStarTime = timestamp;
-    const w = window.innerWidth, h = window.innerHeight;
-    starsCtx.clearRect(0, 0, w, h);
-    for (const s of stars) {
-      s.phase += s.speed; const twinkle = Math.sin(s.phase) * 0.5 + 0.5;
-      starsCtx.fillStyle = `rgba(200, 230, 255, ${s.baseAlpha * (0.4 + twinkle * 0.6)})`;
-      starsCtx.beginPath(); starsCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); starsCtx.fill();
+    let lastStarTime = 0;
+    function drawStars(timestamp) {
+      if (timestamp - lastStarTime < 16) { requestAnimationFrame(drawStars); return; }
+      lastStarTime = timestamp;
+      if (!starsCtx) { requestAnimationFrame(drawStars); return; }
+      const w = window.innerWidth, h = window.innerHeight;
+      starsCtx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        s.phase += s.speed;
+        const twinkle = Math.sin(s.phase) * 0.5 + 0.5;
+        starsCtx.fillStyle = `rgba(240, 220, 180, ${s.baseAlpha * (0.35 + twinkle * 0.65)})`;
+        starsCtx.beginPath();
+        starsCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        starsCtx.fill();
+      }
+      requestAnimationFrame(drawStars);
     }
     requestAnimationFrame(drawStars);
-  }
-  requestAnimationFrame(drawStars);
 
-  const snowCtx = setupCanvas(document.getElementById('snow-canvas'));
-  let flakes = []; let wind = 0;
-  function createFlakes() {
-    flakes = [];
-    const count = isMobile ? 25 : 80;
-    for (let i = 0; i < count; i++) {
-      const size = Math.random() * 2 + 0.8;
-      flakes.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, r: size, speed: Math.random() * 0.8 + 0.3 + size / 4, sway: Math.random() * 0.015, swayPhase: Math.random() * Math.PI * 2, alpha: Math.random() * 0.4 + 0.3 });
+    /* ===== МУЗЫКА ===== */
+    const bgMusic = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    const iconSpan = musicBtn.querySelector('.icon');
+    bgMusic.volume = 0.15;
+
+    musicBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (musicBtn.disabled) return;
+      if (bgMusic.paused) {
+        bgMusic.play()
+                .then(() => {
+                  iconSpan.textContent = '♫';
+                  musicBtn.classList.add('playing');
+                  musicBtn.setAttribute('aria-label', 'Выключить музыку');
+                })
+                .catch(() => {});
+      } else {
+        bgMusic.pause();
+        iconSpan.textContent = '♪';
+        musicBtn.classList.remove('playing');
+        musicBtn.setAttribute('aria-label', 'Включить музыку');
+      }
+    });
+
+    /* ===== ТАБЛО ===== */
+    const TAPE_IDS = [
+      'd-hundreds', 'd-tens', 'd-ones',
+      'h-tens', 'h-ones',
+      'm-tens', 'm-ones',
+      's-tens', 's-ones'
+    ];
+    TAPE_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      for (let i = 0; i <= 9; i++) {
+        const div = document.createElement('div');
+        div.className = 'digit';
+        div.textContent = i;
+        el.appendChild(div);
+      }
+    });
+
+    function recalcDigitHeight() {
+      const sample = document.querySelector('.digit-box');
+      if (sample) digitHeight = sample.offsetHeight;
     }
-  }
-  createFlakes();
-  let lastSnowTime = 0;
-  function drawSnow(timestamp) {
-    if (timestamp - lastSnowTime < 16) { requestAnimationFrame(drawSnow); return; }
-    lastSnowTime = timestamp;
-    if (!isSnowEnabled) { requestAnimationFrame(drawSnow); return; }
+    recalcDigitHeight();
 
-    const w = window.innerWidth, h = window.innerHeight;
-    snowCtx.clearRect(0, 0, w, h); wind = Math.sin(Date.now() / 4000) * 0.4;
-    snowCtx.fillStyle = 'rgba(220, 240, 255, 0.8)';
-    for (const f of flakes) {
-      snowCtx.beginPath(); snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2); snowCtx.fill();
-      f.y += f.speed; f.swayPhase += f.sway; f.x += Math.sin(f.swayPhase) * 0.6 + wind;
-      if (f.y > h + 10) { f.y = -10; f.x = Math.random() * w; }
-    }
-    requestAnimationFrame(drawSnow);
-  }
-  requestAnimationFrame(drawSnow);
-
-  async function syncTime() {
-    try {
-      const startTime = Date.now();
-      const response = await fetch('/api/value');
-      if (response.ok) { const serverTime = await response.json(); timeOffset = (serverTime + (Date.now() - startTime) / 2) - Date.now(); }
-    } catch (e) {}
-  }
-
-  function notifyVisit() {
-    if (sessionStorage.getItem('visit_notified')) return;
-    sessionStorage.setItem('visit_notified', '1');
-    fetch('/api/notify-visit').catch(() => {});
-  }
-
-  window.addEventListener('resize', () => {
-    setupCanvas(document.getElementById('stars-canvas'));
-    setupCanvas(document.getElementById('snow-canvas'));
-    recalcDigitHeight(); createFlakes(); calculateCountdown();
-  });
-
-  async function init() {
-    await syncTime();
-    await loadEvents();
-    setInterval(calculateCountdown, 1000);
-
-    if (localStorage.getItem('privacy_accepted')) {
-      notifyVisit();
-    }
-  }
-  init();
-</script>
-
-<!-- ===== ПРОВЕРКА РЕЖИМА СТРИМА (OBS) ===== -->
-<script>
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has('stream')) {
-    document.body.classList.add('stream-mode');
-
-    const streamerName = urlParams.get('name');
-    if (streamerName) {
-      const mainTitle = document.getElementById('main-title');
-      if (mainTitle) {
-        mainTitle.innerText = `До события (${streamerName})`;
+    const tapeState = {};
+    function moveTape(tapeId, value) {
+      const tape = document.getElementById(tapeId);
+      if (!tape) return;
+      const v = String(value);
+      tapeState[tapeId] = value;
+      if (tape.dataset.currentValue !== v) {
+        tape.dataset.currentValue = v;
+        tape.style.transform = `translate3d(0, -${value * digitHeight}px, 0)`;
       }
     }
-  }
+
+    function reapplyTapes() {
+      for (const id in tapeState) {
+        const tape = document.getElementById(id);
+        if (tape) tape.style.transform = `translate3d(0, -${tapeState[id] * digitHeight}px, 0)`;
+      }
+    }
+
+    function updateDisplay(days, hours, minutes, seconds) {
+      moveTape('d-hundreds', Math.floor(days / 100));
+      moveTape('d-tens',     Math.floor((days % 100) / 10));
+      moveTape('d-ones',     days % 10);
+      moveTape('h-tens',     Math.floor(hours / 10));
+      moveTape('h-ones',     hours % 10);
+      moveTape('m-tens',     Math.floor(minutes / 10));
+      moveTape('m-ones',     minutes % 10);
+      moveTape('s-tens',     Math.floor(seconds / 10));
+      moveTape('s-ones',     seconds % 10);
+    }
+
+    function calculateCountdown() {
+      if (!targetDate) return;
+      const now = new Date(Date.now() + timeOffset);
+      const diff = targetDate - now;
+      if (diff <= 0) { updateDisplay(0, 0, 0, 0); return; }
+      const days    = Math.min(999, Math.floor(diff / 86400000));
+      const hours   = Math.floor((diff / 3600000) % 24);
+      const minutes = Math.floor((diff / 60000) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      updateDisplay(days, hours, minutes, seconds);
+    }
+
+    /* ===== СОБЫТИЯ ===== */
+    async function loadEvents() {
+      try {
+        const response = await fetch('/api/events', { cache: 'no-store' });
+        if (!response.ok) throw new Error('API error');
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) throw new Error('Empty');
+        allEvents = data;
+      } catch (e) {
+        console.warn('Бэкенд не ответил, используем резервные данные', e);
+        allEvents = [
+          { id: 'newyear', name: 'До Нового Года',        date: '2027-01-01T00:00:00+03:00' },
+          { id: 'ramadan', name: 'До Рамадана',           date: '2027-02-08T00:00:00+03:00' },
+          { id: 'adina',   name: 'До дня рождения Адины', date: '2027-08-30T00:00:00+03:00' }
+        ];
+      }
+      selectEvent(startId);
+    }
+
+    function selectEvent(id) {
+      currentEvent = allEvents.find(e => e.id === id);
+      if (!currentEvent) { console.warn('Событие не найдено:', id); return; }
+
+      // ВАЖНО: не затираем stream-mode
+      document.body.classList.remove(...THEMES);
+      document.body.classList.add(THEME_MAP[id] || 'theme-ramadan');
+
+      /* ===== МУЗЫКА ===== */
+      const wasPlaying = !bgMusic.paused;
+      const newTrack = MUSIC_MAP[id] || '/music.mp3';
+
+      if (bgMusic.getAttribute('src') !== newTrack) {
+        iconSpan.textContent = '⏳';
+        musicBtn.disabled = true;
+        bgMusic.setAttribute('src', newTrack);
+        bgMusic.load();
+
+        const onCanPlay = () => {
+          musicBtn.disabled = false;
+          iconSpan.textContent = wasPlaying ? '♫' : '♪';
+          if (wasPlaying) bgMusic.play().catch(() => {});
+          bgMusic.removeEventListener('canplay', onCanPlay);
+          bgMusic.removeEventListener('error', onError);
+        };
+        const onError = () => {
+          musicBtn.disabled = false;
+          iconSpan.textContent = '♪';
+          bgMusic.removeEventListener('canplay', onCanPlay);
+          bgMusic.removeEventListener('error', onError);
+        };
+        bgMusic.addEventListener('canplay', onCanPlay);
+        bgMusic.addEventListener('error', onError);
+      }
+
+      /* ===== ЗАГОЛОВОК И ПЕРЕСЧЁТ ===== */
+      const mainTitle   = document.getElementById('main-title');
+      const clockWrapper = document.getElementById('main-clock');
+      mainTitle.classList.add('fade-out');
+      clockWrapper.classList.add('fade-out');
+
+      const gen = ++titleGen;
+
+      setTimeout(() => {
+        if (gen !== titleGen) return;
+
+        // Заголовок из имени события — "До Рамадана" → "Счётчик до / *Рамадана*"
+        const rawName = currentEvent.name || 'до события';
+        const clean = rawName.replace(/^До\s+/i, '').replace(/^до\s+/i, '');
+        // Заглавная первая буква
+        const pretty = clean.charAt(0).toUpperCase() + clean.slice(1);
+        mainTitle.innerHTML = `Счётчик до<em>${pretty}</em>`;
+
+        let parsed = new Date(currentEvent.date);
+        if (isNaN(parsed.getTime())) parsed = new Date();
+        const now = new Date(Date.now() + timeOffset);
+        while (parsed < now) parsed.setFullYear(parsed.getFullYear() + 1);
+        targetDate = parsed;
+
+        calculateCountdown();
+        mainTitle.classList.remove('fade-out');
+        clockWrapper.classList.remove('fade-out');
+      }, 400);
+    }
+
+    /* ===== СИНХРОН ВРЕМЕНИ ===== */
+    async function syncTime() {
+      try {
+        const start = Date.now();
+        const res = await fetch('/api/value', { cache: 'no-store' });
+        if (!res.ok) return;
+        const serverTime = await res.json();
+        if (typeof serverTime === 'number') {
+          timeOffset = (serverTime + (Date.now() - start) / 2) - Date.now();
+        }
+      } catch (e) {}
+    }
+
+    function notifyVisit() {
+      if (sessionStorage.getItem('visit_notified')) return;
+      try { sessionStorage.setItem('visit_notified', '1'); } catch (e) {}
+      fetch('/api/notify-visit').catch(() => {});
+    }
+
+    /* ===== РЕСАЙЗ ===== */
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (starsCanvas && starsCtx) {
+          starsCanvas.width = window.innerWidth * dpr;
+          starsCanvas.height = window.innerHeight * dpr;
+          starsCanvas.style.width = window.innerWidth + 'px';
+          starsCanvas.style.height = window.innerHeight + 'px';
+          starsCtx.setTransform(1, 0, 0, 1, 0, 0);
+          starsCtx.scale(dpr, dpr);
+        }
+        createStars();
+        recalcDigitHeight();
+        reapplyTapes();
+        calculateCountdown();
+      }, 150);
+    });
+
+    /* ===== ВОЗВРАТ НА ВКЛАДКУ ===== */
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) calculateCountdown();
+    });
+
+    /* ===== ИНИЦИАЛИЗАЦИЯ ===== */
+    async function init() {
+      await Promise.all([syncTime(), loadEvents()]);
+      setInterval(calculateCountdown, 1000);
+
+      if (localStorage.getItem('privacy_accepted')) notifyVisit();
+      setTimeout(hidePreloader, 500);
+    }
+    init();
+  })();
+</script>
+
+<!-- ===== OBS STREAM MODE ===== -->
+<script>
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('stream')) {
+      document.body.classList.add('stream-mode');
+      const streamerName = urlParams.get('name');
+      if (streamerName) {
+        const mainTitle = document.getElementById('main-title');
+        if (mainTitle) {
+          mainTitle.innerHTML = `До события<em>${streamerName}</em>`;
+        }
+      }
+    }
+  })();
 </script>
 </body>
 </html>

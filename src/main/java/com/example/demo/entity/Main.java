@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +8,10 @@ import org.springframework.beans.factory.annotation.Value; // <-- ДОБАВИЛ
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.example.demo")
@@ -46,6 +46,76 @@ public class Main {
                     new EventDto("leto", "До лета", "2027-06-01T00:00:00")
             );
         }
+        // Импорты сверху файла (добавь если нет):
+// import com.fasterxml.jackson.databind.ObjectMapper;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.*;
+
+        @Autowired private PersonalEventRepository personalRepo;
+        @Autowired private ObjectMapper objectMapper;
+
+// ===== ЛИЧНЫЕ СОБЫТИЯ (без регистрации, по токену) =====
+
+        @GetMapping("/personal-events")
+        public Map<String, Object> getPersonalEvents(@RequestParam String token) {
+            // Создаём явный Map<String, Object> — Java не будет гадать
+            Map<String, Object> result = new HashMap<>();
+            result.put("events", new ArrayList<>()); // по умолчанию пустой массив
+
+            if (token == null || token.isBlank() || token.length() > 64) {
+                return result;
+            }
+
+            Optional<PersonalEvent> opt = personalRepo.findById(token);
+            if (opt.isPresent()) {
+                try {
+                    List<?> events = objectMapper.readValue(opt.get().getEventsJson(), List.class);
+                    result.put("events", events);
+                } catch (Exception e) {
+                    // Если JSON битый — молча оставляем пустой список
+                }
+            }
+
+            return result;
+        }
+
+        @PostMapping("/personal-events")
+        public ResponseEntity<?> savePersonalEvents(
+                @RequestHeader(value = "X-Personal-Token", required = false) String token,
+                @RequestBody Map<String, Object> body) {
+
+            if (token == null || token.isBlank() || token.length() > 64) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
+            }
+
+            Object eventsObj = body.get("events");
+            if (!(eventsObj instanceof List)) {
+                return ResponseEntity.badRequest().body(Map.of("error", "events must be array"));
+            }
+            List<?> events = (List<?>) eventsObj;
+
+            // Ограничение на размер, чтобы не залили мусор
+            if (events.size() > 100) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Too many events (max 100)"));
+            }
+
+            try {
+                String json = objectMapper.writeValueAsString(events);
+                // Ограничение на размер JSON, чтобы не забили базу
+                if (json.length() > 100_000) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "Payload too large"));
+                }
+
+                PersonalEvent pe = personalRepo.findById(token).orElse(new PersonalEvent(token, "[]"));
+                pe.setEventsJson(json);
+                personalRepo.save(pe);
+
+                return ResponseEntity.ok(Map.of("ok", true));
+            } catch (Exception e) {
+                return ResponseEntity.internalServerError().body(Map.of("error", "Save failed"));
+            }
+        }
+
 
 
         @GetMapping("/notify-visit")
