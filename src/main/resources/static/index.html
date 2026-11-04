@@ -42,6 +42,7 @@
             font-size: 17px;
             -webkit-text-size-adjust: 100%;
             touch-action: manipulation;
+            overscroll-behavior: none;
         }
 
         body {
@@ -54,20 +55,14 @@
             min-height: 100dvh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
         body.no-scroll { overflow: hidden; }
 
         /* ФОН */
-        .bg-layer {
-            position: fixed; inset: 0;
-            pointer-events: none; z-index: 0;
-            overflow: hidden;
-        }
-        .bg-glow {
-            position: absolute;
-            border-radius: 50%;
-            will-change: transform;
-        }
+        .bg-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-glow { position: absolute; border-radius: 50%; will-change: transform; }
         .bg-glow-1 {
             width: 80vw; height: 80vw;
             top: -35%; left: -25%;
@@ -80,14 +75,9 @@
             background: radial-gradient(circle, rgba(120, 150, 220, 0.07) 0%, transparent 50%);
             animation: drift2 55s ease-in-out infinite;
         }
-        @keyframes drift1 {
-            0%, 100% { transform: translate(0, 0); }
-            50%      { transform: translate(12vw, 14vh); }
-        }
-        @keyframes drift2 {
-            0%, 100% { transform: translate(0, 0); }
-            50%      { transform: translate(-10vw, -12vh); }
-        }
+        @keyframes drift1 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(12vw,14vh);} }
+        @keyframes drift2 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(-10vw,-12vh);} }
+
         .bg-noise {
             position: fixed; inset: 0;
             z-index: 1; pointer-events: none;
@@ -112,8 +102,7 @@
             font-family: var(--font-mono);
             font-size: 15px; letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: var(--text);
-            font-weight: 500;
+            color: var(--text); font-weight: 500;
         }
         .logo-dot {
             width: 8px; height: 8px; border-radius: 50%;
@@ -122,12 +111,10 @@
             animation: pulseDot 2.2s ease-in-out infinite;
         }
         @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%      { opacity: 0.4; transform: scale(1.5); }
+            0%,100% { opacity: 1; transform: scale(1); }
+            50%     { opacity: 0.4; transform: scale(1.5); }
         }
-        .top-right {
-            display: flex; gap: 10px; align-items: center;
-        }
+        .top-right { display: flex; gap: 10px; align-items: center; }
         .live-clock {
             font-family: var(--font-mono);
             font-size: 14px; letter-spacing: 0.14em;
@@ -158,7 +145,7 @@
             transition: all 0.3s;
         }
         .sync-btn.synced .sync-dot { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
-        .sync-btn.local .sync-dot { background: #94a3b8; }
+        .sync-btn.local  .sync-dot { background: #94a3b8; }
         .sync-btn.failed .sync-dot { background: #f87171; box-shadow: 0 0 6px #f87171; }
 
         /* MAIN */
@@ -290,16 +277,14 @@
         }
         .section-label > span:first-child { white-space: nowrap; }
         .section-label::before {
-            content: '';
-            width: 28px; height: 1px;
+            content: ''; width: 28px; height: 1px;
             background: var(--border-strong);
         }
         .section-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
+            content: ''; flex: 1; height: 1px;
             background: var(--border);
         }
+        .section-label .add-event-btn { margin-left: auto; }
 
         .hub-container {
             display: grid;
@@ -329,8 +314,7 @@
             top: 0; left: 20%; right: 20%;
             height: 1px;
             background: linear-gradient(90deg, transparent, currentColor, transparent);
-            opacity: 0;
-            transition: opacity 0.5s;
+            opacity: 0; transition: opacity 0.5s;
         }
         .hub-card::after {
             content: attr(data-emoji);
@@ -340,8 +324,7 @@
             opacity: 0.03;
             pointer-events: none;
             transition: opacity 0.5s, transform 0.5s var(--ease);
-            line-height: 1;
-            z-index: -1;
+            line-height: 1; z-index: -1;
         }
         .hub-card:hover {
             transform: translateY(-4px);
@@ -349,25 +332,22 @@
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.018) 100%);
         }
         .hub-card:hover::before { opacity: 0.55; }
-        .hub-card:hover::after { opacity: 0.09; transform: rotate(-8deg) scale(1.05); }
+        .hub-card:hover::after  { opacity: 0.09; transform: rotate(-8deg) scale(1.05); }
 
         .hub-index {
             position: absolute;
             top: 22px; right: 22px;
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.2em;
+            font-size: 12px; letter-spacing: 0.2em;
             color: var(--text-dim);
         }
         .hub-icon {
-            font-size: 42px;
-            line-height: 1;
+            font-size: 42px; line-height: 1;
             filter: drop-shadow(0 0 18px currentColor);
             opacity: 0.9;
         }
         .hub-title {
-            font-size: 18px;
-            font-weight: 500;
+            font-size: 18px; font-weight: 500;
             letter-spacing: 0.02em;
             color: var(--text);
             overflow: hidden;
@@ -376,8 +356,7 @@
         }
         .hub-sub {
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.14em;
+            font-size: 12px; letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--text-dim);
             margin-top: 8px;
@@ -393,11 +372,8 @@
         .card-birthday { color: var(--c-coral); }
         .card-leto     { color: #f5d98f; }
 
-        /* ЛИЧНЫЕ СОБЫТИЯ */
-        .personal-card {
-            --event-color: var(--accent);
-            color: var(--event-color);
-        }
+        /* ЛИЧНЫЕ */
+        .personal-card { --event-color: var(--accent); color: var(--event-color); }
         .personal-card::before {
             background: linear-gradient(90deg, transparent, var(--event-color), transparent);
         }
@@ -406,11 +382,9 @@
             top: 22px; right: 22px;
             display: flex; align-items: center; gap: 6px;
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.18em;
+            font-size: 11px; letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: var(--event-color);
-            opacity: 0.9;
+            color: var(--event-color); opacity: 0.9;
         }
         .personal-badge::before {
             content: '';
@@ -438,21 +412,16 @@
             background: rgba(0,0,0,0.7);
             border: 1px solid var(--border-strong);
             color: var(--text-muted);
-            cursor: pointer;
-            font-size: 16px;
+            cursor: pointer; font-size: 16px;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-            padding: 0;
+            transition: all 0.2s; padding: 0;
         }
         .card-actions button:hover {
             background: rgba(0,0,0,0.9);
             color: var(--event-color);
             border-color: var(--event-color);
         }
-        .card-actions button.danger:hover {
-            color: #f87171;
-            border-color: #f87171;
-        }
+        .card-actions button.danger:hover { color: #f87171; border-color: #f87171; }
 
         .add-event-btn {
             display: inline-flex; align-items: center; gap: 8px;
@@ -462,28 +431,17 @@
             border-radius: 8px;
             color: var(--text-muted);
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.2em;
+            font-size: 12px; letter-spacing: 0.2em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
+            transition: all 0.3s; font-weight: 500;
             min-height: 40px;
         }
         .add-event-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+            border-color: var(--accent); color: var(--accent);
             box-shadow: 0 0 20px rgba(240, 184, 120, 0.15);
         }
-        .add-event-btn .plus {
-            font-size: 18px;
-            line-height: 1;
-            font-weight: 300;
-        }
-        .section-label .add-event-btn {
-            margin-left: auto;
-        }
-        .section-label::after { display: none; }
+        .add-event-btn .plus { font-size: 18px; line-height: 1; font-weight: 300; }
 
         .personal-empty {
             padding: 56px 28px;
@@ -491,31 +449,19 @@
             border: 1px dashed var(--border-strong);
             border-radius: 14px;
             color: var(--text-dim);
-            font-size: 15px;
-            line-height: 1.7;
-            letter-spacing: 0.02em;
+            font-size: 15px; line-height: 1.7;
         }
         .personal-empty p { margin: 0 0 22px; color: var(--text-muted); }
-        .personal-empty strong {
-            color: var(--text);
-            font-weight: 500;
-            display: block;
-            margin-bottom: 6px;
-            font-size: 16px;
-        }
+        .personal-empty strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 6px; font-size: 16px; }
         .personal-empty .empty-cta {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 13px 24px;
-            background: var(--accent);
-            color: #1a1200;
-            border: none;
-            border-radius: 8px;
+            background: var(--accent); color: #1a1200;
+            border: none; border-radius: 8px;
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.2em;
+            font-size: 12px; letter-spacing: 0.2em;
             text-transform: uppercase;
-            font-weight: 600;
-            cursor: pointer;
+            font-weight: 600; cursor: pointer;
             transition: all 0.3s;
             min-height: 44px;
         }
@@ -530,18 +476,13 @@
             grid-template-columns: repeat(3, 1fr);
             border-top: 1px solid var(--border);
             padding-top: 44px;
-            margin-bottom: 0;
         }
-        .stat {
-            padding: 0 32px;
-            border-right: 1px solid var(--border);
-        }
+        .stat { padding: 0 32px; border-right: 1px solid var(--border); }
         .stat:first-child { padding-left: 0; }
         .stat:last-child { border-right: none; padding-right: 0; }
         .stat-value {
             font-family: var(--font-mono);
-            font-size: 36px;
-            font-weight: 300;
+            font-size: 36px; font-weight: 300;
             letter-spacing: -0.02em;
             color: var(--text);
             margin-bottom: 12px;
@@ -549,8 +490,7 @@
         }
         .stat-label {
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.32em;
+            font-size: 12px; letter-spacing: 0.32em;
             text-transform: uppercase;
             color: var(--text-dim);
         }
@@ -562,8 +502,7 @@
             border-top: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.14em;
+            font-size: 12px; letter-spacing: 0.14em;
             color: var(--text-dim);
             text-transform: uppercase;
             flex-wrap: wrap; gap: 12px;
@@ -582,7 +521,6 @@
             transition: opacity 0.35s var(--ease);
         }
         .modal-backdrop.open { opacity: 1; pointer-events: auto; }
-
         .modal {
             background: var(--bg-elev);
             border: 1px solid var(--border-strong);
@@ -602,11 +540,9 @@
         }
         .modal-header h2 {
             margin: 0;
-            font-size: 30px;
-            font-weight: 200;
+            font-size: 30px; font-weight: 200;
             letter-spacing: -0.015em;
-            color: var(--text);
-            line-height: 1.2;
+            color: var(--text); line-height: 1.2;
         }
         .modal-header h2 em {
             font-family: var(--font-serif);
@@ -617,27 +553,20 @@
         .modal-close {
             background: none; border: none;
             color: var(--text-muted);
-            font-size: 18px;
-            cursor: pointer;
+            font-size: 18px; cursor: pointer;
             width: 38px; height: 38px;
             border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
+            transition: all 0.2s; flex-shrink: 0;
         }
         .modal-close:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); }
 
-        .modal-form {
-            padding: 24px 28px 28px;
-            display: flex; flex-direction: column; gap: 20px;
-        }
-
+        .modal-form { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 20px; }
         .field { display: flex; flex-direction: column; gap: 10px; }
         .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .field label {
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.28em;
+            font-size: 11px; letter-spacing: 0.28em;
             text-transform: uppercase;
             color: var(--text-dim);
             font-weight: 500;
@@ -651,10 +580,8 @@
             border: 1px solid var(--border-strong);
             border-radius: 8px;
             color: var(--text);
-            font-size: 17px;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.2s;
+            font-size: 17px; font-family: inherit;
+            outline: none; transition: all 0.2s;
             -webkit-appearance: none;
             min-height: 48px;
         }
@@ -663,18 +590,10 @@
             background: rgba(255, 255, 255, 0.05);
             box-shadow: 0 0 0 3px rgba(240, 184, 120, 0.1);
         }
-        .field input[type="date"],
-        .field input[type="time"] { color-scheme: dark; }
-        .field input.error {
-            border-color: #f87171;
-            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
-        }
+        .field input[type="date"], .field input[type="time"] { color-scheme: dark; }
+        .field input.error { border-color: #f87171; box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15); }
 
-        .emoji-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-        }
+        .emoji-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .emoji-opt {
             aspect-ratio: 1;
             display: flex; align-items: center; justify-content: center;
@@ -682,15 +601,10 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.15s;
-            padding: 0;
-            min-height: 42px;
+            cursor: pointer; transition: all 0.15s;
+            padding: 0; min-height: 42px;
         }
-        .emoji-opt:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: scale(1.05);
-        }
+        .emoji-opt:hover { background: rgba(255, 255, 255, 0.06); transform: scale(1.05); }
         .emoji-opt.selected {
             border-color: var(--accent);
             background: rgba(240, 184, 120, 0.1);
@@ -702,67 +616,44 @@
             width: 42px; height: 42px;
             border-radius: 50%;
             border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            padding: 0;
+            cursor: pointer; transition: all 0.2s;
+            position: relative; padding: 0;
         }
-        .color-opt.selected {
-            border-color: #fff;
-            transform: scale(1.12);
-        }
+        .color-opt.selected { border-color: #fff; transform: scale(1.12); }
         .color-opt.selected::after {
             content: '✓';
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             display: flex; align-items: center; justify-content: center;
             color: rgba(0, 0, 0, 0.75);
-            font-weight: 700;
-            font-size: 18px;
+            font-weight: 700; font-size: 18px;
         }
 
         .checkbox-field {
             display: flex; align-items: center; gap: 12px;
             cursor: pointer;
-            font-size: 15px;
-            color: var(--text-muted);
-            user-select: none;
-            padding: 4px 0;
+            font-size: 15px; color: var(--text-muted);
+            user-select: none; padding: 4px 0;
         }
         .checkbox-field input[type="checkbox"] {
             width: 22px; height: 22px;
             accent-color: var(--accent);
-            cursor: pointer;
-            flex-shrink: 0;
+            cursor: pointer; flex-shrink: 0;
         }
         .checkbox-field span { line-height: 1.5; }
 
-        .modal-actions {
-            display: flex; gap: 10px;
-            margin-top: 8px;
-            justify-content: flex-end;
-        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end; }
         .btn-primary, .btn-secondary {
             padding: 14px 24px;
             border-radius: 8px;
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.2em;
+            font-size: 12px; letter-spacing: 0.2em;
             text-transform: uppercase;
-            font-weight: 600;
-            cursor: pointer;
+            font-weight: 600; cursor: pointer;
             transition: all 0.2s;
-            border: none;
-            min-height: 48px;
+            border: none; min-height: 48px;
         }
-        .btn-primary {
-            background: var(--accent);
-            color: #1a1200;
-        }
-        .btn-primary:hover:not(:disabled) {
-            background: #f5c98a;
-            box-shadow: 0 0 22px var(--accent-glow);
-        }
+        .btn-primary { background: var(--accent); color: #1a1200; }
+        .btn-primary:hover:not(:disabled) { background: #f5c98a; box-shadow: 0 0 22px var(--accent-glow); }
         .btn-primary:disabled { opacity: 0.5; cursor: wait; }
         .btn-secondary {
             background: transparent;
@@ -777,13 +668,9 @@
         .sync-modal-body p {
             margin: 0 0 18px;
             color: var(--text-muted);
-            font-size: 15px;
-            line-height: 1.7;
+            font-size: 15px; line-height: 1.7;
         }
-        .sync-link-wrap {
-            display: flex; gap: 8px;
-            margin: 16px 0;
-        }
+        .sync-link-wrap { display: flex; gap: 8px; margin: 16px 0; }
         .sync-link-wrap input {
             flex: 1;
             padding: 12px 14px;
@@ -792,27 +679,19 @@
             border-radius: 8px;
             color: var(--text);
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.03em;
-            outline: none;
-            min-width: 0;
-            min-height: 44px;
+            font-size: 12px; letter-spacing: 0.03em;
+            outline: none; min-width: 0; min-height: 44px;
         }
         .sync-link-wrap button {
             padding: 12px 16px;
-            background: var(--accent);
-            color: #1a1200;
-            border: none;
-            border-radius: 8px;
+            background: var(--accent); color: #1a1200;
+            border: none; border-radius: 8px;
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.18em;
+            font-size: 11px; letter-spacing: 0.18em;
             text-transform: uppercase;
-            font-weight: 600;
-            cursor: pointer;
+            font-weight: 600; cursor: pointer;
             transition: all 0.2s;
-            flex-shrink: 0;
-            min-height: 44px;
+            flex-shrink: 0; min-height: 44px;
         }
         .sync-link-wrap button:hover { background: #f5c98a; }
         .sync-hint {
@@ -823,30 +702,26 @@
             letter-spacing: 0.02em;
         }
 
-        /* ========== ПОЛНОЭКРАННЫЙ СЧЁТЧИК ========== */
+        /* ПОЛНОЭКРАННЫЙ СЧЁТЧИК */
         .event-overlay {
             position: fixed; inset: 0;
             z-index: 500;
             background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             padding: 40px 24px;
+            padding-left: max(24px, env(safe-area-inset-left));
+            padding-right: max(24px, env(safe-area-inset-right));
             opacity: 0; pointer-events: none;
             transition: opacity 0.5s var(--ease);
             overflow: hidden;
         }
-        .event-overlay.open {
-            opacity: 1; pointer-events: auto;
-        }
-        /* Мягкое свечение в цвете события */
+        .event-overlay.open { opacity: 1; pointer-events: auto; }
         .event-overlay::before {
             content: '';
             position: absolute; inset: 0;
             background: radial-gradient(ellipse at 50% 50%, var(--ov-color, #f0b878) 0%, transparent 55%);
-            opacity: 0.13;
-            pointer-events: none;
+            opacity: 0.13; pointer-events: none;
         }
         .event-overlay::after {
             content: '';
@@ -863,6 +738,9 @@
             top: 0; left: 0; right: 0;
             display: flex; justify-content: space-between; align-items: center;
             padding: 24px 32px;
+            padding-top: max(24px, env(safe-area-inset-top));
+            padding-left: max(32px, env(safe-area-inset-left));
+            padding-right: max(32px, env(safe-area-inset-right));
             z-index: 2;
         }
         .ov-top-btn {
@@ -872,8 +750,7 @@
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-strong);
             color: var(--text-muted);
-            cursor: pointer;
-            font-size: 18px;
+            cursor: pointer; font-size: 18px;
             transition: all 0.25s var(--ease);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -885,13 +762,11 @@
         }
 
         .ov-content {
-            position: relative;
-            z-index: 2;
+            position: relative; z-index: 2;
             display: flex; flex-direction: column;
-            align-items: center;
-            text-align: center;
+            align-items: center; text-align: center;
             animation: ovFadeIn 0.7s var(--ease) 0.1s both;
-            max-width: 100%;
+            max-width: 100%; width: 100%;
         }
         @keyframes ovFadeIn {
             from { opacity: 0; transform: translateY(24px); }
@@ -932,9 +807,7 @@
             align-items: flex-start;
             gap: clamp(20px, 5vw, 60px);
         }
-        .ov-unit {
-            display: flex; flex-direction: column; align-items: center;
-        }
+        .ov-unit { display: flex; flex-direction: column; align-items: center; }
         .ov-value {
             font-family: var(--font-mono);
             font-size: clamp(52px, 11vw, 148px);
@@ -943,10 +816,7 @@
             letter-spacing: -0.04em;
             font-variant-numeric: tabular-nums;
             color: transparent;
-            background: linear-gradient(180deg,
-            #ffffff 0%,
-            #f0eadf 45%,
-            var(--ov-color, var(--accent)) 130%);
+            background: linear-gradient(180deg, #ffffff 0%, #f0eadf 45%, var(--ov-color, var(--accent)) 130%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -960,33 +830,13 @@
             color: var(--text-dim);
             margin-top: clamp(14px, 2vw, 22px);
         }
-
         .ov-hint {
             margin-top: clamp(40px, 6vw, 72px);
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.28em;
+            font-size: 11px; letter-spacing: 0.28em;
             text-transform: uppercase;
             color: var(--text-dim);
             opacity: 0.55;
-        }
-
-        /* Мобильная — дни в одну строку, часы/мин/сек мельче */
-        @media (max-width: 640px) {
-            .ov-countdown {
-                flex-wrap: wrap;
-                gap: 16px 28px;
-                max-width: 100vw;
-                padding: 0 10px;
-            }
-            .ov-unit:nth-child(1) { flex-basis: 100%; margin-bottom: 8px; }
-            .ov-value { font-size: clamp(46px, 12vw, 72px); }
-            .ov-unit:nth-child(1) .ov-value { font-size: clamp(70px, 22vw, 120px); }
-            .ov-label { font-size: 10px; letter-spacing: 0.24em; }
-            .ov-emoji { font-size: 64px; margin-bottom: 16px; }
-            .ov-date { margin-bottom: 32px; }
-            .ov-top { padding: 16px 20px; }
-            .ov-top-btn { width: 44px; height: 44px; }
         }
 
         /* ЧАТ */
@@ -1001,8 +851,7 @@
             border: 1px solid var(--border-strong);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            cursor: pointer;
-            font-size: 22px;
+            cursor: pointer; font-size: 22px;
             display: flex; align-items: center; justify-content: center;
             color: var(--text);
             transition: all 0.35s var(--ease);
@@ -1050,18 +899,14 @@
             border-bottom: 1px solid var(--border);
             color: var(--text);
             font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.24em;
+            font-size: 12px; letter-spacing: 0.24em;
             text-transform: uppercase;
-            font-weight: 500;
-            flex-shrink: 0;
+            font-weight: 500; flex-shrink: 0;
         }
         #chat-close {
             background: none; border: none;
             color: var(--text-muted);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 0;
+            font-size: 18px; cursor: pointer; padding: 0;
             width: 34px; height: 34px;
             border-radius: 6px;
             transition: all 0.2s;
@@ -1069,8 +914,7 @@
         }
         #chat-close:hover { background: rgba(255,255,255,0.06); color: var(--text); }
         .chat-body {
-            flex: 1;
-            overflow-y: auto;
+            flex: 1; overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
             padding: 16px;
@@ -1079,10 +923,8 @@
         }
         .chat-empty {
             color: var(--text-dim);
-            font-size: 14px;
-            text-align: center;
-            margin-top: 50px;
-            line-height: 1.7;
+            font-size: 14px; text-align: center;
+            margin-top: 50px; line-height: 1.7;
             font-family: var(--font-mono);
             letter-spacing: 0.05em;
         }
@@ -1090,8 +932,7 @@
             padding: 12px 16px;
             border-radius: 12px;
             max-width: 85%;
-            font-size: 15px;
-            line-height: 1.5;
+            font-size: 15px; line-height: 1.5;
             overflow-wrap: break-word;
             word-break: break-word;
             animation: msgIn 0.3s var(--ease);
@@ -1117,8 +958,7 @@
         .chat-msg.error {
             align-self: center;
             background: rgba(232, 100, 100, 0.12);
-            color: #f0a0a0;
-            font-size: 13px;
+            color: #f0a0a0; font-size: 13px;
             border: 1px solid rgba(232, 100, 100, 0.25);
             text-align: center;
         }
@@ -1149,10 +989,8 @@
             border-radius: 10px;
             padding: 12px 14px;
             color: var(--text);
-            font-size: 16px;
-            font-family: inherit;
-            outline: none;
-            min-width: 0;
+            font-size: 16px; font-family: inherit;
+            outline: none; min-width: 0;
             -webkit-appearance: none;
             transition: all 0.2s;
             min-height: 48px;
@@ -1166,13 +1004,9 @@
         #chat-send {
             width: 48px; height: 48px;
             border-radius: 10px;
-            background: var(--accent);
-            color: #1a1200;
-            border: none;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: var(--accent); color: #1a1200;
+            border: none; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
             flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
         }
@@ -1249,8 +1083,12 @@
             .nc-label { font-size: 10px; letter-spacing: 0.22em; margin-top: 12px; }
 
             .hub-container { grid-template-columns: 1fr; gap: 12px; }
-            .hub-card { min-height: 120px; padding: 22px; border-radius: 12px; flex-direction: row; align-items: center; gap: 20px; }
-            .hub-card > div:last-child { flex: 1; }
+            .hub-card {
+                min-height: 120px; padding: 22px;
+                border-radius: 12px;
+                flex-direction: row; align-items: center; gap: 20px;
+            }
+            .hub-card > div:last-child { flex: 1; min-width: 0; }
             .hub-card::after { font-size: 120px; right: -18px; bottom: -18px; }
             .hub-index { top: 18px; right: 20px; font-size: 11px; }
             .hub-icon { font-size: 40px; }
@@ -1296,10 +1134,70 @@
         @media (hover: none) {
             .hub-card:hover { transform: none; }
             .hub-card:hover::before { opacity: 0; }
-            .hub-card:hover::after { opacity: 0.03; transform: none; }
+            .hub-card:hover::after  { opacity: 0.03; transform: none; }
             .chat-btn:hover { transform: none; box-shadow: none; }
             .personal-card .card-actions { opacity: 1; }
             .personal-card .personal-badge { opacity: 0; }
+        }
+
+        /* =============================================
+           MOBILE PERFORMANCE PATCH
+           (Infinix GT 30, любые Android-браузеры)
+           ============================================= */
+        @media (max-width: 820px), (hover: none), (prefers-reduced-motion: reduce) {
+            .topbar, .chat-btn, .chat-modal, .modal-backdrop {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .topbar         { background: rgba(6, 7, 12, 0.95) !important; }
+            .chat-btn       { background: rgba(18, 22, 34, 0.97) !important; }
+            .chat-modal     { background: rgba(10, 12, 20, 0.99) !important; }
+            .modal-backdrop { background: rgba(0, 0, 0, 0.88) !important; }
+
+            .bg-glow { animation: none !important; will-change: auto !important; }
+            .bg-glow-1 { opacity: 0.55; }
+            .bg-glow-2 { opacity: 0.45; }
+
+            .bg-noise { mix-blend-mode: normal !important; opacity: 0.018 !important; }
+
+            .pulse-line::after {
+                animation: none !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                opacity: 0.7;
+            }
+
+            .ov-value { filter: none !important; text-shadow: 0 0 24px var(--ov-color, #f0b878) !important; }
+            .ov-emoji  { filter: none !important; }
+            .hub-icon  { filter: none !important; }
+            .hero h1 em { filter: none !important; }
+
+            .hero h1, .hero p, .pulse-line,
+            .nearest-eyebrow, .nearest-name, .nearest-countdown,
+            .events-section, .stats {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .logo-dot,
+            .nearest-eyebrow::before,
+            .personal-badge::before { animation: none !important; }
+
+            .event-overlay::before { opacity: 0.10 !important; }
+            .event-overlay::after  { display: none !important; }
+        }
+
+        /* =============================================
+           FLUID OVERLAY COUNTER — вписывается в iPhone SE
+           ============================================= */
+        @media (max-width: 640px) {
+            .ov-unit:nth-child(1) .ov-value { font-size: clamp(56px, 16vw, 88px); }
+            .ov-value  { font-size: clamp(36px, 9.5vw, 56px); }
+            .ov-countdown { gap: 12px 20px; flex-wrap: wrap; max-width: 100vw; padding: 0 6px; }
+            .ov-unit:nth-child(1) { flex-basis: 100%; margin-bottom: 8px; }
+            .ov-name { font-size: clamp(26px, 7.5vw, 40px); }
+            .ov-emoji { font-size: 64px; margin-bottom: 16px; }
+            .ov-date { margin-bottom: 32px; }
         }
     </style>
 
@@ -1329,7 +1227,7 @@
     </div>
     <div class="top-right">
         <div class="live-clock" id="live-clock" aria-label="Текущее время">--:--:--</div>
-        <button class="sync-btn local" id="sync-btn" aria-label="Информация о синхронизации" title="Синхронизация">
+        <button class="sync-btn local" id="sync-btn" aria-label="Синхронизация" title="Синхронизация">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
             </svg>
@@ -1379,34 +1277,22 @@
             <a href="/newyear.html" class="hub-card card-newyear" data-emoji="❄️">
                 <span class="hub-index">01</span>
                 <div class="hub-icon" aria-hidden="true">❄️</div>
-                <div>
-                    <div class="hub-title">Новый Год</div>
-                    <div class="hub-sub">Зима</div>
-                </div>
+                <div><div class="hub-title">Новый Год</div><div class="hub-sub">Зима</div></div>
             </a>
             <a href="/ramadan.html" class="hub-card card-ramadan" data-emoji="🌙">
                 <span class="hub-index">02</span>
                 <div class="hub-icon" aria-hidden="true">🌙</div>
-                <div>
-                    <div class="hub-title">Рамадан</div>
-                    <div class="hub-sub">Пост</div>
-                </div>
+                <div><div class="hub-title">Рамадан</div><div class="hub-sub">Пост</div></div>
             </a>
             <a href="/birthdays.html" class="hub-card card-birthday" data-emoji="🎂">
                 <span class="hub-index">03</span>
                 <div class="hub-icon" aria-hidden="true">🎂</div>
-                <div>
-                    <div class="hub-title">Дни рождения</div>
-                    <div class="hub-sub">Личное</div>
-                </div>
+                <div><div class="hub-title">Дни рождения</div><div class="hub-sub">Личное</div></div>
             </a>
             <a href="/leto.html" class="hub-card card-leto" data-emoji="☀️">
                 <span class="hub-index">04</span>
                 <div class="hub-icon" aria-hidden="true">☀️</div>
-                <div>
-                    <div class="hub-title">Лето</div>
-                    <div class="hub-sub">Сезон</div>
-                </div>
+                <div><div class="hub-title">Лето</div><div class="hub-sub">Сезон</div></div>
             </a>
         </div>
     </section>
@@ -1456,14 +1342,8 @@
                 <input type="text" id="ev-name" maxlength="40" placeholder="Например: День рождения мамы" autocomplete="off" required>
             </div>
             <div class="field-row">
-                <div class="field">
-                    <label for="ev-date">Дата</label>
-                    <input type="date" id="ev-date" required>
-                </div>
-                <div class="field">
-                    <label for="ev-time">Время</label>
-                    <input type="time" id="ev-time" value="00:00">
-                </div>
+                <div class="field"><label for="ev-date">Дата</label><input type="date" id="ev-date" required></div>
+                <div class="field"><label for="ev-time">Время</label><input type="time" id="ev-time" value="00:00"></div>
             </div>
             <div class="field">
                 <label>Иконка</label>
@@ -1524,7 +1404,7 @@
         /* ==================================================
            УТИЛИТЫ
            ================================================== */
-        const MONTHS_GENITIVE = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        const MONTHS_GENITIVE = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
         const pad2 = (n) => String(n).padStart(2, '0');
         const uid = () => 'pe_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
 
@@ -1539,18 +1419,14 @@
 
         function escapeHtml(s) {
             return String(s == null ? '' : s)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
         }
 
         /* ==================================================
-           STORAGE / СИНХРОНИЗАЦИЯ
-           ⚠ КОНТРАКТ БЭКЕНДА (поправь здесь если у тебя иначе):
-              GET  /api/personal-events?token=…  → { events: [...] }
-              POST /api/personal-events  headers: { X-Personal-Token }, body: { events: [...] }
+           STORAGE / СИНХРОН
+           ⚠ КОНТРАКТ БЭКЕНДА — поправь если у тебя иначе
            ================================================== */
         const Storage = {
             TOKEN_KEY: 'personal_token_v1',
@@ -1565,29 +1441,23 @@
                 }
                 return t;
             },
-            setToken(t) {
-                try { localStorage.setItem(this.TOKEN_KEY, t); } catch (e) {}
-            },
+            setToken(t) { try { localStorage.setItem(this.TOKEN_KEY, t); } catch (e) {} },
             loadLocal() {
-                try {
-                    const raw = localStorage.getItem(this.EVENTS_KEY);
-                    return raw ? JSON.parse(raw) : [];
-                } catch (e) { return []; }
+                try { const raw = localStorage.getItem(this.EVENTS_KEY); return raw ? JSON.parse(raw) : []; }
+                catch (e) { return []; }
             },
-            saveLocal(events) {
-                try { localStorage.setItem(this.EVENTS_KEY, JSON.stringify(events)); } catch (e) {}
-            },
+            saveLocal(events) { try { localStorage.setItem(this.EVENTS_KEY, JSON.stringify(events)); } catch (e) {} },
             async fetchFromServer() {
                 try {
                     const token = this.getToken();
                     const res = await fetch(`${this.API_URL}?token=${encodeURIComponent(token)}`, {
                         headers: { 'X-Personal-Token': token },
-                        cache: 'no-store'
+                        cache: 'no-store',
+                        signal: AbortSignal.timeout(5000)
                     });
                     if (!res.ok) return null;
                     const data = await res.json();
-                    if (!data || !Array.isArray(data.events)) return null;
-                    return data;
+                    return (data && Array.isArray(data.events)) ? data : null;
                 } catch (e) { return null; }
             },
             async pushToServer(events) {
@@ -1595,11 +1465,9 @@
                     const token = this.getToken();
                     const res = await fetch(this.API_URL, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Personal-Token': token
-                        },
-                        body: JSON.stringify({ events })
+                        headers: { 'Content-Type': 'application/json', 'X-Personal-Token': token },
+                        body: JSON.stringify({ events }),
+                        signal: AbortSignal.timeout(8000)
                     });
                     return res.ok;
                 } catch (e) { return false; }
@@ -1611,12 +1479,11 @@
             if (!btn) return;
             btn.classList.remove('synced', 'local', 'failed');
             btn.classList.add(status);
-            const titles = {
+            btn.title = {
                 synced: 'Синхронизировано с сервером',
                 local: 'Только на этом устройстве',
                 failed: 'Ошибка синхронизации'
-            };
-            btn.title = titles[status] || 'Синхронизация';
+            }[status] || 'Синхронизация';
         }
 
         /* ==================================================
@@ -1627,7 +1494,7 @@
         let defaultEvents = [];
         let nearestTarget = null;
 
-        const EMOJIS = ['🎂', '🎁', '💍', '🎓', '✈️', '🏖️', '🎉', '💼', '🏠', '🌸', '❤️', '⭐', '🍀', '🎵', '📚', '🎬', '⚽', '🎮', '🎨', '🍕', '🎄', '🎃', '🐣', '🕯️', '💎', '🏆', '🚀', '✨'];
+        const EMOJIS = ['🎂','🎁','💍','🎓','✈️','🏖️','🎉','💼','🏠','🌸','❤️','⭐','🍀','🎵','📚','🎬','⚽','🎮','🎨','🍕','🎄','🎃','🐣','🕯️','💎','🏆','🚀','✨'];
 
         const COLORS = [
             { id: 'gold',     value: '#f0b878' },
@@ -1647,7 +1514,6 @@
             const [y, m, d] = parts;
             const [hh, mm] = (ev.time || '00:00').split(':').map(Number);
             let target = new Date(y, m - 1, d, hh || 0, mm || 0, 0, 0);
-
             if (ev.recurring) {
                 let safety = 0;
                 while (target < now && safety < 200) {
@@ -1684,7 +1550,7 @@
         }
 
         /* ==================================================
-           РЕНДЕР ЛИЧНЫХ СОБЫТИЙ
+           РЕНДЕР ЛИЧНЫХ
            ================================================== */
         function renderPersonalGrid() {
             const grid = document.getElementById('personal-grid');
@@ -1699,7 +1565,6 @@
                 if (stat) stat.textContent = '4';
                 return;
             }
-
             grid.hidden = false;
             empty.hidden = true;
 
@@ -1727,29 +1592,19 @@
                         <div class="hub-title" title="${escapeHtml(ev.name)}">${escapeHtml(ev.name)}</div>
                         <div class="hub-sub" data-sub-id="${ev.id}">${escapeHtml(sub)}</div>
                     </div>
-                </div>
-            `;
+                </div>`;
             }).join('');
 
             grid.querySelectorAll('.edit-action').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openEventModal(btn.dataset.id);
-                });
+                btn.addEventListener('click', (e) => { e.stopPropagation(); openEventModal(btn.dataset.id); });
             });
             grid.querySelectorAll('.delete-action').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    confirmDelete(btn.dataset.id);
-                });
+                btn.addEventListener('click', (e) => { e.stopPropagation(); confirmDelete(btn.dataset.id); });
             });
             grid.querySelectorAll('.personal-card').forEach(card => {
                 card.addEventListener('click', () => openEventOverlay(card.dataset.eventId));
                 card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        openEventOverlay(card.dataset.eventId);
-                    }
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEventOverlay(card.dataset.eventId); }
                 });
             });
 
@@ -1781,7 +1636,7 @@
                 const [hh, mm] = (payload.time || '00:00').split(':').map(Number);
                 const chosen = new Date(y, m - 1, d, hh || 0, mm || 0, 0, 0);
                 const now = new Date();
-                if (chosen < now) return 'Дата уже прошла. Включите «Повторять каждый год» или выберите будущую дату';
+                if (chosen < now) return 'Дата прошла. Включите «Повторять каждый год» или выберите будущую';
                 if (chosen - now > 100 * 365 * 86400000) return 'Дата слишком далеко в будущем';
             }
             return null;
@@ -1790,13 +1645,10 @@
         async function savePersonalEvent(payload) {
             const err = validateEventPayload(payload);
             if (err) { showToast(err, 'error'); return false; }
-
             const now = Date.now();
             if (editingEventId) {
                 const idx = personalEvents.findIndex(e => e.id === editingEventId);
-                if (idx !== -1) {
-                    personalEvents[idx] = { ...personalEvents[idx], ...payload, updatedAt: now };
-                }
+                if (idx !== -1) personalEvents[idx] = { ...personalEvents[idx], ...payload, updatedAt: now };
             } else {
                 personalEvents.push({ id: uid(), ...payload, createdAt: now, updatedAt: now });
             }
@@ -1826,10 +1678,8 @@
                 window.history.replaceState({}, '', clean);
                 showToast('События перенесены на это устройство', 'success');
             }
-
             let events = Storage.loadLocal();
             const server = await Storage.fetchFromServer();
-
             if (server && Array.isArray(server.events)) {
                 if (server.events.length === 0 && events.length > 0) {
                     const ok = await Storage.pushToServer(events);
@@ -1842,7 +1692,6 @@
             } else {
                 setSyncStatus('local');
             }
-
             personalEvents = events;
             return events;
         }
@@ -1858,28 +1707,28 @@
         /* ==================================================
            ПОЛНОЭКРАННЫЙ СЧЁТЧИК
            ================================================== */
-        const overlayEl = document.getElementById('event-overlay');
-        const overlayNameEl = document.getElementById('ov-name');
-        const overlayDateEl = document.getElementById('ov-date');
+        const overlayEl      = document.getElementById('event-overlay');
+        const overlayNameEl  = document.getElementById('ov-name');
+        const overlayDateEl  = document.getElementById('ov-date');
         const overlayEmojiEl = document.getElementById('ov-emoji');
-        const ovDays = document.getElementById('ov-days');
-        const ovHours = document.getElementById('ov-hours');
+        const ovDays    = document.getElementById('ov-days');
+        const ovHours   = document.getElementById('ov-hours');
         const ovMinutes = document.getElementById('ov-minutes');
         const ovSeconds = document.getElementById('ov-seconds');
-        const ovBack = document.getElementById('ov-back');
-        const ovEdit = document.getElementById('ov-edit');
+        const ovBack    = document.getElementById('ov-back');
+        const ovEdit    = document.getElementById('ov-edit');
 
         let overlayEvent = null;
         let overlayTimer = null;
 
         function tickOverlay() {
-            if (!overlayEvent) return;
+            if (!overlayEvent || document.hidden) return;
             const now = new Date();
             const target = nextOccurrence(overlayEvent, now);
             if (!target) return;
             const diff = Math.max(0, target - now);
-            ovDays.textContent = Math.floor(diff / 86400000);
-            ovHours.textContent = pad2(Math.floor((diff / 3600000) % 24));
+            ovDays.textContent    = Math.floor(diff / 86400000);
+            ovHours.textContent   = pad2(Math.floor((diff / 3600000) % 24));
             ovMinutes.textContent = pad2(Math.floor((diff / 60000) % 60));
             ovSeconds.textContent = pad2(Math.floor((diff / 1000) % 60));
         }
@@ -1887,17 +1736,15 @@
         function openEventOverlay(id, pushUrl = true) {
             const ev = personalEvents.find(e => e.id === id);
             if (!ev) return;
-
             overlayEvent = ev;
             const color = (COLORS.find(c => c.id === ev.color) || COLORS[0]).value;
             overlayEl.style.setProperty('--ov-color', color);
-            overlayNameEl.textContent = ev.name;
+            overlayNameEl.textContent  = ev.name;
             overlayEmojiEl.textContent = ev.emoji || '📌';
-            overlayDateEl.textContent = formatEventDate(ev);
+            overlayDateEl.textContent  = formatEventDate(ev);
 
             overlayEl.classList.add('open');
             document.body.classList.add('no-scroll');
-
             tickOverlay();
             clearInterval(overlayTimer);
             overlayTimer = setInterval(tickOverlay, 1000);
@@ -1916,7 +1763,6 @@
             overlayEvent = null;
             clearInterval(overlayTimer);
             overlayTimer = null;
-
             if (pushUrl) {
                 const url = new URL(window.location.href);
                 url.searchParams.delete('event');
@@ -1932,31 +1778,26 @@
             openEventModal(id);
         });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && overlayEl.classList.contains('open')) {
-                closeEventOverlay();
-            }
+            if (e.key === 'Escape' && overlayEl.classList.contains('open')) closeEventOverlay();
         });
         window.addEventListener('popstate', () => {
             const url = new URL(window.location.href);
             const id = url.searchParams.get('event');
-            if (id) {
-                if (!overlayEvent) openEventOverlay(id, false);
-            } else {
-                if (overlayEvent) closeEventOverlay(false);
-            }
+            if (id) { if (!overlayEvent) openEventOverlay(id, false); }
+            else    { if (overlayEvent)  closeEventOverlay(false); }
         });
 
         /* ==================================================
-           МОДАЛКА РЕДАКТИРОВАНИЯ
+           МОДАЛКА
            ================================================== */
-        const eventModal = document.getElementById('event-modal');
-        const eventForm = document.getElementById('event-form');
-        const nameInput = document.getElementById('ev-name');
-        const dateInput = document.getElementById('ev-date');
-        const timeInput = document.getElementById('ev-time');
+        const eventModal     = document.getElementById('event-modal');
+        const eventForm      = document.getElementById('event-form');
+        const nameInput      = document.getElementById('ev-name');
+        const dateInput      = document.getElementById('ev-date');
+        const timeInput      = document.getElementById('ev-time');
         const recurringInput = document.getElementById('ev-recurring');
-        const modalTitle = document.getElementById('event-modal-title');
-        const saveBtn = document.getElementById('event-save');
+        const modalTitle     = document.getElementById('event-modal-title');
+        const saveBtn        = document.getElementById('event-save');
 
         let selectedEmoji = '🎂';
         let selectedColor = 'gold';
@@ -2015,13 +1856,10 @@
                 selectedEmoji = '🎂';
                 selectedColor = 'gold';
             }
-
             nameInput.classList.remove('error');
             dateInput.classList.remove('error');
-
             buildEmojiGrid();
             buildColorGrid();
-
             eventModal.classList.add('open');
             setTimeout(() => nameInput.focus(), 350);
         }
@@ -2041,17 +1879,13 @@
                 emoji: selectedEmoji,
                 color: selectedColor
             };
-
             nameInput.classList.remove('error');
             dateInput.classList.remove('error');
-
             if (!payload.name) { nameInput.classList.add('error'); showToast('Введите название', 'error'); return; }
             if (!payload.date) { dateInput.classList.add('error'); showToast('Укажите дату', 'error'); return; }
-
             saveBtn.disabled = true;
             const ok = await savePersonalEvent(payload);
             saveBtn.disabled = false;
-
             if (ok) {
                 showToast(editingEventId ? 'Событие обновлено' : 'Событие создано', 'success');
                 closeEventModal();
@@ -2060,10 +1894,7 @@
 
         document.getElementById('event-modal-close').addEventListener('click', closeEventModal);
         document.getElementById('event-cancel').addEventListener('click', closeEventModal);
-        eventModal.addEventListener('click', (e) => {
-            if (e.target === eventModal) closeEventModal();
-        });
-
+        eventModal.addEventListener('click', (e) => { if (e.target === eventModal) closeEventModal(); });
         document.getElementById('add-event-btn').addEventListener('click', () => openEventModal(null));
         document.getElementById('empty-create-btn').addEventListener('click', () => openEventModal(null));
 
@@ -2095,31 +1926,29 @@
         });
 
         /* ==================================================
-           БЛИЖАЙШЕЕ СОБЫТИЕ
+           БЛИЖАЙШЕЕ
            ================================================== */
         async function loadDefaultEvents() {
             try {
-                const res = await fetch('/api/events', { cache: 'no-store' });
-                if (!res.ok) throw new Error('API error');
+                const res = await fetch('/api/events', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+                if (!res.ok) throw new Error('API');
                 const data = await res.json();
                 if (!Array.isArray(data) || data.length === 0) throw new Error('Empty');
                 defaultEvents = data;
             } catch (e) {
                 defaultEvents = [
-                    { id: 'newyear', name: 'Новый Год', date: '2027-01-01T00:00:00' },
-                    { id: 'ramadan', name: 'Рамадан', date: '2027-02-08T00:00:00' },
-                    { id: 'adina', name: 'День рождения Адины', date: '2027-08-30T00:00:00' },
+                    { id: 'newyear',  name: 'Новый Год',              date: '2027-01-01T00:00:00' },
+                    { id: 'ramadan',  name: 'Рамадан',                date: '2027-02-08T00:00:00' },
+                    { id: 'adina',    name: 'День рождения Адины',    date: '2027-08-30T00:00:00' },
                     { id: 'myrzaiym', name: 'День рождения Мырзайыма', date: '2027-01-21T00:00:00' },
-                    { id: 'leto', name: 'Лето', date: '2027-06-01T00:00:00' }
+                    { id: 'leto',     name: 'Лето',                   date: '2027-06-01T00:00:00' }
                 ];
             }
         }
 
         async function computeNearestEvent() {
             const now = new Date();
-            let winner = null;
-            let minDiff = Infinity;
-            let winnerColor = null;
+            let winner = null, minDiff = Infinity, winnerColor = null;
 
             defaultEvents.forEach(ev => {
                 let date = new Date(ev.date);
@@ -2155,7 +1984,7 @@
         }
 
         /* ==================================================
-           ЧАСЫ И COUNTDOWN
+           ЧАСЫ / COUNTDOWN
            ================================================== */
         function updateTimeAndCountdown() {
             const options = { timeZone: 'Asia/Krasnoyarsk', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
@@ -2165,8 +1994,8 @@
             if (nearestTarget) {
                 const diff = Math.max(0, nearestTarget - new Date());
                 const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-                set('nc-days', Math.floor(diff / 86400000));
-                set('nc-hours', pad2(Math.floor((diff / 3600000) % 24)));
+                set('nc-days',    Math.floor(diff / 86400000));
+                set('nc-hours',   pad2(Math.floor((diff / 3600000) % 24)));
                 set('nc-minutes', pad2(Math.floor((diff / 60000) % 60)));
                 set('nc-seconds', pad2(Math.floor((diff / 1000) % 60)));
             }
@@ -2197,13 +2026,13 @@
         let pollFailures = 0;
         let pollTimer = null;
 
-        const chatBtn = document.getElementById('chat-btn');
-        const chatModal = document.getElementById('chat-modal');
-        const chatClose = document.getElementById('chat-close');
+        const chatBtn      = document.getElementById('chat-btn');
+        const chatModal    = document.getElementById('chat-modal');
+        const chatClose    = document.getElementById('chat-close');
         const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatSend = document.getElementById('chat-send');
-        const chatDot = chatBtn.querySelector('.dot');
+        const chatInput    = document.getElementById('chat-input');
+        const chatSend     = document.getElementById('chat-send');
+        const chatDot      = chatBtn.querySelector('.dot');
 
         function saveChatCache() {
             try {
@@ -2228,10 +2057,7 @@
         }
 
         function renderChat() {
-            if (chatHistory.length < renderedCount) {
-                chatMessages.innerHTML = '';
-                renderedCount = 0;
-            }
+            if (chatHistory.length < renderedCount) { chatMessages.innerHTML = ''; renderedCount = 0; }
             if (chatHistory.length === 0 && !isClosed && renderedCount === 0) {
                 chatMessages.innerHTML = '<div class="chat-empty">Здравствуйте.<br>Напишите ваш вопрос — мы ответим здесь.</div>';
             } else if (renderedCount === 0 && chatHistory.length > 0) {
@@ -2293,10 +2119,7 @@
                     if (isClosed && !wasClosed) showToast('Диалог закрыт', 'info');
                 }
                 schedulePoll();
-            } catch (e) {
-                pollFailures = Math.min(pollFailures + 1, 5);
-                schedulePoll();
-            }
+            } catch (e) { pollFailures = Math.min(pollFailures + 1, 5); schedulePoll(); }
         }
 
         async function sendChat() {
@@ -2335,14 +2158,10 @@
             if (!isClosed) setTimeout(() => chatInput.focus(), 320);
         });
         chatClose.addEventListener('click', () => {
-            chatModal.classList.remove('open');
-            chatInput.blur();
-            clearTimeout(pollTimer);
+            chatModal.classList.remove('open'); chatInput.blur(); clearTimeout(pollTimer);
         });
         chatSend.addEventListener('click', sendChat);
-        chatInput.addEventListener('keypress', e => {
-            if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
-        });
+        chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendChat(); } });
 
         loadChatCache(); renderChat(); updateInputState();
 
@@ -2351,18 +2170,43 @@
            ================================================== */
         async function trackVisit() {
             try {
-                const res = await fetch('/api/visits/main');
-                if (res.ok) {
-                    const count = await res.text();
-                    document.getElementById('visit-counter').textContent = count;
-                } else {
-                    document.getElementById('visit-counter').textContent = '0';
-                }
+                const res = await fetch('/api/visits/main', { signal: AbortSignal.timeout(4000) });
+                const el = document.getElementById('visit-counter');
+                if (res.ok) el.textContent = await res.text();
+                else el.textContent = '0';
             } catch (e) {
                 document.getElementById('visit-counter').textContent = '0';
             }
         }
         trackVisit();
+
+        /* ==================================================
+           ТАЙМЕРЫ + ПАУЗА ПРИ СКРЫТОЙ ВКЛАДКЕ
+           ================================================== */
+        let mainTimer = null;
+        let nearestTimer = null;
+
+        function startTimers() {
+            if (mainTimer) clearInterval(mainTimer);
+            if (nearestTimer) clearInterval(nearestTimer);
+            mainTimer = setInterval(() => { if (!document.hidden) updateTimeAndCountdown(); }, 1000);
+            nearestTimer = setInterval(() => { if (!document.hidden) computeNearestEvent(); }, 60000);
+        }
+
+        function stopTimers() {
+            if (mainTimer) { clearInterval(mainTimer); mainTimer = null; }
+            if (nearestTimer) { clearInterval(nearestTimer); nearestTimer = null; }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopTimers();
+            } else {
+                startTimers();
+                updateTimeAndCountdown();
+                computeNearestEvent();
+            }
+        });
 
         /* ==================================================
            ИНИЦИАЛИЗАЦИЯ
@@ -2372,16 +2216,12 @@
             renderPersonalGrid();
             await computeNearestEvent();
 
-            // Если URL содержит ?event=ID — открываем счётчик
             const urlParams = new URLSearchParams(window.location.search);
             const openId = urlParams.get('event');
-            if (openId && personalEvents.some(e => e.id === openId)) {
-                openEventOverlay(openId, false);
-            }
+            if (openId && personalEvents.some(e => e.id === openId)) openEventOverlay(openId, false);
 
-            setInterval(updateTimeAndCountdown, 1000);
             updateTimeAndCountdown();
-            setInterval(computeNearestEvent, 60000);
+            startTimers();
         }
 
         init();
