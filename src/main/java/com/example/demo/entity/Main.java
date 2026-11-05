@@ -1,5 +1,5 @@
 package com.example.demo.entity;
-
+import org.telegram.telegrambots.meta.api.objects.Update;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.ResponseEntity;
 import java.util.*;
 
 @SpringBootApplication
@@ -27,6 +27,8 @@ public class Main {
 
         @Autowired private FeedbackService feedbackService;
         @Autowired private TelegramNotifier notifier;
+        @Autowired private OpenRouterExample openRouterExample;
+        @Autowired private SharedEventRepository sharedEventRepo;
 
         // ВОТ ТУТ ПОДТЯГИВАЕТСЯ ПАРОЛЬ ИЗ application.properties
         @Value("${admin.code}")
@@ -77,6 +79,75 @@ public class Main {
             }
 
             return result;
+        }
+        @GetMapping("/ai")
+        public String getTextAi(@RequestParam(defaultValue = "Привет! Как дела?") String message) {
+            try {
+                return openRouterExample.ask(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Ошибка: " + e.getMessage();
+            }
+        }
+        @PostMapping("/telegram/webhook")
+        public String telegramWebhook(@RequestBody Update update) {
+            notifier.handleUpdate(update);
+            return "ok";
+        }
+        @PostMapping("/share")
+        public ResponseEntity<?> createShare(@RequestBody Map<String, String> body) {
+            String title = body.get("title");
+            String emoji = body.get("emoji");
+            String date = body.get("date");
+            String color = body.get("color");
+
+            // 1. ВАЛИДАЦИЯ (как ты просил)
+            if (title == null || title.trim().isEmpty() || title.length() > 100) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Title is invalid"));
+            }
+            if (date == null || date.trim().isEmpty() || date.length() > 20) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Date is invalid"));
+            }
+            // Если emoji или color не передали, ставим дефолт (чтобы база не ругалась)
+            if (emoji == null) emoji = "⏱️";
+            if (color == null) color = "#3b82f6";
+
+            // 2. ГЕНЕРАЦИЯ УНИКАЛЬНОГО ID
+            String shareId;
+            do {
+                shareId = generateShortId();
+            } while (sharedEventRepo.existsById(shareId)); // Проверка на уникальность
+
+            // 3. СОХРАНЕНИЕ
+            SharedEvent event = new SharedEvent(shareId, title, emoji, date, color);
+            sharedEventRepo.save(event);
+
+            // 4. ОТВЕТ
+            return ResponseEntity.ok(Map.of("shareId", shareId));
+        }
+
+
+        @GetMapping("/share/{shareId}")
+        public ResponseEntity<?> getShare(@PathVariable String shareId) {
+            return sharedEventRepo.findById(shareId)
+                    .map(event -> ResponseEntity.ok(Map.of(
+                            "title", event.getTitle(),
+                            "emoji", event.getEmoji(),
+                            "date", event.getDate(),
+                            "color", event.getColor()
+                    )))
+                    .orElse(ResponseEntity.notFound().build()); // 404, как договаривались
+        }
+
+        // Вспомогательный метод для генерации ID (6 символов: буквы + цифры)
+        private String generateShortId() {
+            String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            StringBuilder sb = new StringBuilder(6);
+            java.security.SecureRandom random = new java.security.SecureRandom();
+            for (int i = 0; i < 6; i++) {
+                sb.append(chars.charAt(random.nextInt(chars.length())));
+            }
+            return sb.toString();
         }
 
         @PostMapping("/personal-events")
