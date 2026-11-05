@@ -37,7 +37,7 @@ public class BotProtectionFilter extends OncePerRequestFilter {
     // Легитимные UA — пропускаем (поисковики, мессенджеры)
     private static final String[] ALLOWED_UA_MARKERS = {
             "googlebot", "yandexbot", "bingbot", "duckduckbot",
-            "google-cloud-vertexbot", // <--- ДОБАВЛЕНО СЮДА
+            "google-cloud-vertexbot",
             "telegram", "whatsapp", "viber", "facebookexternalhit",
             "chrome", "safari", "firefox", "edg/", "opr/", "opera"
     };
@@ -55,10 +55,18 @@ public class BotProtectionFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 2. Реальный IP (Amvera за прокси)
+        // 2. Webhook Telegram — пропускаем целиком, ДО любых проверок UA и rate limit.
+        //    Иначе фильтр возвращает 403/429, и Telegram пишет
+        //    "Wrong response from the webhook: 403 Forbidden" в getWebhookInfo.
+        if (path.startsWith("/api/telegram/webhook")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 3. Реальный IP (Amvera за прокси)
         String ip = getClientIp(request);
 
-        // 3. Проверка User-Agent
+        // 4. Проверка User-Agent
         String userAgent = request.getHeader("User-Agent");
         if (isBotUserAgent(userAgent)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -67,7 +75,7 @@ public class BotProtectionFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 4. Rate limiting
+        // 5. Rate limiting
         if (!isAllowedByRateLimit(ip)) {
             response.setStatus(429);
             response.setHeader("Retry-After", "60");
@@ -76,7 +84,7 @@ public class BotProtectionFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 5. Пропускаем
+        // 6. Пропускаем
         filterChain.doFilter(request, response);
     }
 
@@ -107,14 +115,14 @@ public class BotProtectionFilter extends OncePerRequestFilter {
         // Сначала проверяем разрешённых — их пропускаем
         for (String allowed : ALLOWED_UA_MARKERS) {
             if (lower.contains(allowed)) {
-                return false; // Если нашли в разрешенных, то это НЕ бот (пропускаем)
+                return false;
             }
         }
 
         // Затем проверяем запрещённых
         for (String marker : BOT_UA_MARKERS) {
             if (lower.contains(marker)) {
-                return true; // Если нашли в запрещенных, то блокируем
+                return true;
             }
         }
         return false;
